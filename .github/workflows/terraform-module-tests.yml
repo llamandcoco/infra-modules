@@ -1,0 +1,92 @@
+name: Terraform Module Tests
+
+on:
+  pull_request:
+    paths:
+      - 'terraform/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+
+jobs:
+  discover-modules:
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.set-matrix.outputs.modules }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Discover test modules
+        id: set-matrix
+        run: |
+          # Find all directories containing tests
+          modules=$(find terraform -type f -name "main.tf" -path "*/tests/*" -exec dirname {} \; | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          echo "modules=$modules" >> $GITHUB_OUTPUT
+          echo "Found test modules:"
+          echo "$modules" | jq
+
+  module-tests:
+    needs: discover-modules
+    if: needs.discover-modules.outputs.modules != '[]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        module: ${{ fromJson(needs.discover-modules.outputs.modules) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ~1.7
+
+      - name: Module Info
+        run: |
+          echo "Testing module: ${{ matrix.module }}"
+          ls -la ${{ matrix.module }}
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: ${{ matrix.module }}
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ${{ matrix.module }}
+
+      - name: Terraform Plan
+        run: terraform plan -out=plan.out
+        working-directory: ${{ matrix.module }}
+        env:
+          # These mock credentials are used for planning without actual AWS access
+          AWS_ACCESS_KEY_ID: "test"
+          AWS_SECRET_ACCESS_KEY: "test"
+          AWS_DEFAULT_REGION: "us-east-1"
+
+      - name: Terraform Show
+        run: terraform show plan.out
+        working-directory: ${{ matrix.module }}
+
+  module-tests-summary:
+    needs: [discover-modules, module-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.module-tests.result }}" == "failure" ]; then
+            echo "Module tests failed"
+            exit 1
+          elif [ "${{ needs.discover-modules.outputs.modules }}" == "[]" ]; then
+            echo "No test modules found - skipping tests"
+          else
+            echo "All module tests passed"
+          fi
