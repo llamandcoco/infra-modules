@@ -68,38 +68,28 @@ jobs:
         working-directory: terraform
         continue-on-error: true
 
-      - name: Read TFLint output
-        if: github.event_name == 'pull_request'
-        id: tflint-output
-        run: |
-          if [ -f terraform/tflint_output.txt ]; then
-            echo "TFLINT_RESULTS<<EOF" >> $GITHUB_OUTPUT
-            cat terraform/tflint_output.txt >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          else
-            echo "TFLINT_RESULTS=No output file found" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Read tfsec output
-        if: github.event_name == 'pull_request'
-        id: tfsec-output
-        run: |
-          if [ -f terraform/tfsec_output.txt ]; then
-            echo "TFSEC_RESULTS<<EOF" >> $GITHUB_OUTPUT
-            cat terraform/tfsec_output.txt >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          else
-            echo "TFSEC_RESULTS=No output file found" >> $GITHUB_OUTPUT
-          fi
-
       - name: Comment PR with Results
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const tflintResults = `${{ steps.tflint-output.outputs.TFLINT_RESULTS }}`;
-            const tfsecResults = `${{ steps.tfsec-output.outputs.TFSEC_RESULTS }}`;
+            const fs = require('fs');
+            const path = require('path');
+
+            // Read TFLint output
+            let tflintResults = 'No issues found or TFLint did not run';
+            const tflintPath = path.join(process.env.GITHUB_WORKSPACE, 'terraform/tflint_output.txt');
+            if (fs.existsSync(tflintPath)) {
+              tflintResults = fs.readFileSync(tflintPath, 'utf8').trim() || 'No issues found';
+            }
+
+            // Read tfsec output
+            let tfsecResults = 'No issues found or tfsec did not run';
+            const tfsecPath = path.join(process.env.GITHUB_WORKSPACE, 'terraform/tfsec_output.txt');
+            if (fs.existsSync(tfsecPath)) {
+              tfsecResults = fs.readFileSync(tfsecPath, 'utf8').trim() || 'No issues found';
+            }
 
             const output = `## Terraform Check Results
 
