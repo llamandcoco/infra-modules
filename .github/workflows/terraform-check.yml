@@ -50,7 +50,8 @@ jobs:
         id: tflint
         run: |
           tflint --init
-          tflint --recursive --format compact
+          tflint --recursive --format compact --enable-rule=terraform_naming_convention --minimum-failure-severity=notice > tflint_output.txt 2>&1 || true
+          cat tflint_output.txt
         working-directory: terraform
         continue-on-error: true
 
@@ -61,9 +62,35 @@ jobs:
 
       - name: Run tfsec
         id: tfsec
-        run: tfsec . --soft-fail --format lovely
+        run: |
+          tfsec . --soft-fail --format lovely > tfsec_output.txt 2>&1 || true
+          cat tfsec_output.txt
         working-directory: terraform
         continue-on-error: true
+
+      - name: Read TFLint output
+        if: github.event_name == 'pull_request'
+        id: tflint-output
+        run: |
+          if [ -f terraform/tflint_output.txt ]; then
+            echo "TFLINT_RESULTS<<EOF" >> $GITHUB_OUTPUT
+            cat terraform/tflint_output.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "TFLINT_RESULTS=No output file found" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Read tfsec output
+        if: github.event_name == 'pull_request'
+        id: tfsec-output
+        run: |
+          if [ -f terraform/tfsec_output.txt ]; then
+            echo "TFSEC_RESULTS<<EOF" >> $GITHUB_OUTPUT
+            cat terraform/tfsec_output.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "TFSEC_RESULTS=No output file found" >> $GITHUB_OUTPUT
+          fi
 
       - name: Comment PR with Results
         if: github.event_name == 'pull_request'
@@ -71,12 +98,41 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-            #### TFLint 🔍\`${{ steps.tflint.outcome }}\`
-            #### tfsec Security Scan 🔒\`${{ steps.tfsec.outcome }}\`
+            const tflintResults = `${{ steps.tflint-output.outputs.TFLINT_RESULTS }}`;
+            const tfsecResults = `${{ steps.tfsec-output.outputs.TFSEC_RESULTS }}`;
 
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            const output = `## Terraform Check Results
+
+            ### 🖌 Terraform Format and Style
+            **Status:** \`${{ steps.fmt.outcome }}\`
+
+            ### 🤖 Terraform Validation
+            **Status:** \`${{ steps.validate.outcome }}\`
+
+            ### 🔍 TFLint Analysis
+            **Status:** \`${{ steps.tflint.outcome }}\`
+
+            <details>
+            <summary>View TFLint Output</summary>
+
+            \`\`\`
+            ${tflintResults}
+            \`\`\`
+            </details>
+
+            ### 🔒 tfsec Security Scan
+            **Status:** \`${{ steps.tfsec.outcome }}\`
+
+            <details>
+            <summary>View tfsec Output</summary>
+
+            \`\`\`
+            ${tfsecResults}
+            \`\`\`
+            </details>
+
+            ---
+            *Pusher: @${{ github.actor }} | Action: \`${{ github.event_name }}\` | Workflow: \`${{ github.workflow }}\`*`;
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

@@ -1,6 +1,6 @@
 plugin "terraform" {
   enabled = true
-  preset  = "recommended"
+  preset  = "all"  # Enable all rules, then customize below
 }
 
 plugin "aws" {
@@ -9,25 +9,9 @@ plugin "aws" {
   source  = "github.com/terraform-linters/tflint-ruleset-aws"
 }
 
-rule "terraform_naming_convention" {
-  enabled = true
-
-  variable {
-    format = "snake_case"
-  }
-
-  output {
-    format = "snake_case"
-  }
-
-  resource {
-    format = "snake_case"
-  }
-
-  module {
-    format = "snake_case"
-  }
-}
+# Note: terraform_naming_convention produces "notice" level, not visible by default
+# Use: tflint --enable-rule=terraform_naming_convention to see these issues
+# Or add to command: --minimum-failure-severity=notice
 
 rule "terraform_documented_variables" {
   enabled = true
