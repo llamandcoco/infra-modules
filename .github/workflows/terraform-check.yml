@@ -50,7 +50,7 @@ jobs:
         id: tflint
         run: |
           tflint --init
-          tflint --recursive --format compact --enable-rule=terraform_naming_convention --minimum-failure-severity=notice > tflint_output.txt 2>&1 || true
+          tflint --recursive --format compact --enable-rule=terraform_naming_convention --minimum-failure-severity=notice --no-color > tflint_output.txt 2>&1 || true
           cat tflint_output.txt
         working-directory: terraform
         continue-on-error: true
@@ -63,7 +63,7 @@ jobs:
       - name: Run tfsec
         id: tfsec
         run: |
-          tfsec . --soft-fail --format lovely > tfsec_output.txt 2>&1 || true
+          tfsec . --soft-fail --format default --no-color > tfsec_output.txt 2>&1 || true
           cat tfsec_output.txt
         working-directory: terraform
         continue-on-error: true
