@@ -1,0 +1,70 @@
+repos:
+  # Terraform hooks
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.88.4
+    hooks:
+      # Format terraform files
+      - id: terraform_fmt
+        name: Terraform fmt
+        description: Rewrites all Terraform files to canonical format
+
+      # Validate terraform files
+      - id: terraform_validate
+        name: Terraform validate
+        description: Validates all Terraform files
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
+          - --tf-init-args=-backend=false
+
+      # Run tflint
+      - id: terraform_tflint
+        name: Terraform tflint
+        description: Runs tflint on Terraform files
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+
+      # Generate terraform docs (optional)
+      - id: terraform_docs
+        name: Terraform docs
+        description: Inserts terraform-docs output into README.md
+        args:
+          - --hook-config=--path-to-file=README.md
+          - --hook-config=--add-to-existing-file=true
+          - --hook-config=--create-file-if-not-exist=true
+
+      # Run tfsec
+      - id: terraform_tfsec
+        name: Terraform tfsec
+        description: Runs tfsec security scanner
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Prevent committing large files
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+      # Check for merge conflicts
+      - id: check-merge-conflict
+
+      # Check YAML syntax
+      - id: check-yaml
+        args: ['--unsafe']  # Allow custom tags in GitHub Actions
+
+      # Trim trailing whitespace
+      - id: trailing-whitespace
+        args: ['--markdown-linebreak-ext=md']
+
+      # Ensure files end with newline
+      - id: end-of-file-fixer
+
+      # Check for secrets
+      - id: detect-private-key
+
+  # Prevent commits to main branch
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: no-commit-to-branch
+        args: ['--branch', 'main', '--branch', 'master']
