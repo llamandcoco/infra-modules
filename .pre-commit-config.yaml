@@ -21,7 +21,7 @@ repos:
         name: Terraform tflint
         description: Runs tflint on Terraform files
         args:
-          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+          - --args=--config=__GIT_WORKING_DIR__/terraform/.tflint.hcl
 
       # Generate terraform docs (optional)
       - id: terraform_docs
