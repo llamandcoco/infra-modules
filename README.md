@@ -96,11 +96,53 @@ Automatically discovers and tests all modules:
 
 ### Prerequisites
 
-- Terraform >= 1.0
+**Required:**
+- [Terraform](https://www.terraform.io/downloads) >= 1.0
 - Git
-- Pre-commit (optional but recommended)
-- TFLint (optional but recommended)
-- tfsec (optional but recommended)
+
+**Optional (for local development with pre-commit):**
+- [pre-commit](https://pre-commit.com/) - Git hook framework
+- [TFLint](https://github.com/terraform-linters/tflint) - Terraform linter
+- [tfsec](https://github.com/aquasecurity/tfsec) - Security scanner
+- [terraform-docs](https://terraform-docs.io/) - Documentation generator
+
+**Installation (macOS):**
+```bash
+# Install via Homebrew
+brew install terraform
+brew install pre-commit
+brew install tflint
+brew install tfsec
+brew install terraform-docs
+```
+
+**Installation (Linux):**
+```bash
+# Terraform
+wget https://releases.hashicorp.com/terraform/1.x.x/terraform_1.x.x_linux_amd64.zip
+unzip terraform_1.x.x_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+
+# pre-commit
+pip install pre-commit
+# or
+curl https://pre-commit.com/install-local.py | python -
+
+# TFLint
+curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+# tfsec
+curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+
+# terraform-docs
+GO111MODULE=on go install github.com/terraform-docs/terraform-docs@latest
+```
+
+**Or use the automated installer:**
+```bash
+# Installs all required tools (macOS only)
+make install-tools
+```
 
 ### Quick Setup
 
