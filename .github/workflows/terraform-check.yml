@@ -50,7 +50,8 @@ jobs:
         id: tflint
         run: |
           tflint --init
-          tflint --recursive --format compact
+          tflint --recursive --format compact --enable-rule=terraform_naming_convention --minimum-failure-severity=notice --no-color > tflint_output.txt 2>&1 || true
+          cat tflint_output.txt
         working-directory: terraform
         continue-on-error: true
 
@@ -61,7 +62,9 @@ jobs:
 
       - name: Run tfsec
         id: tfsec
-        run: tfsec . --soft-fail --format lovely
+        run: |
+          tfsec . --soft-fail --format default --no-color > tfsec_output.txt 2>&1 || true
+          cat tfsec_output.txt
         working-directory: terraform
         continue-on-error: true
 
@@ -71,12 +74,55 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-            #### TFLint 🔍\`${{ steps.tflint.outcome }}\`
-            #### tfsec Security Scan 🔒\`${{ steps.tfsec.outcome }}\`
+            const fs = require('fs');
+            const path = require('path');
 
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            // Read TFLint output
+            let tflintResults = 'No issues found or TFLint did not run';
+            const tflintPath = path.join(process.env.GITHUB_WORKSPACE, 'terraform/tflint_output.txt');
+            if (fs.existsSync(tflintPath)) {
+              tflintResults = fs.readFileSync(tflintPath, 'utf8').trim() || 'No issues found';
+            }
+
+            // Read tfsec output
+            let tfsecResults = 'No issues found or tfsec did not run';
+            const tfsecPath = path.join(process.env.GITHUB_WORKSPACE, 'terraform/tfsec_output.txt');
+            if (fs.existsSync(tfsecPath)) {
+              tfsecResults = fs.readFileSync(tfsecPath, 'utf8').trim() || 'No issues found';
+            }
+
+            const output = `## Terraform Check Results
+
+            ### 🖌 Terraform Format and Style
+            **Status:** \`${{ steps.fmt.outcome }}\`
+
+            ### 🤖 Terraform Validation
+            **Status:** \`${{ steps.validate.outcome }}\`
+
+            ### 🔍 TFLint Analysis
+            **Status:** \`${{ steps.tflint.outcome }}\`
+
+            <details>
+            <summary>View TFLint Output</summary>
+
+            \`\`\`
+            ${tflintResults}
+            \`\`\`
+            </details>
+
+            ### 🔒 tfsec Security Scan
+            **Status:** \`${{ steps.tfsec.outcome }}\`
+
+            <details>
+            <summary>View tfsec Output</summary>
+
+            \`\`\`
+            ${tfsecResults}
+            \`\`\`
+            </details>
+
+            ---
+            *Pusher: @${{ github.actor }} | Action: \`${{ github.event_name }}\` | Workflow: \`${{ github.workflow }}\`*`;
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
