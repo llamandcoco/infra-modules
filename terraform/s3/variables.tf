@@ -11,6 +11,16 @@ variable "bucket_name" {
     condition     = !can(regex("[A-Z_]", var.bucket_name))
     error_message = "Bucket name must not contain uppercase letters or underscores."
   }
+
+  validation {
+    condition     = !can(regex("\\.\\.", var.bucket_name))
+    error_message = "Bucket name must not contain consecutive periods."
+  }
+
+  validation {
+    condition     = !can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}$", var.bucket_name))
+    error_message = "Bucket name must not be formatted as an IP address (e.g., 192.168.1.1)."
+  }
 }
 
 variable "force_destroy" {

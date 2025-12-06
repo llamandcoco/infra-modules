@@ -62,10 +62,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
       # Filter is required in newer provider versions
       # Provide an empty filter if no prefix or tags are specified
       filter {
-        prefix = lookup(rule.value, "filter_prefix", "")
+        prefix = rule.value.filter_prefix != null ? rule.value.filter_prefix : ""
 
         dynamic "tag" {
-          for_each = lookup(rule.value, "filter_tags", null) != null ? rule.value.filter_tags : {}
+          for_each = rule.value.filter_tags != null ? rule.value.filter_tags : {}
           content {
             key   = tag.key
             value = tag.value
@@ -75,27 +75,27 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
 
       # Transition rules
       dynamic "transition" {
-        for_each = lookup(rule.value, "transition", null) != null ? rule.value.transition : []
+        for_each = rule.value.transition != null ? rule.value.transition : []
         content {
-          days          = lookup(transition.value, "days", null)
-          date          = lookup(transition.value, "date", null)
+          days          = transition.value.days
+          date          = transition.value.date
           storage_class = transition.value.storage_class
         }
       }
 
       # Expiration rule
       dynamic "expiration" {
-        for_each = lookup(rule.value, "expiration", null) != null ? [rule.value.expiration] : []
+        for_each = rule.value.expiration != null ? [rule.value.expiration] : []
         content {
-          days                         = lookup(expiration.value, "days", null)
-          date                         = lookup(expiration.value, "date", null)
-          expired_object_delete_marker = lookup(expiration.value, "expired_object_delete_marker", null)
+          days                         = expiration.value.days
+          date                         = expiration.value.date
+          expired_object_delete_marker = expiration.value.expired_object_delete_marker
         }
       }
 
       # Non-current version transition
       dynamic "noncurrent_version_transition" {
-        for_each = lookup(rule.value, "noncurrent_version_transition", null) != null ? rule.value.noncurrent_version_transition : []
+        for_each = rule.value.noncurrent_version_transition != null ? rule.value.noncurrent_version_transition : []
         content {
           noncurrent_days = noncurrent_version_transition.value.noncurrent_days
           storage_class   = noncurrent_version_transition.value.storage_class
@@ -104,7 +104,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
 
       # Non-current version expiration
       dynamic "noncurrent_version_expiration" {
-        for_each = lookup(rule.value, "noncurrent_version_expiration", null) != null ? [rule.value.noncurrent_version_expiration] : []
+        for_each = rule.value.noncurrent_version_expiration != null ? [rule.value.noncurrent_version_expiration] : []
         content {
           noncurrent_days = noncurrent_version_expiration.value.noncurrent_days
         }
@@ -112,7 +112,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
 
       # Abort incomplete multipart upload
       dynamic "abort_incomplete_multipart_upload" {
-        for_each = lookup(rule.value, "abort_incomplete_multipart_upload_days", null) != null ? [1] : []
+        for_each = rule.value.abort_incomplete_multipart_upload_days != null ? [1] : []
         content {
           days_after_initiation = rule.value.abort_incomplete_multipart_upload_days
         }
