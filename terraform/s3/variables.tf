@@ -81,11 +81,11 @@ variable "restrict_public_buckets" {
 variable "lifecycle_rules" {
   description = "Lifecycle rules to apply to the bucket. Leave empty to disable lifecycle configuration."
   type = list(object({
-    id                                    = string
-    enabled                               = bool
-    prefix                                = optional(string)
-    expiration_days                       = optional(number)
-    noncurrent_version_expiration_days    = optional(number)
+    id                                     = string
+    enabled                                = bool
+    prefix                                 = optional(string)
+    expiration_days                        = optional(number)
+    noncurrent_version_expiration_days     = optional(number)
     abort_incomplete_multipart_upload_days = optional(number)
     transitions = optional(list(object({
       days          = number
