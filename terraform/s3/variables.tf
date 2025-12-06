@@ -24,8 +24,8 @@ variable "acl" {
   type        = string
   default     = "private"
   validation {
-    condition     = contains(["private", "public-read", "public-read-write", "authenticated-read"], var.acl) == false ? var.acl == "private" : true
-    error_message = "Only 'private' is recommended. If you change this, ensure you understand the public access implications."
+    condition     = contains(["private", "public-read", "public-read-write", "authenticated-read"], var.acl)
+    error_message = "ACL must be one of: private, public-read, public-read-write, authenticated-read."
   }
 }
 

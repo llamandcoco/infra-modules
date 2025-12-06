@@ -13,7 +13,9 @@ locals {
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket = var.bucket_name
+  bucket        = var.bucket_name != "" ? var.bucket_name : null
+  bucket_prefix = var.bucket_name == "" && var.bucket_prefix != "" ? var.bucket_prefix : null
+  force_destroy = var.force_destroy
 
   tags = merge(var.default_tags, var.tags)
 }
