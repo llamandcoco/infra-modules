@@ -82,10 +82,10 @@ variable "lifecycle_rules" {
     - noncurrent_version_expiration_days: Days until old versions expire (optional)
   EOT
   type = list(object({
-    id          = string
-    enabled     = bool
-    prefix      = optional(string)
-    tags        = optional(map(string), {})
+    id      = string
+    enabled = bool
+    prefix  = optional(string)
+    tags    = optional(map(string), {})
     transitions = optional(list(object({
       days          = number
       storage_class = string
