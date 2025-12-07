@@ -87,9 +87,27 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
         for_each = rule.value.prefix != null || length(rule.value.tags) > 0 ? [1] : []
 
         content {
-          and {
-            prefix = rule.value.prefix
-            tags   = rule.value.tags
+          # Use 'and' block only when both prefix and tags are present
+          dynamic "and" {
+            for_each = rule.value.prefix != null && length(rule.value.tags) > 0 ? [1] : []
+
+            content {
+              prefix = rule.value.prefix
+              tags   = rule.value.tags
+            }
+          }
+
+          # Use simple prefix when only prefix is set
+          prefix = rule.value.prefix != null && length(rule.value.tags) == 0 ? rule.value.prefix : null
+
+          # Use simple tag when only tags are set
+          dynamic "tag" {
+            for_each = rule.value.prefix == null && length(rule.value.tags) > 0 ? rule.value.tags : {}
+
+            content {
+              key   = tag.key
+              value = tag.value
+            }
           }
         }
       }
