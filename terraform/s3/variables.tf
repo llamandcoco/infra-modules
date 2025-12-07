@@ -18,31 +18,16 @@ variable "bucket_name" {
 }
 
 # -----------------------------------------------------------------------------
-# Security Variables
+# Public Access Block Configuration
+# NOTE: While AWS provider defaults to false, this module defaults to true
+# for security best practices. Users can explicitly set to false if public
+# access is required (e.g., for static website hosting).
 # -----------------------------------------------------------------------------
-
-variable "versioning_enabled" {
-  description = "Enable versioning to protect against accidental deletion and provide object history. Recommended for production buckets."
-  type        = bool
-  default     = true
-}
-
-variable "kms_key_id" {
-  description = "ARN of the KMS key to use for SSE-KMS encryption. If not specified, SSE-S3 (AES256) encryption will be used."
-  type        = string
-  default     = null
-}
-
-variable "bucket_key_enabled" {
-  description = "Enable S3 Bucket Keys to reduce KMS costs by decreasing request traffic from S3 to KMS. Only applies when using KMS encryption."
-  type        = bool
-  default     = true
-}
 
 variable "block_public_acls" {
   description = "Block public ACLs on this bucket. Recommended to keep enabled for security."
   type        = bool
-  default     = true
+  default     = true # Secure by default
 }
 
 variable "block_public_policy" {
@@ -61,6 +46,48 @@ variable "restrict_public_buckets" {
   description = "Restrict public bucket policies for this bucket. Recommended to keep enabled for security."
   type        = bool
   default     = true
+}
+
+# -----------------------------------------------------------------------------
+# Data Protection & Reliability Variables
+# -----------------------------------------------------------------------------
+
+variable "versioning_enabled" {
+  description = "Enable versioning to protect against accidental deletion and provide object history. Recommended for production buckets."
+  type        = bool
+  default     = true
+}
+
+# -----------------------------------------------------------------------------
+# Security Variables
+# -----------------------------------------------------------------------------
+
+variable "kms_key_id" {
+  description = "ARN of the KMS key to use for SSE-KMS encryption. If not specified, SSE-S3 (AES256) encryption will be used."
+  type        = string
+  default     = null
+}
+
+variable "bucket_key_enabled" {
+  description = "Enable S3 Bucket Keys to reduce KMS costs by decreasing request traffic from S3 to KMS. Only applies when using KMS encryption."
+  type        = bool
+  default     = true
+}
+
+# -----------------------------------------------------------------------------
+# Logging Configuration
+# -----------------------------------------------------------------------------
+
+variable "logging_target_bucket" {
+  description = "Name of the target bucket for access logs. If not specified, logging is disabled. The target bucket must exist and have appropriate permissions."
+  type        = string
+  default     = null
+}
+
+variable "logging_target_prefix" {
+  description = "Prefix for access log objects stored in the target bucket. Only used if logging_target_bucket is specified."
+  type        = string
+  default     = "logs/"
 }
 
 # -----------------------------------------------------------------------------

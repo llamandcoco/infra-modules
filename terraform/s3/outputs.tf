@@ -4,12 +4,12 @@
 
 output "bucket_id" {
   description = "The name/ID of the S3 bucket. Use this for bucket policy references and other resource configurations."
-  value       = aws_s3_bucket.main.id
+  value       = aws_s3_bucket.this.id
 }
 
 output "bucket_arn" {
   description = "The ARN of the S3 bucket. Use this for IAM policies and cross-account access configurations."
-  value       = aws_s3_bucket.main.arn
+  value       = aws_s3_bucket.this.arn
 }
 
 # -----------------------------------------------------------------------------
@@ -18,17 +18,17 @@ output "bucket_arn" {
 
 output "bucket_domain_name" {
   description = "The bucket domain name. Use this for CloudFront distributions or direct S3 website hosting."
-  value       = aws_s3_bucket.main.bucket_domain_name
+  value       = aws_s3_bucket.this.bucket_domain_name
 }
 
 output "bucket_regional_domain_name" {
   description = "The bucket region-specific domain name. Use this when you need region-specific endpoints."
-  value       = aws_s3_bucket.main.bucket_regional_domain_name
+  value       = aws_s3_bucket.this.bucket_regional_domain_name
 }
 
 output "bucket_region" {
   description = "The AWS region where the bucket is deployed."
-  value       = aws_s3_bucket.main.region
+  value       = aws_s3_bucket.this.region
 }
 
 # -----------------------------------------------------------------------------
@@ -56,10 +56,10 @@ output "kms_key_id" {
 
 output "bucket_name" {
   description = "The name of the bucket (same as bucket_id). Provided for convenience and clarity in module outputs."
-  value       = aws_s3_bucket.main.bucket
+  value       = aws_s3_bucket.this.bucket
 }
 
 output "tags" {
   description = "All tags applied to the bucket, including default and custom tags."
-  value       = aws_s3_bucket.main.tags_all
+  value       = aws_s3_bucket.this.tags_all
 }
