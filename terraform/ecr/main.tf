@@ -48,15 +48,23 @@ resource "aws_ecr_lifecycle_policy" "this" {
   policy = jsonencode({
     rules = [
       for idx, rule in var.lifecycle_policy : {
-        rulePriority = idx + 1
+        rulePriority = rule.priority != null ? rule.priority : idx + 1
         description  = rule.description
-        selection = {
-          tagStatus     = rule.tag_status
-          tagPrefixList = rule.tag_prefix_list
-          countType     = rule.count_type
-          countUnit     = rule.count_unit
-          countNumber   = rule.count_number
-        }
+        selection = merge(
+          {
+            tagStatus   = rule.tag_status
+            countType   = rule.count_type
+            countNumber = rule.count_number
+          },
+          # Only include tagPrefixList for tagged images
+          rule.tag_status == "tagged" && rule.tag_prefix_list != null ? {
+            tagPrefixList = rule.tag_prefix_list
+          } : {},
+          # Only include countUnit for sinceImagePushed
+          rule.count_type == "sinceImagePushed" && rule.count_unit != null ? {
+            countUnit = rule.count_unit
+          } : {}
+        )
         action = {
           type = "expire"
         }

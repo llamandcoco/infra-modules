@@ -56,16 +56,14 @@ module "ecr" {
       tag_status      = "tagged"
       tag_prefix_list = ["prod-"]
       count_type      = "imageCountMoreThan"
-      count_unit      = null
       count_number    = 10
     },
     {
-      description     = "Remove untagged images older than 7 days"
-      tag_status      = "untagged"
-      tag_prefix_list = null
-      count_type      = "sinceImagePushed"
-      count_unit      = "days"
-      count_number    = 7
+      description  = "Remove untagged images older than 7 days"
+      tag_status   = "untagged"
+      count_type   = "sinceImagePushed"
+      count_unit   = "days"
+      count_number = 7
     }
   ]
 

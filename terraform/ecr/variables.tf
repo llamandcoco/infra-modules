@@ -7,8 +7,8 @@ variable "repository_name" {
   type        = string
 
   validation {
-    condition     = can(regex("^[a-z0-9][a-z0-9/_-]*[a-z0-9]$", var.repository_name))
-    error_message = "Repository name must start and end with a lowercase letter or number, and can only contain lowercase letters, numbers, hyphens, underscores, and forward slashes."
+    condition     = can(regex("^[a-z0-9]+(?:[/_-][a-z0-9]+)*$", var.repository_name))
+    error_message = "Repository name must contain only lowercase letters, numbers, hyphens, underscores, and forward slashes. It cannot start or end with hyphens, underscores, or slashes."
   }
 
   validation {
@@ -72,34 +72,34 @@ variable "lifecycle_policy" {
 
     Each rule includes:
     - description: Human-readable description of the rule
+    - priority: Optional explicit priority (lower numbers have higher priority). If not specified, rules are prioritized by their order in the list (first = priority 1)
     - tag_status: Either 'tagged', 'untagged', or 'any'
-    - tag_prefix_list: List of tag prefixes to match (only for tagged images)
+    - tag_prefix_list: List of tag prefixes to match (only for tagged images, omit for untagged/any)
     - count_type: Either 'imageCountMoreThan' or 'sinceImagePushed'
-    - count_unit: 'days' (only for sinceImagePushed)
+    - count_unit: 'days' (only for sinceImagePushed, omit for imageCountMoreThan)
     - count_number: Number of images or days
 
     Example:
     lifecycle_policy = [
       {
-        description      = "Keep only 10 most recent production images"
-        tag_status       = "tagged"
-        tag_prefix_list  = ["prod-"]
-        count_type       = "imageCountMoreThan"
-        count_unit       = null
-        count_number     = 10
+        description     = "Keep only 10 most recent production images"
+        tag_status      = "tagged"
+        tag_prefix_list = ["prod-"]
+        count_type      = "imageCountMoreThan"
+        count_number    = 10
       },
       {
-        description      = "Remove untagged images older than 7 days"
-        tag_status       = "untagged"
-        tag_prefix_list  = null
-        count_type       = "sinceImagePushed"
-        count_unit       = "days"
-        count_number     = 7
+        description  = "Remove untagged images older than 7 days"
+        tag_status   = "untagged"
+        count_type   = "sinceImagePushed"
+        count_unit   = "days"
+        count_number = 7
       }
     ]
   EOT
   type = list(object({
     description     = string
+    priority        = optional(number)
     tag_status      = string
     tag_prefix_list = optional(list(string))
     count_type      = string

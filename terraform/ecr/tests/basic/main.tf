@@ -71,23 +71,20 @@ module "lifecycle_repository" {
       tag_status      = "tagged"
       tag_prefix_list = ["prod-", "v"]
       count_type      = "imageCountMoreThan"
-      count_unit      = null
       count_number    = 10
     },
     {
-      description     = "Remove untagged images older than 7 days"
-      tag_status      = "untagged"
-      tag_prefix_list = null
-      count_type      = "sinceImagePushed"
-      count_unit      = "days"
-      count_number    = 7
+      description  = "Remove untagged images older than 7 days"
+      tag_status   = "untagged"
+      count_type   = "sinceImagePushed"
+      count_unit   = "days"
+      count_number = 7
     },
     {
       description     = "Keep last 5 development images"
       tag_status      = "tagged"
       tag_prefix_list = ["dev-"]
       count_type      = "imageCountMoreThan"
-      count_unit      = null
       count_number    = 5
     }
   ]
@@ -174,12 +171,10 @@ module "comprehensive_repository" {
 
   lifecycle_policy = [
     {
-      description     = "Keep last 15 images"
-      tag_status      = "any"
-      tag_prefix_list = null
-      count_type      = "imageCountMoreThan"
-      count_unit      = null
-      count_number    = 15
+      description  = "Keep last 15 images"
+      tag_status   = "any"
+      count_type   = "imageCountMoreThan"
+      count_number = 15
     }
   ]
 
