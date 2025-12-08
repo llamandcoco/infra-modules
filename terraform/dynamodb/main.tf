@@ -79,11 +79,11 @@ resource "aws_dynamodb_table" "this" {
     content {
       name               = global_secondary_index.value.name
       hash_key           = global_secondary_index.value.hash_key
-      range_key          = lookup(global_secondary_index.value, "range_key", null)
+      range_key          = try(global_secondary_index.value.range_key, null)
       projection_type    = global_secondary_index.value.projection_type
-      non_key_attributes = lookup(global_secondary_index.value, "non_key_attributes", null)
-      read_capacity      = var.billing_mode == "PROVISIONED" ? lookup(global_secondary_index.value, "read_capacity", null) : null
-      write_capacity     = var.billing_mode == "PROVISIONED" ? lookup(global_secondary_index.value, "write_capacity", null) : null
+      non_key_attributes = try(global_secondary_index.value.non_key_attributes, null)
+      read_capacity      = var.billing_mode == "PROVISIONED" ? try(global_secondary_index.value.read_capacity, null) : null
+      write_capacity     = var.billing_mode == "PROVISIONED" ? try(global_secondary_index.value.write_capacity, null) : null
     }
   }
 
@@ -95,7 +95,7 @@ resource "aws_dynamodb_table" "this" {
       name               = local_secondary_index.value.name
       range_key          = local_secondary_index.value.range_key
       projection_type    = local_secondary_index.value.projection_type
-      non_key_attributes = lookup(local_secondary_index.value, "non_key_attributes", null)
+      non_key_attributes = try(local_secondary_index.value.non_key_attributes, null)
     }
   }
 
@@ -170,11 +170,11 @@ resource "aws_appautoscaling_target" "gsi_read" {
   for_each = var.billing_mode == "PROVISIONED" && var.enable_autoscaling ? {
     for idx in var.global_secondary_indexes :
     idx.name => idx
-    if lookup(idx, "enable_autoscaling", true)
+    if try(idx.enable_autoscaling, true)
   } : {}
 
-  max_capacity       = lookup(each.value, "autoscaling_read_max_capacity", var.autoscaling_read_max_capacity)
-  min_capacity       = lookup(each.value, "autoscaling_read_min_capacity", var.autoscaling_read_min_capacity)
+  max_capacity       = coalesce(try(each.value.autoscaling_read_max_capacity, null), var.autoscaling_read_max_capacity)
+  min_capacity       = coalesce(try(each.value.autoscaling_read_min_capacity, null), var.autoscaling_read_min_capacity)
   resource_id        = "table/${aws_dynamodb_table.this.name}/index/${each.key}"
   scalable_dimension = "dynamodb:index:ReadCapacityUnits"
   service_namespace  = "dynamodb"
@@ -201,11 +201,11 @@ resource "aws_appautoscaling_target" "gsi_write" {
   for_each = var.billing_mode == "PROVISIONED" && var.enable_autoscaling ? {
     for idx in var.global_secondary_indexes :
     idx.name => idx
-    if lookup(idx, "enable_autoscaling", true)
+    if try(idx.enable_autoscaling, true)
   } : {}
 
-  max_capacity       = lookup(each.value, "autoscaling_write_max_capacity", var.autoscaling_write_max_capacity)
-  min_capacity       = lookup(each.value, "autoscaling_write_min_capacity", var.autoscaling_write_min_capacity)
+  max_capacity       = coalesce(try(each.value.autoscaling_write_max_capacity, null), var.autoscaling_write_max_capacity)
+  min_capacity       = coalesce(try(each.value.autoscaling_write_min_capacity, null), var.autoscaling_write_min_capacity)
   resource_id        = "table/${aws_dynamodb_table.this.name}/index/${each.key}"
   scalable_dimension = "dynamodb:index:WriteCapacityUnits"
   service_namespace  = "dynamodb"

@@ -330,14 +330,6 @@ variable "global_secondary_indexes" {
     ])
     error_message = "GSI projection_type must be one of: KEYS_ONLY, INCLUDE, ALL."
   }
-
-  validation {
-    condition = alltrue([
-      for gsi in var.global_secondary_indexes :
-      gsi.projection_type != "INCLUDE" || (gsi.non_key_attributes != null && length(gsi.non_key_attributes) > 0)
-    ])
-    error_message = "When projection_type is INCLUDE, non_key_attributes must be specified."
-  }
 }
 
 # -----------------------------------------------------------------------------
@@ -372,14 +364,6 @@ variable "local_secondary_indexes" {
       contains(["KEYS_ONLY", "INCLUDE", "ALL"], lsi.projection_type)
     ])
     error_message = "LSI projection_type must be one of: KEYS_ONLY, INCLUDE, ALL."
-  }
-
-  validation {
-    condition = alltrue([
-      for lsi in var.local_secondary_indexes :
-      lsi.projection_type != "INCLUDE" || (lsi.non_key_attributes != null && length(lsi.non_key_attributes) > 0)
-    ])
-    error_message = "When projection_type is INCLUDE, non_key_attributes must be specified."
   }
 }
 
