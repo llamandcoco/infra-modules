@@ -62,7 +62,7 @@ validate:
 lint:
 	@echo "🔍 Running tflint..."
 	@tflint --init >/dev/null 2>&1 || true
-	@tflint --recursive --format compact terraform/
+	@tflint --recursive --format compact --chdir terraform/
 	@echo "✅ Linting complete"
 
 # Run tfsec security scan
