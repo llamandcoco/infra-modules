@@ -76,7 +76,7 @@ variable "overwrite" {
 # -----------------------------------------------------------------------------
 
 variable "data_type" {
-  description = "Data type for the parameter value. Used for validation. Common values: text (default), aws:ec2:image (for AMI IDs). Leave null for most use cases."
+  description = "Data type for the parameter value. Used for validation. Common values: text (AWS default when not specified), aws:ec2:image (for AMI IDs). Defaults to null, which allows AWS to use its default (text)."
   type        = string
   default     = null
 

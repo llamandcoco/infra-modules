@@ -191,7 +191,7 @@ See the [tests/basic](./tests/basic/main.tf) directory for complete examples inc
 
 ## Notes
 
-- Parameters names must start with `/` and can be up to 2048 characters
+- Parameter names must start with `/` and can be up to 2048 characters
 - Standard tier parameters are limited to 4 KB, use Advanced tier for larger values
 - SecureString parameters are automatically encrypted (default AWS-managed key or custom KMS key)
 - Parameter versions increment with each update
