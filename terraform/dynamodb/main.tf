@@ -82,8 +82,8 @@ resource "aws_dynamodb_table" "this" {
       range_key          = try(global_secondary_index.value.range_key, null)
       projection_type    = global_secondary_index.value.projection_type
       non_key_attributes = try(global_secondary_index.value.non_key_attributes, null)
-      read_capacity      = var.billing_mode == "PROVISIONED" ? try(global_secondary_index.value.read_capacity, null) : null
-      write_capacity     = var.billing_mode == "PROVISIONED" ? try(global_secondary_index.value.write_capacity, null) : null
+      read_capacity      = var.billing_mode == "PROVISIONED" ? coalesce(try(global_secondary_index.value.read_capacity, null), var.read_capacity) : null
+      write_capacity     = var.billing_mode == "PROVISIONED" ? coalesce(try(global_secondary_index.value.write_capacity, null), var.write_capacity) : null
     }
   }
 
