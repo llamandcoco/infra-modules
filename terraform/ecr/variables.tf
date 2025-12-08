@@ -3,12 +3,12 @@
 # -----------------------------------------------------------------------------
 
 variable "repository_name" {
-  description = "Name of the ECR repository. This will be used to identify your container images (e.g., 'my-app', 'backend-service')."
+  description = "Name of the ECR repository. This will be used to identify your container images (e.g., 'my-app', 'backend-service'). While AWS ECR supports mixed case, lowercase is recommended for consistency."
   type        = string
 
   validation {
-    condition     = can(regex("^[a-z0-9]+(?:[/_-][a-z0-9]+)*$", var.repository_name))
-    error_message = "Repository name must contain only lowercase letters, numbers, hyphens, underscores, and forward slashes. It cannot start or end with hyphens, underscores, or slashes."
+    condition     = can(regex("^[a-zA-Z0-9]+(?:[/_-][a-zA-Z0-9]+)*$", var.repository_name))
+    error_message = "Repository name must contain only letters, numbers, hyphens, underscores, and forward slashes. It cannot start or end with hyphens, underscores, or slashes."
   }
 
   validation {
@@ -127,9 +127,17 @@ variable "lifecycle_policy" {
   validation {
     condition = var.lifecycle_policy == null ? true : alltrue([
       for rule in var.lifecycle_policy :
-      rule.count_type == "sinceImagePushed" ? rule.count_unit == "days" : true
+      rule.count_type == "sinceImagePushed" ? (rule.count_unit != null && rule.count_unit == "days") : true
     ])
     error_message = "Lifecycle policy count_unit must be 'days' when count_type is 'sinceImagePushed'."
+  }
+
+  validation {
+    condition = var.lifecycle_policy == null ? true : alltrue([
+      for rule in var.lifecycle_policy :
+      rule.count_type == "imageCountMoreThan" ? rule.count_unit == null : true
+    ])
+    error_message = "Lifecycle policy count_unit must not be set when count_type is 'imageCountMoreThan'."
   }
 }
 
