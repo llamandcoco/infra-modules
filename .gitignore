@@ -41,8 +41,8 @@ terraform.rc
 # Ignore TFLint cache
 .tflint.d/
 
-# Ignore template's lock file (users will generate their own when copying template)
-terraform/_template/.terraform.lock.hcl
+# Ignore terraform lock files (users will generate their own when using modules)
+.terraform.lock.hcl
 
 # Ignore any local test files or scratch directories
 scratch/
