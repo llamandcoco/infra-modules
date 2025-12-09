@@ -19,9 +19,9 @@ This module creates AWS Systems Manager (SSM) Parameter Store parameters with su
 module "database_password" {
   source = "github.com/your-org/infra-modules//terraform/parameter_store?ref=v1.0.0"
 
-  parameter_name = "/app/production/database/password"
-  value          = var.db_password
-  description    = "Production database password"
+  parameter_name = "/app/<application_name>/<environment>/version"
+  value          = var.application_version
+  description    = "Application version for the <environment> environment"
 
   tags = {
     Environment = "production"
