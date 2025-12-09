@@ -31,13 +31,13 @@ variable "ingress_rules" {
 variable "egress_rules" {
   description = "List of egress rules to apply. Empty list denies all outbound traffic."
   type = list(object({
-    description                   = optional(string)
-    from_port                     = number
-    to_port                       = number
-    protocol                      = string
-    cidr_blocks                   = optional(list(string), [])
-    ipv6_cidr_blocks              = optional(list(string), [])
-    destination_security_group_id = optional(string)
+    description              = optional(string)
+    from_port                = number
+    to_port                  = number
+    protocol                 = string
+    cidr_blocks              = optional(list(string), [])
+    ipv6_cidr_blocks         = optional(list(string), [])
+    source_security_group_id = optional(string)
   }))
   default = []
 }

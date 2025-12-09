@@ -10,11 +10,11 @@ flowchart LR
   RTpub --- PubA["Public Subnet A"]
   RTpub --- PubB["Public Subnet B"]
 
-  NATa["NAT GW A"] --- RTea["Private RT A"]
-  NATb["NAT GW B"] --- RTeB["Private RT B"]
+  NATa["NAT GW A"] --- RTA["Private RT A"]
+  NATb["NAT GW B"] --- RTB["Private RT B"]
 
-  RTea --- PrivA["Private Subnet A"]
-  RTeB --- PrivB["Private Subnet B"]
+  RTA --- PrivA["Private Subnet A"]
+  RTB --- PrivB["Private Subnet B"]
 
   DBRT["Database RT"] --- DBA["DB Subnet A"]
   DBRT --- DBB["DB Subnet B"]
@@ -95,7 +95,7 @@ No resources.
 | <a name="input_private_subnet_cidrs"></a> [private_subnet_cidrs](#input_private_subnet_cidrs) | CIDR blocks for private subnets. | `list(string)` | n/a | yes |
 | <a name="input_public_subnet_cidrs"></a> [public_subnet_cidrs](#input_public_subnet_cidrs) | CIDR blocks for public subnets. | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input_tags) | Common tags applied to all networking resources. | `map(string)` | `{}` | no |
-| <a name="input_workload_security_group_egress"></a> [workload_security_group_egress](#input_workload_security_group_egress) | Egress rules for the default workload security group. | <pre>list(object({<br/>    description                   = optional(string)<br/>    from_port                     = number<br/>    to_port                       = number<br/>    protocol                      = string<br/>    cidr_blocks                   = optional(list(string), [])<br/>    ipv6_cidr_blocks              = optional(list(string), [])<br/>    destination_security_group_id = optional(string)<br/>  }))</pre> | <pre>[<br/>  {<br/>    description = "Allow all outbound"<br/>    from_port   = 0<br/>    to_port     = 0<br/>    protocol    = "-1"<br/>    cidr_blocks = ["0.0.0.0/0"]<br/>  }<br/>]</pre> | no |
+| <a name="input_workload_security_group_egress"></a> [workload_security_group_egress](#input_workload_security_group_egress) | Egress rules for the default workload security group. | <pre>list(object({<br/>    description              = optional(string)<br/>    from_port                = number<br/>    to_port                  = number<br/>    protocol                 = string<br/>    cidr_blocks              = optional(list(string), [])<br/>    ipv6_cidr_blocks         = optional(list(string), [])<br/>    source_security_group_id = optional(string)<br/>  }))</pre> | <pre>[<br/>  {<br/>    description = "Allow all outbound"<br/>    from_port   = 0<br/>    to_port     = 0<br/>    protocol    = "-1"<br/>    cidr_blocks = ["0.0.0.0/0"]<br/>  }<br/>]</pre> | no |
 | <a name="input_workload_security_group_ingress"></a> [workload_security_group_ingress](#input_workload_security_group_ingress) | Ingress rules for the default workload security group. | <pre>list(object({<br/>    description              = optional(string)<br/>    from_port                = number<br/>    to_port                  = number<br/>    protocol                 = string<br/>    cidr_blocks              = optional(list(string), [])<br/>    ipv6_cidr_blocks         = optional(list(string), [])<br/>    source_security_group_id = optional(string)<br/>  }))</pre> | `[]` | no |
 
 ## Outputs

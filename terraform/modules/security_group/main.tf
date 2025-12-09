@@ -35,11 +35,11 @@ resource "aws_security_group_rule" "ingress" {
   from_port                = each.value.from_port
   to_port                  = each.value.to_port
   protocol                 = each.value.protocol
-  cidr_blocks              = lookup(each.value, "cidr_blocks", [])
-  ipv6_cidr_blocks         = lookup(each.value, "ipv6_cidr_blocks", [])
+  cidr_blocks              = each.value.cidr_blocks
+  ipv6_cidr_blocks         = each.value.ipv6_cidr_blocks
   security_group_id        = aws_security_group.this.id
-  source_security_group_id = lookup(each.value, "source_security_group_id", null)
-  description              = lookup(each.value, "description", null)
+  source_security_group_id = try(each.value.source_security_group_id, null)
+  description              = try(each.value.description, null)
 }
 
 resource "aws_security_group_rule" "egress" {
@@ -49,9 +49,9 @@ resource "aws_security_group_rule" "egress" {
   from_port                = each.value.from_port
   to_port                  = each.value.to_port
   protocol                 = each.value.protocol
-  cidr_blocks              = lookup(each.value, "cidr_blocks", [])
-  ipv6_cidr_blocks         = lookup(each.value, "ipv6_cidr_blocks", [])
+  cidr_blocks              = each.value.cidr_blocks
+  ipv6_cidr_blocks         = each.value.ipv6_cidr_blocks
   security_group_id        = aws_security_group.this.id
-  source_security_group_id = lookup(each.value, "destination_security_group_id", null)
-  description              = lookup(each.value, "description", null)
+  source_security_group_id = try(each.value.source_security_group_id, null)
+  description              = try(each.value.description, null)
 }

@@ -13,6 +13,7 @@ locals {
   private_subnet_map  = { for idx, subnet_id in var.private_subnet_ids : tostring(idx) => subnet_id }
   public_subnet_map   = { for idx, subnet_id in var.public_subnet_ids : idx => subnet_id }
   database_subnet_map = { for idx, subnet_id in var.database_subnet_ids : idx => subnet_id }
+  nat_gateway_default = try(var.nat_gateway_ids[try(keys(var.nat_gateway_ids)[0], "")], null)
 }
 
 resource "aws_route_table" "public" {
@@ -59,10 +60,7 @@ resource "aws_route" "private_nat" {
 
   route_table_id         = aws_route_table.private[each.key].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id = coalesce(
-    try(var.nat_gateway_ids[each.key], null),
-    try(var.nat_gateway_ids[try(keys(var.nat_gateway_ids)[0], "")], null)
-  )
+  nat_gateway_id         = coalesce(try(var.nat_gateway_ids[each.key], null), local.nat_gateway_default)
 }
 
 resource "aws_route_table_association" "private" {
@@ -89,7 +87,7 @@ resource "aws_route" "database_nat" {
   count                  = length(aws_route_table.database) > 0 && var.database_route_via_nat && length(var.nat_gateway_ids) > 0 ? 1 : 0
   route_table_id         = aws_route_table.database[0].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = var.nat_gateway_ids[sort(keys(var.nat_gateway_ids))[0]]
+  nat_gateway_id         = local.nat_gateway_default
 }
 
 resource "aws_route_table_association" "database" {

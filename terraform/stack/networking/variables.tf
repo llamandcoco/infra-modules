@@ -134,13 +134,13 @@ variable "workload_security_group_ingress" {
 variable "workload_security_group_egress" {
   description = "Egress rules for the default workload security group."
   type = list(object({
-    description                   = optional(string)
-    from_port                     = number
-    to_port                       = number
-    protocol                      = string
-    cidr_blocks                   = optional(list(string), [])
-    ipv6_cidr_blocks              = optional(list(string), [])
-    destination_security_group_id = optional(string)
+    description              = optional(string)
+    from_port                = number
+    to_port                  = number
+    protocol                 = string
+    cidr_blocks              = optional(list(string), [])
+    ipv6_cidr_blocks         = optional(list(string), [])
+    source_security_group_id = optional(string)
   }))
   default = [
     {
