@@ -44,7 +44,7 @@ No modules.
 | <a name="input_create"></a> [create](#input\_create) | Whether to create the Internet Gateway. | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name tag for the Internet Gateway. | `string` | `"igw"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to the Internet Gateway. | `map(string)` | `{}` | no |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID to attach the Internet Gateway. If null, the gateway is not created. | `string` | `null` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID to attach the Internet Gateway. Required if creating gateway. | `string` | n/a | yes |
 
 ## Outputs
 

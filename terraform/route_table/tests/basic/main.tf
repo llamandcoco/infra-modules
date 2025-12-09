@@ -21,14 +21,14 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "../../vpc"
+  source = "../../../vpc"
 
   name       = "rt-test"
   cidr_block = "10.4.0.0/16"
 }
 
 module "subnets" {
-  source = "../../subnet"
+  source = "../../../subnet"
 
   vpc_id               = module.vpc.vpc_id
   azs                  = ["us-east-1a", "us-east-1b"]
@@ -37,14 +37,14 @@ module "subnets" {
 }
 
 module "igw" {
-  source = "../../internet_gateway"
+  source = "../../../internet_gateway"
 
   name   = "rt-test"
   vpc_id = module.vpc.vpc_id
 }
 
 module "nat" {
-  source = "../../nat_gateway"
+  source = "../../../nat_gateway"
 
   public_subnet_ids = module.subnets.public_subnet_ids
   create_per_az     = true

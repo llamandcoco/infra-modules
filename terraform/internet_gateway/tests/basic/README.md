@@ -17,7 +17,7 @@ No providers.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_igw"></a> [igw](#module\_igw) | ../.. | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../vpc | n/a |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../../vpc | n/a |
 
 ## Resources
 

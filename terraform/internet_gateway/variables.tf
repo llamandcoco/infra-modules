@@ -11,14 +11,8 @@ variable "create" {
 }
 
 variable "vpc_id" {
-  description = "VPC ID to attach the Internet Gateway. If null, the gateway is not created."
+  description = "VPC ID to attach the Internet Gateway. Required if creating gateway."
   type        = string
-  default     = null
-
-  validation {
-    condition     = !var.create || var.vpc_id != null
-    error_message = "vpc_id is required when create is true."
-  }
 }
 
 variable "tags" {

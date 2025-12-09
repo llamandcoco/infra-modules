@@ -17,7 +17,7 @@ No providers.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_subnets"></a> [subnets](#module\_subnets) | ../.. | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../vpc | n/a |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../../vpc | n/a |
 
 ## Resources
 

@@ -21,7 +21,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "../../vpc"
+  source = "../../../vpc"
 
   name       = "igw-test"
   cidr_block = "10.2.0.0/16"

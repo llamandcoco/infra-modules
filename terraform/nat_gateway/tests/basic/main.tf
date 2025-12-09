@@ -21,14 +21,14 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "../../vpc"
+  source = "../../../vpc"
 
   name       = "nat-test"
   cidr_block = "10.3.0.0/16"
 }
 
 module "subnets" {
-  source = "../../subnet"
+  source = "../../../subnet"
 
   vpc_id              = module.vpc.vpc_id
   azs                 = ["us-east-1a", "us-east-1b"]

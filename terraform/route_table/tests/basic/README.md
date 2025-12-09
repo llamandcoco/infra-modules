@@ -16,11 +16,11 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_igw"></a> [igw](#module\_igw) | ../../internet_gateway | n/a |
-| <a name="module_nat"></a> [nat](#module\_nat) | ../../nat_gateway | n/a |
+| <a name="module_igw"></a> [igw](#module\_igw) | ../../../internet_gateway | n/a |
+| <a name="module_nat"></a> [nat](#module\_nat) | ../../../nat_gateway | n/a |
 | <a name="module_route_tables"></a> [route\_tables](#module\_route\_tables) | ../.. | n/a |
-| <a name="module_subnets"></a> [subnets](#module\_subnets) | ../../subnet | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../vpc | n/a |
+| <a name="module_subnets"></a> [subnets](#module\_subnets) | ../../../subnet | n/a |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../../vpc | n/a |
 
 ## Resources
 

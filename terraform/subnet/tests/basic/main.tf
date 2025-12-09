@@ -21,7 +21,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "../../vpc"
+  source = "../../../vpc"
 
   name       = "subnet-test"
   cidr_block = "10.1.0.0/16"
