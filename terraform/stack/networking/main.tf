@@ -19,7 +19,7 @@ locals {
 }
 
 module "vpc" {
-  source = "../../modules/vpc"
+  source = "../../vpc"
 
   name        = var.name
   cidr_block  = var.cidr_block
@@ -33,7 +33,7 @@ module "vpc" {
 }
 
 module "internet_gateway" {
-  source = "../../modules/internet_gateway"
+  source = "../../internet_gateway"
 
   name   = "${var.name}-igw"
   vpc_id = module.vpc.vpc_id
@@ -41,7 +41,7 @@ module "internet_gateway" {
 }
 
 module "subnets" {
-  source = "../../modules/subnet"
+  source = "../../subnet"
 
   vpc_id                  = module.vpc.vpc_id
   azs                     = var.azs
@@ -55,7 +55,7 @@ module "subnets" {
 }
 
 module "nat_gateway" {
-  source = "../../modules/nat_gateway"
+  source = "../../nat_gateway"
 
   public_subnet_ids = module.subnets.public_subnet_ids
   create_per_az     = var.nat_per_az
@@ -64,7 +64,7 @@ module "nat_gateway" {
 }
 
 module "route_tables" {
-  source = "../../modules/route_table"
+  source = "../../route_table"
 
   vpc_id                 = module.vpc.vpc_id
   internet_gateway_id    = module.internet_gateway.internet_gateway_id
@@ -78,7 +78,7 @@ module "route_tables" {
 }
 
 module "security_group" {
-  source = "../../modules/security_group"
+  source = "../../security_group"
 
   name          = "${var.name}-default-sg"
   description   = "Default workload security group"
