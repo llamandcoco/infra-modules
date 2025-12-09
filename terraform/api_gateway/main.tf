@@ -285,11 +285,11 @@ resource "aws_api_gateway_deployment" "this" {
   triggers = {
     redeployment = sha1(jsonencode([
       aws_api_gateway_rest_api.this.body,
-      aws_api_gateway_resource.this,
-      aws_api_gateway_method.this,
-      aws_api_gateway_integration.this,
-      aws_api_gateway_method_response.this,
-      aws_api_gateway_integration_response.this,
+      length(aws_api_gateway_resource.this) > 0 ? aws_api_gateway_resource.this : {},
+      length(aws_api_gateway_method.this) > 0 ? aws_api_gateway_method.this : {},
+      length(aws_api_gateway_integration.this) > 0 ? aws_api_gateway_integration.this : {},
+      length(local.method_responses) > 0 ? aws_api_gateway_method_response.this : {},
+      length(local.integration_responses) > 0 ? aws_api_gateway_integration_response.this : {},
     ]))
   }
 
