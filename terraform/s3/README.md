@@ -238,16 +238,3 @@ cd tests/basic
 terraform init -backend=false
 terraform plan
 ```
-
-## Contributing
-
-This module serves as a reference implementation. When creating new modules:
-- Follow the same structure and naming conventions
-- Include comprehensive variable validation
-- Add detailed descriptions for all inputs and outputs
-- Create at least one test case
-- Document security considerations
-
-## License
-
-See repository LICENSE file for details.
