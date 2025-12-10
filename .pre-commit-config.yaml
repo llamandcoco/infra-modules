@@ -28,6 +28,7 @@ repos:
       - id: terraform_docs
         name: Terraform docs
         description: Inserts terraform-docs output into README.md
+        exclude: (.*/)?(tests|_template)/.*
         args:
           - --hook-config=--path-to-file=README.md
           - --hook-config=--add-to-existing-file=true

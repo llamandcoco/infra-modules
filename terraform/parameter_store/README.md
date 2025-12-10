@@ -250,6 +250,8 @@ No modules.
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the parameter, including default and custom tags. |
 <!-- END_TF_DOCS -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+
 ## Requirements
 
 | Name | Version |
@@ -277,16 +279,16 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_parameter_name"></a> [parameter\_name](#input\_parameter\_name) | Name of the SSM parameter. Should follow a hierarchical naming pattern like /app/environment/config. Must start with forward slash. | `string` | n/a | yes |
+| <a name="input_value"></a> [value](#input\_value) | Value of the parameter. For SecureString types, this should be sensitive data like passwords or API keys. For StringList, use comma-separated values. | `string` | n/a | yes |
 | <a name="input_allowed_pattern"></a> [allowed\_pattern](#input\_allowed\_pattern) | Regular expression pattern to validate parameter values. Useful for enforcing value formats. Example: '^[a-zA-Z0-9]*$' for alphanumeric only. | `string` | `null` | no |
 | <a name="input_data_type"></a> [data\_type](#input\_data\_type) | Data type for the parameter value. Used for validation. Common values: text (AWS default when not specified), aws:ec2:image (for AMI IDs). Defaults to null, which allows AWS to use its default (text). | `string` | `null` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of the parameter. Explain what the parameter is used for and any important context. | `string` | `null` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | KMS key ID, ARN, alias, or alias ARN to use for encrypting SecureString parameters. If not specified, uses the default AWS-managed key (alias/aws/ssm). Only applies to SecureString type. | `string` | `null` | no |
 | <a name="input_overwrite"></a> [overwrite](#input\_overwrite) | Whether to overwrite an existing parameter. Set to true to update existing parameters, false to prevent accidental overwrites. | `bool` | `true` | no |
-| <a name="input_parameter_name"></a> [parameter\_name](#input\_parameter\_name) | Name of the SSM parameter. Should follow a hierarchical naming pattern like /app/environment/config. Must start with forward slash. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to the parameter. Use this for resource organization, cost allocation, and governance. | `map(string)` | `{}` | no |
 | <a name="input_tier"></a> [tier](#input\_tier) | Parameter tier determines storage limits and pricing. Standard (up to 4KB, free), Advanced (up to 8KB, charges apply), Intelligent-Tiering (automatic tier selection). | `string` | `"Standard"` | no |
 | <a name="input_type"></a> [type](#input\_type) | Type of parameter. String for plain text, SecureString for encrypted sensitive data (recommended), StringList for comma-separated values. | `string` | `"SecureString"` | no |
-| <a name="input_value"></a> [value](#input\_value) | Value of the parameter. For SecureString types, this should be sensitive data like passwords or API keys. For StringList, use comma-separated values. | `string` | n/a | yes |
 
 ## Outputs
 
