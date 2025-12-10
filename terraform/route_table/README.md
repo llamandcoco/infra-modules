@@ -6,7 +6,7 @@ Creates public, private, and database route tables with associations supporting 
 
 ```hcl
 module "route_tables" {
-  source = "github.com/your-org/infra-modules//terraform/modules/route_table"
+  source = "github.com/your-org/infra-modules//terraform/route_table"
 
   vpc_id              = module.vpc.vpc_id
   internet_gateway_id = module.igw.internet_gateway_id

@@ -6,7 +6,7 @@ Creates NAT Gateways (optionally one per AZ) with Elastic IPs for private subnet
 
 ```hcl
 module "nat" {
-  source = "github.com/your-org/infra-modules//terraform/modules/nat_gateway"
+  source = "github.com/your-org/infra-modules//terraform/nat_gateway"
 
   public_subnet_ids = module.subnets.public_subnet_ids
   create_per_az     = true

@@ -6,7 +6,7 @@ Creates public, private, and database subnets across multiple AZs with tagging a
 
 ```hcl
 module "subnets" {
-  source = "github.com/your-org/infra-modules//terraform/modules/subnet"
+  source = "github.com/your-org/infra-modules//terraform/subnet"
 
   vpc_id               = module.vpc.vpc_id
   azs                  = ["us-east-1a", "us-east-1b"]

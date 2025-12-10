@@ -6,7 +6,7 @@ Creates a security group with structured ingress and egress rules. Defaults to d
 
 ```hcl
 module "web_sg" {
-  source = "github.com/your-org/infra-modules//terraform/modules/security_group"
+  source = "github.com/your-org/infra-modules//terraform/security_group"
 
   name   = "web-sg"
   vpc_id = module.vpc.vpc_id

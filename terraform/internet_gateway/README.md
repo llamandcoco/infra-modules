@@ -6,7 +6,7 @@ Creates an Internet Gateway optionally attached to a VPC with tagging support.
 
 ```hcl
 module "igw" {
-  source = "github.com/your-org/infra-modules//terraform/modules/internet_gateway"
+  source = "github.com/your-org/infra-modules//terraform/internet_gateway"
 
   name   = "core-igw"
   vpc_id = module.vpc.vpc_id

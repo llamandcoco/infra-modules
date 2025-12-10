@@ -6,7 +6,7 @@ Creates a production-ready Amazon VPC with optional IPv6 support, DNS configurat
 
 ```hcl
 module "vpc" {
-  source = "github.com/your-org/infra-modules//terraform/modules/vpc"
+  source = "github.com/your-org/infra-modules//terraform/vpc"
 
   name       = "core-vpc"
   cidr_block = "10.0.0.0/16"
