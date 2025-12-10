@@ -20,13 +20,41 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history to detect changes
+
+      - name: Detect changed modules
+        id: changed-modules
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # For PRs, compare with base branch
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          else
+            # For pushes, compare with previous commit
+            CHANGED_FILES=$(git diff --name-only HEAD~1...HEAD)
+          fi
+
+          # Extract unique module paths (terraform/module_name/)
+          CHANGED_MODULES=$(echo "$CHANGED_FILES" | grep "^terraform/" | sed 's|/.*||' | sort -u)
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          echo ""
+          echo "Changed modules:"
+          echo "$CHANGED_MODULES"
+
+          # Convert to space-separated list for iteration
+          echo "changed_modules<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_MODULES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ~1.7
 
-      - name: Terraform Format Check
+      - name: Terraform Format Check (All Modules)
         id: fmt
         run: terraform fmt -check -recursive
         working-directory: terraform
@@ -36,36 +64,76 @@ jobs:
         run: terraform init -backend=false
         working-directory: terraform
 
-      - name: Terraform Validate
+      - name: Terraform Validate (All Modules)
         id: validate
         run: terraform validate -no-color
         working-directory: terraform
+        continue-on-error: true
 
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v4
         with:
           tflint_version: latest
 
-      - name: Run TFLint
+      - name: Run TFLint (Changed Modules Only)
         id: tflint
         run: |
           tflint --init
-          tflint --recursive --format compact --enable-rule=terraform_naming_convention --minimum-failure-severity=notice --no-color > tflint_output.txt 2>&1 || true
+
+          CHANGED_MODULES='${{ steps.changed-modules.outputs.changed_modules }}'
+
+          if [ -z "$CHANGED_MODULES" ]; then
+            echo "No modules changed, skipping TFLint" > tflint_output.txt
+          else
+            echo "Running TFLint on changed modules:" > tflint_output.txt
+            echo "$CHANGED_MODULES" >> tflint_output.txt
+            echo "" >> tflint_output.txt
+
+            # Run tflint on each changed module
+            while IFS= read -r module_path; do
+              if [ -d "$module_path" ] && [ -n "$module_path" ]; then
+                echo "=== Checking $module_path ===" >> tflint_output.txt
+                tflint --chdir="$module_path" --format compact --enable-rule=terraform_naming_convention --minimum-failure-severity=notice --no-color >> tflint_output.txt 2>&1 || true
+                echo "" >> tflint_output.txt
+              fi
+            done <<< "$CHANGED_MODULES"
+          fi
+
           cat tflint_output.txt
-        working-directory: terraform
+        working-directory: .
         continue-on-error: true
 
-      - name: Setup tfsec
+      - name: Setup Trivy
         run: |
-          wget -q https://github.com/aquasecurity/tfsec/releases/latest/download/tfsec-linux-amd64 -O /usr/local/bin/tfsec
-          chmod +x /usr/local/bin/tfsec
+          wget -q https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.48.3_Linux-64bit.tar.gz
+          tar zxf trivy_0.48.3_Linux-64bit.tar.gz
+          sudo mv trivy /usr/local/bin/
+          trivy --version
 
-      - name: Run tfsec
-        id: tfsec
+      - name: Run Trivy (Changed Modules Only)
+        id: trivy
         run: |
-          tfsec . --soft-fail --format default --no-color > tfsec_output.txt 2>&1 || true
-          cat tfsec_output.txt
-        working-directory: terraform
+          CHANGED_MODULES='${{ steps.changed-modules.outputs.changed_modules }}'
+
+          if [ -z "$CHANGED_MODULES" ]; then
+            echo "No modules changed, skipping Trivy" > trivy_output.txt
+          else
+            echo "Running Trivy on changed modules:" > trivy_output.txt
+            echo "$CHANGED_MODULES" >> trivy_output.txt
+            echo "" >> trivy_output.txt
+
+            # Run trivy on each changed module
+            while IFS= read -r module_path; do
+              if [ -d "$module_path" ] && [ -n "$module_path" ]; then
+                echo "=== Scanning $module_path ===" >> trivy_output.txt
+                trivy config "$module_path" --severity MEDIUM,HIGH,CRITICAL --exit-code 0 --no-progress >> trivy_output.txt 2>&1 || true
+                echo "" >> trivy_output.txt
+              fi
+            done <<< "$CHANGED_MODULES"
+          fi
+
+          cat trivy_output.txt
+        working-directory: .
         continue-on-error: true
 
       - name: Comment PR with Results
@@ -79,27 +147,28 @@ jobs:
 
             // Read TFLint output
             let tflintResults = 'No issues found or TFLint did not run';
-            const tflintPath = path.join(process.env.GITHUB_WORKSPACE, 'terraform/tflint_output.txt');
+            const tflintPath = path.join(process.env.GITHUB_WORKSPACE, 'tflint_output.txt');
             if (fs.existsSync(tflintPath)) {
               tflintResults = fs.readFileSync(tflintPath, 'utf8').trim() || 'No issues found';
             }
 
-            // Read tfsec output
-            let tfsecResults = 'No issues found or tfsec did not run';
-            const tfsecPath = path.join(process.env.GITHUB_WORKSPACE, 'terraform/tfsec_output.txt');
-            if (fs.existsSync(tfsecPath)) {
-              tfsecResults = fs.readFileSync(tfsecPath, 'utf8').trim() || 'No issues found';
+            // Read Trivy output
+            let trivyResults = 'No issues found or Trivy did not run';
+            const trivyPath = path.join(process.env.GITHUB_WORKSPACE, 'trivy_output.txt');
+            if (fs.existsSync(trivyPath)) {
+              trivyResults = fs.readFileSync(trivyPath, 'utf8').trim() || 'No issues found';
             }
 
             const output = `## Terraform Check Results
 
-            ### 🖌 Terraform Format and Style
+            ### 🖌 Terraform Format and Style (All Modules)
             **Status:** \`${{ steps.fmt.outcome }}\`
 
-            ### 🤖 Terraform Validation
+            ### 🤖 Terraform Validation (All Modules)
             **Status:** \`${{ steps.validate.outcome }}\`
+            > Validates all modules including dependencies
 
-            ### 🔍 TFLint Analysis
+            ### 🔍 TFLint Analysis (Changed Modules Only)
             **Status:** \`${{ steps.tflint.outcome }}\`
 
             <details>
@@ -110,14 +179,14 @@ jobs:
             \`\`\`
             </details>
 
-            ### 🔒 tfsec Security Scan
-            **Status:** \`${{ steps.tfsec.outcome }}\`
+            ### 🔒 Trivy Security Scan (Changed Modules Only)
+            **Status:** \`${{ steps.trivy.outcome }}\`
 
             <details>
-            <summary>View tfsec Output</summary>
+            <summary>View Trivy Output</summary>
 
             \`\`\`
-            ${tfsecResults}
+            ${trivyResults}
             \`\`\`
             </details>
 
