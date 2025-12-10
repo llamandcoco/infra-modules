@@ -44,6 +44,10 @@ terraform.rc
 # Ignore terraform lock files (users will generate their own when using modules)
 .terraform.lock.hcl
 
+# Ignore lock files in modules (users will generate their own)
+terraform/*/.terraform.lock.hcl
+terraform/*/tests/*/.terraform.lock.hcl
+
 # Ignore any local test files or scratch directories
 scratch/
 .scratch/
