@@ -9,7 +9,7 @@ Production-ready Terraform module for creating secure, well-configured AWS S3 bu
 - **Versioning**: Enabled by default to protect against accidental deletion
 - **Lifecycle Management**: Flexible lifecycle rules for cost optimization
 - **Compliance Ready**: Follows AWS security best practices
-- **Fully Tested**: Includes test configurations and passes tfsec security scans
+- **Fully Tested**: Includes test configurations and passes trivy security scans
 
 ## Usage
 
