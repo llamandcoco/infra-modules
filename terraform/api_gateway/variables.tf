@@ -88,7 +88,7 @@ variable "resources" {
 variable "methods" {
   description = <<-EOT
     Map of API Gateway methods and their integrations. Defines HTTP methods (GET, POST, etc.) and backend integrations.
-    
+
     Example for Lambda proxy integration:
     {
       get_health = {
@@ -174,7 +174,7 @@ variable "cors_configuration" {
   description = <<-EOT
     CORS configuration for specific resources. Only used if enable_cors is true.
     Each entry creates an OPTIONS method with appropriate CORS headers.
-    
+
     Example:
     {
       users_cors = {
@@ -202,7 +202,7 @@ variable "request_validators" {
   description = <<-EOT
     Map of request validators to validate request parameters and body before processing.
     Improves security and reduces invalid requests reaching your backend.
-    
+
     Example:
     {
       body_validator = {
@@ -228,7 +228,7 @@ variable "models" {
   description = <<-EOT
     Map of request/response models defining data structures. Used for request validation and documentation.
     Schema should be in JSON Schema format.
-    
+
     Example:
     {
       user_model = {
@@ -263,7 +263,7 @@ variable "authorizers" {
   description = <<-EOT
     Map of API Gateway authorizers for authentication and authorization.
     Supports Lambda authorizers (TOKEN or REQUEST) and Cognito User Pool authorizers.
-    
+
     Example for Lambda authorizer:
     {
       lambda_auth = {
@@ -470,7 +470,7 @@ variable "unauthorized_cache_control_header_strategy" {
 variable "api_keys" {
   description = <<-EOT
     Map of API keys for authentication. Use with usage plans to control access and enforce rate limits.
-    
+
     Example:
     {
       partner_key = {
@@ -494,7 +494,7 @@ variable "usage_plans" {
   description = <<-EOT
     Map of usage plans to configure throttling and quota limits for API consumers.
     Controls how many requests clients can make and at what rate.
-    
+
     Example:
     {
       basic_plan = {
@@ -540,7 +540,7 @@ variable "usage_plans" {
 variable "usage_plan_keys" {
   description = <<-EOT
     Map associating API keys with usage plans. Links keys to plans to enforce throttling and quotas.
-    
+
     Example:
     {
       partner_basic = {
