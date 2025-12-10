@@ -23,7 +23,7 @@ provider "aws" {
 module "networking" {
   source = "../.."
 
-  name       = "stack-test"
+  name       = "test-stack"
   cidr_block = "10.6.0.0/16"
   azs        = ["us-east-1a", "us-east-1b"]
 

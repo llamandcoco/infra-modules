@@ -23,7 +23,7 @@ provider "aws" {
 module "vpc" {
   source = "../../../vpc"
 
-  name       = "subnet-test"
+  name       = "test-vpc"
   cidr_block = "10.1.0.0/16"
 }
 
@@ -36,5 +36,5 @@ module "subnets" {
   private_subnet_cidrs    = ["10.1.10.0/24", "10.1.11.0/24"]
   database_subnet_cidrs   = ["10.1.20.0/24", "10.1.21.0/24"]
   map_public_ip_on_launch = true
-  name_prefix             = "subnet-test"
+  name_prefix             = "test-subnet"
 }

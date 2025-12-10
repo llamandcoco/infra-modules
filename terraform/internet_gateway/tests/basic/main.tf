@@ -23,13 +23,13 @@ provider "aws" {
 module "vpc" {
   source = "../../../vpc"
 
-  name       = "igw-test"
+  name       = "test-vpc"
   cidr_block = "10.2.0.0/16"
 }
 
 module "igw" {
   source = "../.."
 
-  name   = "igw-test"
+  name   = "test-igw"
   vpc_id = module.vpc.vpc_id
 }

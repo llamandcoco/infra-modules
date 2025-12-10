@@ -23,7 +23,7 @@ provider "aws" {
 module "vpc" {
   source = "../../../vpc"
 
-  name       = "nat-test"
+  name       = "test-vpc"
   cidr_block = "10.3.0.0/16"
 }
 
@@ -40,5 +40,5 @@ module "nat" {
 
   public_subnet_ids = module.subnets.public_subnet_ids
   create_per_az     = true
-  name_prefix       = "nat-test"
+  name_prefix       = "test-nat"
 }

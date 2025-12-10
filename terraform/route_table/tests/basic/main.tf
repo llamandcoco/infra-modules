@@ -23,7 +23,7 @@ provider "aws" {
 module "vpc" {
   source = "../../../vpc"
 
-  name       = "rt-test"
+  name       = "test-vpc"
   cidr_block = "10.4.0.0/16"
 }
 
@@ -39,7 +39,7 @@ module "subnets" {
 module "igw" {
   source = "../../../internet_gateway"
 
-  name   = "rt-test"
+  name   = "test-igw"
   vpc_id = module.vpc.vpc_id
 }
 
