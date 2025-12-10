@@ -35,6 +35,7 @@ locals {
   }
 }
 
+# trivy:ignore:AVD-AWS-0164
 resource "aws_subnet" "public" {
   for_each = local.public_subnets
 
@@ -46,6 +47,7 @@ resource "aws_subnet" "public" {
 
   tags = merge(
     var.tags,
+    var.public_subnet_tags,
     {
       Name = "${var.name_prefix}-public-${each.value.az}"
       Tier = "public"
@@ -62,6 +64,7 @@ resource "aws_subnet" "private" {
 
   tags = merge(
     var.tags,
+    var.private_subnet_tags,
     {
       Name = "${var.name_prefix}-private-${each.value.az}"
       Tier = "private"
@@ -78,6 +81,7 @@ resource "aws_subnet" "database" {
 
   tags = merge(
     var.tags,
+    var.database_subnet_tags,
     {
       Name = "${var.name_prefix}-database-${each.value.az}"
       Tier = "database"

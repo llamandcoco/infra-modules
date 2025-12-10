@@ -53,10 +53,7 @@ No modules.
 | <a name="input_azs"></a> [azs](#input\_azs) | List of availability zones to spread subnets across. | `list(string)` | n/a | yes |
 | <a name="input_database_subnet_cidrs"></a> [database\_subnet\_cidrs](#input\_database\_subnet\_cidrs) | CIDR blocks for database subnets. Length must match azs when provided. | `list(string)` | `[]` | no |
 | <a name="input_database_subnet_tags"></a> [database\_subnet\_tags](#input\_database\_subnet\_tags) | Additional tags for database subnets only. | `map(string)` | `{}` | no |
-| <a name="input_enable_dns64"></a> [enable\_dns64](#input\_enable\_dns64) | Enable DNS64 for subnets (requires IPv6). | `bool` | `false` | no |
 | <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | Assign IPv6 addresses on creation for public subnets. | `bool` | `false` | no |
-| <a name="input_enable_resource_name_dns_a_record_on_launch"></a> [enable\_resource\_name\_dns\_a\_record\_on\_launch](#input\_enable\_resource\_name\_dns\_a\_record\_on\_launch) | Enable resource name DNS A record on launch for public subnets. | `bool` | `false` | no |
-| <a name="input_enable_resource_name_dns_aaaa_record_on_launch"></a> [enable\_resource\_name\_dns\_aaaa\_record\_on\_launch](#input\_enable\_resource\_name\_dns\_aaaa\_record\_on\_launch) | Enable resource name DNS AAAA record on launch (requires IPv6). | `bool` | `false` | no |
 | <a name="input_map_public_ip_on_launch"></a> [map\_public\_ip\_on\_launch](#input\_map\_public\_ip\_on\_launch) | Auto-assign public IPs for instances in public subnets. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix used for subnet Name tags. | `string` | `"network"` | no |
 | <a name="input_private_subnet_cidrs"></a> [private\_subnet\_cidrs](#input\_private\_subnet\_cidrs) | CIDR blocks for private subnets. Length must match azs when provided. | `list(string)` | `[]` | no |

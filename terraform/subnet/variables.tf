@@ -79,24 +79,6 @@ variable "enable_ipv6" {
   default     = false
 }
 
-variable "enable_resource_name_dns_a_record_on_launch" {
-  description = "Enable resource name DNS A record on launch for public subnets."
-  type        = bool
-  default     = false
-}
-
-variable "enable_dns64" {
-  description = "Enable DNS64 for subnets (requires IPv6)."
-  type        = bool
-  default     = false
-}
-
-variable "enable_resource_name_dns_aaaa_record_on_launch" {
-  description = "Enable resource name DNS AAAA record on launch (requires IPv6)."
-  type        = bool
-  default     = false
-}
-
 variable "public_subnet_tags" {
   description = "Additional tags for public subnets only."
   type        = map(string)
