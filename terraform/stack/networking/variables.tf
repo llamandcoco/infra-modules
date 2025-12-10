@@ -28,11 +28,6 @@ variable "public_subnet_cidrs" {
   type        = list(string)
 
   validation {
-    condition     = length(var.public_subnet_cidrs) == length(var.azs)
-    error_message = "public_subnet_cidrs must match the number of AZs."
-  }
-
-  validation {
     condition     = alltrue([for cidr in var.public_subnet_cidrs : can(cidrnetmask(cidr))])
     error_message = "All public_subnet_cidrs must be valid IPv4 CIDRs."
   }
@@ -41,11 +36,6 @@ variable "public_subnet_cidrs" {
 variable "private_subnet_cidrs" {
   description = "CIDR blocks for private subnets."
   type        = list(string)
-
-  validation {
-    condition     = length(var.private_subnet_cidrs) == length(var.azs)
-    error_message = "private_subnet_cidrs must match the number of AZs."
-  }
 
   validation {
     condition     = alltrue([for cidr in var.private_subnet_cidrs : can(cidrnetmask(cidr))])
@@ -57,11 +47,6 @@ variable "database_subnet_cidrs" {
   description = "CIDR blocks for database subnets."
   type        = list(string)
   default     = []
-
-  validation {
-    condition     = length(var.database_subnet_cidrs) == 0 || length(var.database_subnet_cidrs) == length(var.azs)
-    error_message = "database_subnet_cidrs must be empty or match the number of AZs."
-  }
 
   validation {
     condition     = alltrue([for cidr in var.database_subnet_cidrs : can(cidrnetmask(cidr))])
