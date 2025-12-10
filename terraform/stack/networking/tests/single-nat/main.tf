@@ -23,14 +23,19 @@ provider "aws" {
 module "networking" {
   source = "../.."
 
-  name       = "test-stack"
-  cidr_block = "10.6.0.0/16"
-  azs        = ["us-east-1a", "us-east-1b"]
+  name       = "test-single-nat"
+  cidr_block = "10.7.0.0/16"
+  azs        = ["us-east-1a", "us-east-1b", "us-east-1c"]
 
-  # Using auto-calculated CIDRs (new feature!)
-  # public_subnet_cidrs, private_subnet_cidrs, database_subnet_cidrs are auto-calculated
+  # Using single NAT gateway for cost optimization
+  nat_gateway_mode = "single"
 
   workload_security_group_ingress = []
+}
+
+output "nat_gateway_ids" {
+  description = "Should contain only one NAT gateway"
+  value       = module.networking.nat_gateway_ids
 }
 
 output "computed_cidrs" {

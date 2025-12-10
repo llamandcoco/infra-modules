@@ -23,14 +23,27 @@ provider "aws" {
 module "networking" {
   source = "../.."
 
-  name       = "test-stack"
-  cidr_block = "10.6.0.0/16"
+  name       = "test-no-nat"
+  cidr_block = "10.8.0.0/16"
   azs        = ["us-east-1a", "us-east-1b"]
 
-  # Using auto-calculated CIDRs (new feature!)
-  # public_subnet_cidrs, private_subnet_cidrs, database_subnet_cidrs are auto-calculated
+  # No NAT gateway - fully isolated private network
+  nat_gateway_mode = "none"
 
+  # Only private subnets, no public subnets
+  public_subnet_cidrs             = []
+  internet_gateway_enabled        = false
   workload_security_group_ingress = []
+}
+
+output "nat_gateway_ids" {
+  description = "Should be empty"
+  value       = module.networking.nat_gateway_ids
+}
+
+output "internet_gateway_id" {
+  description = "Should be null"
+  value       = module.networking.internet_gateway_id
 }
 
 output "computed_cidrs" {
