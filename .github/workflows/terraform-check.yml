@@ -105,8 +105,11 @@ jobs:
 
       - name: Setup Trivy
         run: |
-          wget -q https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.48.3_Linux-64bit.tar.gz
-          tar zxf trivy_0.48.3_Linux-64bit.tar.gz
+          TRIVY_VERSION="0.68.1"
+          DOWNLOAD_URL="https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"
+          echo "Downloading Trivy from $DOWNLOAD_URL"
+          wget -q "$DOWNLOAD_URL" -O trivy.tar.gz
+          tar -xzf trivy.tar.gz
           sudo mv trivy /usr/local/bin/
           trivy --version
 
