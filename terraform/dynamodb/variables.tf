@@ -290,12 +290,12 @@ variable "global_secondary_indexes" {
     List of Global Secondary Indexes (GSI) for the table.
     Each GSI allows querying the table using different key attributes.
     GSI can have different partition key (hash_key) and optional sort key (range_key) from the base table.
-    
+
     Required fields:
     - name: Name of the GSI
     - hash_key: Partition key for the GSI (must be defined in attributes)
     - projection_type: Attributes to project (KEYS_ONLY, INCLUDE, or ALL)
-    
+
     Optional fields:
     - range_key: Sort key for the GSI (must be defined in attributes if specified)
     - non_key_attributes: List of attributes to include when projection_type is INCLUDE
@@ -341,12 +341,12 @@ variable "local_secondary_indexes" {
     List of Local Secondary Indexes (LSI) for the table.
     LSI must have the same partition key as the base table but different sort key.
     LSI can only be created at table creation time and cannot be modified later.
-    
+
     Required fields:
     - name: Name of the LSI
     - range_key: Sort key for the LSI (must be defined in attributes, different from table's range_key)
     - projection_type: Attributes to project (KEYS_ONLY, INCLUDE, or ALL)
-    
+
     Optional fields:
     - non_key_attributes: List of attributes to include when projection_type is INCLUDE
   EOT
