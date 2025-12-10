@@ -140,25 +140,7 @@ module "policy_repository" {
 }
 
 # -----------------------------------------------------------------------------
-# Test 5: ECR repository with mutable tags (development workflow)
-# -----------------------------------------------------------------------------
-
-module "mutable_repository" {
-  source = "../../"
-
-  repository_name      = "test-mutable-repo"
-  image_tag_mutability = "MUTABLE"
-  scan_on_push         = true
-
-  tags = {
-    Environment = "development"
-    ManagedBy   = "terraform"
-    Purpose     = "development-testing"
-  }
-}
-
-# -----------------------------------------------------------------------------
-# Test 6: ECR repository with all features combined
+# Test 5: ECR repository with all features combined
 # -----------------------------------------------------------------------------
 
 module "comprehensive_repository" {
@@ -226,11 +208,6 @@ output "lifecycle_repository_name" {
 output "policy_repository_policy_enabled" {
   description = "Whether repository policy is enabled"
   value       = module.policy_repository.repository_policy_enabled
-}
-
-output "mutable_repository_tag_mutability" {
-  description = "Tag mutability setting for mutable repository"
-  value       = module.mutable_repository.image_tag_mutability
 }
 
 output "comprehensive_repository_registry_id" {
