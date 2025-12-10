@@ -1,0 +1,9 @@
+severity:
+  - CRITICAL
+  - HIGH
+
+misconfiguration:
+  ignore-unfixed: true
+  exclude:
+    - "tests/**"
+    - "_template/**"

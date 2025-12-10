@@ -20,6 +20,7 @@ repos:
       - id: terraform_tflint
         name: Terraform tflint
         description: Runs tflint on Terraform files
+        exclude: (.*/)?(tests|_template)/.*
         args:
           - --args=--config=__GIT_WORKING_DIR__/terraform/.tflint.hcl
 
@@ -32,10 +33,12 @@ repos:
           - --hook-config=--add-to-existing-file=true
           - --hook-config=--create-file-if-not-exist=true
 
-      # Run tfsec
-      - id: terraform_tfsec
-        name: Terraform tfsec
-        description: Runs tfsec security scanner
+      # Run trivy
+      - id: terraform_trivy
+        name: Terraform trivy
+        description: Runs trivy security scanner
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/terraform/.trivy.yaml
 
   # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
