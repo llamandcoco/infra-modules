@@ -23,14 +23,14 @@ provider "aws" {
 module "vpc" {
   source = "../../../vpc"
 
-  name       = "sg-test"
+  name       = "test-vpc"
   cidr_block = "10.5.0.0/16"
 }
 
 module "security_group" {
   source = "../.."
 
-  name        = "sg-test"
+  name        = "test-sg"
   description = "Test security group"
   vpc_id      = module.vpc.vpc_id
   ingress_rules = [
