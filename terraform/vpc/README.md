@@ -20,8 +20,6 @@ module "vpc" {
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
-
 ## Requirements
 
 | Name | Version |
@@ -53,7 +51,6 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | CIDR block for the VPC. | `string` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | Name tag for the VPC. | `string` | n/a | yes |
 | <a name="input_enable_dns_hostnames"></a> [enable\_dns\_hostnames](#input\_enable\_dns\_hostnames) | Enable DNS hostnames for instances launched in the VPC. | `bool` | `true` | no |
 | <a name="input_enable_dns_support"></a> [enable\_dns\_support](#input\_enable\_dns\_support) | Enable DNS resolution for the VPC. | `bool` | `true` | no |
 | <a name="input_enable_flow_logs"></a> [enable\_flow\_logs](#input\_enable\_flow\_logs) | Enable VPC Flow Logs for network monitoring and security auditing. | `bool` | `false` | no |
@@ -65,6 +62,7 @@ No modules.
 | <a name="input_instance_tenancy"></a> [instance\_tenancy](#input\_instance\_tenancy) | The allowed tenancy of instances launched into the VPC. | `string` | `"default"` | no |
 | <a name="input_manage_default_nacl"></a> [manage\_default\_nacl](#input\_manage\_default\_nacl) | Manage the default network ACL. | `bool` | `true` | no |
 | <a name="input_manage_default_security_group"></a> [manage\_default\_security\_group](#input\_manage\_default\_security\_group) | Manage the default security group and lock it down (recommended for security). | `bool` | `true` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name tag for the VPC. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to apply to the VPC. | `map(string)` | `{}` | no |
 
 ## Outputs

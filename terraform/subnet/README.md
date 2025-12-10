@@ -21,8 +21,6 @@ module "subnets" {
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
-
 ## Requirements
 
 | Name | Version |
@@ -53,7 +51,6 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_azs"></a> [azs](#input\_azs) | List of availability zones to spread subnets across. | `list(string)` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where subnets will be created. | `string` | n/a | yes |
 | <a name="input_database_subnet_cidrs"></a> [database\_subnet\_cidrs](#input\_database\_subnet\_cidrs) | CIDR blocks for database subnets. Length must match azs when provided. | `list(string)` | `[]` | no |
 | <a name="input_database_subnet_tags"></a> [database\_subnet\_tags](#input\_database\_subnet\_tags) | Additional tags for database subnets only. | `map(string)` | `{}` | no |
 | <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | Assign IPv6 addresses on creation for public subnets. | `bool` | `false` | no |
@@ -64,6 +61,7 @@ No modules.
 | <a name="input_public_subnet_cidrs"></a> [public\_subnet\_cidrs](#input\_public\_subnet\_cidrs) | CIDR blocks for public subnets. Length must match azs when provided. | `list(string)` | `[]` | no |
 | <a name="input_public_subnet_tags"></a> [public\_subnet\_tags](#input\_public\_subnet\_tags) | Additional tags for public subnets only. | `map(string)` | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Common tags applied to all subnets. | `map(string)` | `{}` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where subnets will be created. | `string` | n/a | yes |
 
 ## Outputs
 

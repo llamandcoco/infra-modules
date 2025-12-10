@@ -18,8 +18,6 @@ module "route_tables" {
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
-
 ## Requirements
 
 | Name | Version |
@@ -55,7 +53,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC. | `string` | n/a | yes |
 | <a name="input_database_route_via_nat"></a> [database\_route\_via\_nat](#input\_database\_route\_via\_nat) | Route database subnets through the first NAT Gateway. | `bool` | `false` | no |
 | <a name="input_database_subnet_ids"></a> [database\_subnet\_ids](#input\_database\_subnet\_ids) | List of database subnet IDs to associate with the database route table. | `list(string)` | `[]` | no |
 | <a name="input_enable_private_default_route"></a> [enable\_private\_default\_route](#input\_enable\_private\_default\_route) | Create default routes for private subnets using NAT. | `bool` | `true` | no |
@@ -66,6 +63,7 @@ No modules.
 | <a name="input_private_subnet_ids"></a> [private\_subnet\_ids](#input\_private\_subnet\_ids) | List of private subnet IDs to associate with private route tables. | `list(string)` | `[]` | no |
 | <a name="input_public_subnet_ids"></a> [public\_subnet\_ids](#input\_public\_subnet\_ids) | List of public subnet IDs to associate with the public route table. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to all route tables. | `map(string)` | `{}` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC. | `string` | n/a | yes |
 
 ## Outputs
 
