@@ -18,14 +18,57 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history to detect changes
 
-      - name: Discover test modules
+      - name: Detect changed files
+        id: changed-files
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # For PRs, compare with base branch
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          else
+            # For pushes, compare with previous commit
+            CHANGED_FILES=$(git diff --name-only HEAD~1...HEAD)
+          fi
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Discover test modules for changed files
         id: set-matrix
         run: |
-          # Find all directories containing tests
-          modules=$(find terraform -type f -name "main.tf" -path "*/tests/*" -exec dirname {} \; | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          # Get changed files from previous step
+          CHANGED_FILES='${{ steps.changed-files.outputs.changed_files }}'
+
+          # Find all test modules
+          ALL_TEST_MODULES=$(find terraform -type f -name "main.tf" -path "*/tests/*" -exec dirname {} \; | sort -u)
+
+          # Filter to only modules where files changed
+          FILTERED_MODULES=""
+          while IFS= read -r module; do
+            # Extract module path (remove /tests/xxx part)
+            MODULE_ROOT=$(echo "$module" | sed 's|/tests/.*||')
+
+            # Check if any changed file belongs to this module
+            if echo "$CHANGED_FILES" | grep -q "^$MODULE_ROOT/"; then
+              FILTERED_MODULES="$FILTERED_MODULES$module"$'\n'
+            fi
+          done <<< "$ALL_TEST_MODULES"
+
+          # Convert to JSON array
+          if [ -z "$FILTERED_MODULES" ]; then
+            modules="[]"
+          else
+            modules=$(echo "$FILTERED_MODULES" | grep -v '^$' | jq -R -s -c 'split("\n")[:-1]')
+          fi
+
           echo "modules=$modules" >> $GITHUB_OUTPUT
-          echo "Found test modules:"
+          echo "Found test modules for changed files:"
           echo "$modules" | jq
 
   module-tests:
