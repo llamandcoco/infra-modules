@@ -31,7 +31,7 @@
 
 ### Security
 
-- [ ] tfsec scan passes without critical issues
+- [ ] trivy scan passes without critical issues
 - [ ] No sensitive data (credentials, keys, etc.) included
 - [ ] Security best practices followed (encryption enabled, public access blocked, etc.)
 
