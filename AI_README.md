@@ -37,7 +37,7 @@ Runs on every PR and push to main. This workflow validates Terraform code qualit
 - **Terraform Format**: Ensures code follows standard formatting (`terraform fmt`)
 - **Terraform Validate**: Validates syntax and configuration (`terraform validate`)
 - **TFLint**: Linting for best practices and potential issues
-- **tfsec**: Security scanning for misconfigurations and vulnerabilities
+- **trivy**: Security scanning for misconfigurations and vulnerabilities
 
 **Key features:**
 - Runs with `-backend=false` to avoid needing backend credentials
@@ -68,7 +68,7 @@ Automatically discovers and tests all module test cases.
 1. **Install tools:**
    ```bash
    make install-tools  # macOS with Homebrew
-   # or manually install: terraform, tflint, tfsec, pre-commit
+   # or manually install: terraform, tflint, trivy, pre-commit
    ```
 
 2. **Setup pre-commit hooks:**
@@ -91,7 +91,7 @@ Pre-commit hooks run **automatically on every `git commit`**, regardless of bran
 - `terraform fmt` - Auto-formats code
 - `terraform validate` - Validates configuration
 - `tflint` - Linting checks
-- `tfsec` - Security scanning
+- `trivy` - Security scanning
 - `terraform-docs` - Auto-generates documentation
 - File checks - Trailing whitespace, YAML syntax, merge conflicts
 - Branch protection - Prevents direct commits to main/master
@@ -131,7 +131,7 @@ make test           # Run all tests
 make fmt            # Format all terraform files
 make validate       # Validate terraform configuration
 make lint           # Run tflint
-make security       # Run tfsec
+make security       # Run trivy
 make test-module MODULE=s3  # Test specific module
 make clean          # Clean terraform artifacts
 ```
@@ -259,7 +259,7 @@ When adding a new Terraform module:
 
 - Enable encryption by default where applicable
 - Block public access by default for data stores
-- Use `tfsec` ignore comments sparingly and document why
+- Use `trivy` ignore comments sparingly and document why
 - Never commit real credentials or sensitive data
 
 ### Documentation
@@ -307,8 +307,8 @@ terraform validate
 tflint --init
 tflint --recursive terraform/
 
-# Run tfsec
-tfsec terraform/
+# Run trivy
+trivy terraform/
 ```
 
 ### Testing a module locally
@@ -374,12 +374,12 @@ provider "aws" {
 
 Run `terraform init -backend=false` to initialize without configuring a backend.
 
-### TFLint or tfsec warnings
+### TFLint or trivy warnings
 
 Review the output and either:
 - Fix the issue if it's a valid concern
 - Add an ignore comment with justification if it's a false positive
-- Update `.tflint.hcl` or tfsec configuration if needed
+- Update `.tflint.hcl` or trivy configuration if needed
 
 ## Migration Notes
 
@@ -410,7 +410,7 @@ Potential improvements to consider:
 - [Terraform Best Practices](https://www.terraform-best-practices.com/)
 - [Terraform Testing Guide](https://developer.hashicorp.com/terraform/tutorials/configuration-language/test)
 - [TFLint Rules](https://github.com/terraform-linters/tflint/tree/master/docs/rules)
-- [tfsec Checks](https://aquasecurity.github.io/tfsec/)
+- [trivy Checks](https://aquasecurity.github.io/trivy/)
 
 ## Questions or Issues?
 

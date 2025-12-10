@@ -29,11 +29,11 @@ if ! command -v tflint &> /dev/null; then
     echo "   Or visit: https://github.com/terraform-linters/tflint"
 fi
 
-# Check if tfsec is installed
-if ! command -v tfsec &> /dev/null; then
-    echo "⚠️  Warning: tfsec is not installed"
-    echo "   Install with: brew install tfsec"
-    echo "   Or visit: https://github.com/aquasecurity/tfsec"
+# Check if trivy is installed
+if ! command -v trivy &> /dev/null; then
+    echo "⚠️  Warning: trivy is not installed"
+    echo "   Install with: brew install trivy"
+    echo "   Or visit: https://github.com/aquasecurity/trivy"
 fi
 
 # Install pre-commit hooks

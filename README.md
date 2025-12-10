@@ -9,9 +9,9 @@ This repository contains well-tested, production-ready Terraform modules for man
 ## Features
 
 - **Credential-less Testing**: All tests run in GitHub Actions without AWS/cloud credentials
-- **Automated Validation**: Terraform fmt, validate, tflint, and tfsec checks on every PR
+- **Automated Validation**: Terraform fmt, validate, tflint, and trivy checks on every PR
 - **Auto-discovery**: Test modules are automatically discovered and executed
-- **Security First**: All modules scanned with tfsec for security best practices
+- **Security First**: All modules scanned with trivy for security best practices
 - **Well Documented**: Each module includes comprehensive documentation and examples
 
 ## Quick Start
@@ -81,7 +81,7 @@ Runs on every PR and validates:
 - Code formatting (`terraform fmt`)
 - Configuration validity (`terraform validate`)
 - Linting with TFLint
-- Security scanning with tfsec
+- Security scanning with trivy
 
 ### Module Tests
 
@@ -103,7 +103,7 @@ Automatically discovers and tests all modules:
 **Optional (for local development with pre-commit):**
 - [pre-commit](https://pre-commit.com/) - Git hook framework
 - [TFLint](https://github.com/terraform-linters/tflint) - Terraform linter
-- [tfsec](https://github.com/aquasecurity/tfsec) - Security scanner
+- [trivy](https://github.com/aquasecurity/trivy) - Security scanner
 - [terraform-docs](https://terraform-docs.io/) - Documentation generator
 
 **Installation (macOS):**
@@ -112,7 +112,7 @@ Automatically discovers and tests all modules:
 brew install terraform
 brew install pre-commit
 brew install tflint
-brew install tfsec
+brew install trivy
 brew install terraform-docs
 ```
 
@@ -131,8 +131,8 @@ curl https://pre-commit.com/install-local.py | python -
 # TFLint
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
-# tfsec
-curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+# trivy
+curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
 # terraform-docs
 GO111MODULE=on go install github.com/terraform-docs/terraform-docs@latest
@@ -176,7 +176,7 @@ pre-commit run --all-files
 - Terraform formatting
 - Terraform validation
 - TFLint checks
-- tfsec security scan
+- trivy security scan
 - Trailing whitespace, YAML syntax, etc.
 
 ### Make Commands
@@ -187,7 +187,7 @@ make test              # Run all tests (fmt, validate, lint, security)
 make fmt               # Format terraform files
 make validate          # Validate configuration
 make lint              # Run tflint
-make security          # Run tfsec
+make security          # Run trivy
 make test-module MODULE=s3  # Test specific module
 make clean             # Clean artifacts
 ```
