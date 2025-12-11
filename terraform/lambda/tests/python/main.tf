@@ -48,18 +48,18 @@ module "lambda_python" {
   s3_object_version = "abc123"
 
   # Function configuration
-  description  = "Python Lambda function deployed from S3"
-  timeout      = 60
-  memory_size  = 256
+  description = "Python Lambda function deployed from S3"
+  timeout     = 60
+  memory_size = 256
 
   # Environment variables
   # These are encrypted at rest using AWS managed keys
   environment_variables = {
-    ENVIRONMENT     = "production"
-    LOG_LEVEL       = "INFO"
-    API_ENDPOINT    = "https://api.example.com"
-    TABLE_NAME      = "my-dynamodb-table"
-    CACHE_TTL       = "300"
+    ENVIRONMENT  = "production"
+    LOG_LEVEL    = "INFO"
+    API_ENDPOINT = "https://api.example.com"
+    TABLE_NAME   = "my-dynamodb-table"
+    CACHE_TTL    = "300"
   }
 
   # CloudWatch Logs configuration

@@ -40,7 +40,7 @@ module "lambda_go" {
   function_name = "go-processor-lambda"
   runtime       = "provided.al2023"
   # Go Lambda handler is always "bootstrap" (the binary name)
-  handler       = "bootstrap"
+  handler = "bootstrap"
 
   # S3 deployment method
   # In production, Go binary would be compiled and uploaded to S3
@@ -49,9 +49,9 @@ module "lambda_go" {
   s3_object_version = "def456"
 
   # Function configuration
-  description  = "High-performance Go Lambda for data processing"
-  timeout      = 120
-  memory_size  = 1024
+  description = "High-performance Go Lambda for data processing"
+  timeout     = 120
+  memory_size = 1024
 
   # Environment variables
   environment_variables = {

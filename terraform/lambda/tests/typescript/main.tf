@@ -40,7 +40,7 @@ module "lambda_typescript" {
   function_name = "typescript-api-lambda"
   runtime       = "nodejs20.x"
   # Handler points to compiled JS in dist/ directory
-  handler       = "dist/index.handler"
+  handler = "dist/index.handler"
 
   # S3 deployment method
   # In production, TypeScript would be compiled and uploaded to S3
@@ -49,17 +49,17 @@ module "lambda_typescript" {
   s3_object_version = "xyz789"
 
   # Function configuration
-  description  = "TypeScript Lambda function for API processing"
-  timeout      = 30
-  memory_size  = 512
+  description = "TypeScript Lambda function for API processing"
+  timeout     = 30
+  memory_size = 512
 
   # Environment variables
   environment_variables = {
-    NODE_ENV        = "production"
-    LOG_LEVEL       = "debug"
-    API_VERSION     = "v2"
-    CORS_ORIGIN     = "*"
-    MAX_RETRY       = "3"
+    NODE_ENV    = "production"
+    LOG_LEVEL   = "debug"
+    API_VERSION = "v2"
+    CORS_ORIGIN = "*"
+    MAX_RETRY   = "3"
   }
 
   # CloudWatch Logs configuration
