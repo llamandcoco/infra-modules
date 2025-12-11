@@ -30,7 +30,7 @@ variable "instance_type" {
   type        = string
 
   validation {
-    condition = can(regex("^[a-z][a-z0-9-]+\\.[a-z0-9]+$", var.instance_type))
+    condition     = can(regex("^[a-z][a-z0-9-]+\\.[a-z0-9]+$", var.instance_type))
     error_message = "Instance type must be a valid EC2 instance type format (e.g., t3.micro, c6i.large)."
   }
 }

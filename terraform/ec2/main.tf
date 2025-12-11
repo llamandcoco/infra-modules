@@ -212,10 +212,10 @@ resource "aws_spot_instance_request" "this" {
   subnet_id     = var.subnet_id
 
   # Spot configuration
-  spot_price                      = var.spot_price
-  wait_for_fulfillment            = true
-  instance_interruption_behavior  = var.spot_instance_interruption_behavior
-  spot_type                       = var.spot_instance_type
+  spot_price                     = var.spot_price
+  wait_for_fulfillment           = true
+  instance_interruption_behavior = var.spot_instance_interruption_behavior
+  spot_type                      = var.spot_instance_type
 
   # Security groups
   vpc_security_group_ids = var.create_security_group ? concat(
