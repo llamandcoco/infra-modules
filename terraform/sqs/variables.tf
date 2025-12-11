@@ -74,7 +74,11 @@ variable "deduplication_scope" {
   default     = null
 
   validation {
-    condition     = var.deduplication_scope == null || contains(["messageGroup", "queue"], var.deduplication_scope)
+    condition = (
+      var.deduplication_scope != null
+      ? contains(["messageGroup", "queue"], var.deduplication_scope)
+      : true
+    )
     error_message = "Deduplication scope must be either 'messageGroup' or 'queue'."
   }
 }
@@ -95,7 +99,11 @@ variable "fifo_throughput_limit" {
   default     = null
 
   validation {
-    condition     = var.fifo_throughput_limit == null || contains(["perQueue", "perMessageGroupId"], var.fifo_throughput_limit)
+    condition = (
+      var.fifo_throughput_limit != null
+      ? contains(["perQueue", "perMessageGroupId"], var.fifo_throughput_limit)
+      : true
+    )
     error_message = "FIFO throughput limit must be either 'perQueue' or 'perMessageGroupId'."
   }
 }
@@ -401,8 +409,10 @@ variable "redrive_allow_policy" {
   default = null
 
   validation {
-    condition = var.redrive_allow_policy == null || (
-      contains(["allowAll", "denyAll", "byQueue"], var.redrive_allow_policy.redrivePermission)
+    condition = (
+      var.redrive_allow_policy != null
+      ? contains(["allowAll", "denyAll", "byQueue"], var.redrive_allow_policy.redrivePermission)
+      : true
     )
     error_message = "Redrive permission must be one of: allowAll, denyAll, byQueue."
   }

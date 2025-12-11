@@ -85,10 +85,10 @@ module "test_encrypted_queue" {
 }
 
 # Test 4: FIFO queue with high throughput mode
-module "test_high_throughput_fifo" {
+module "test_high_throughput_fifo_queue" {
   source = "../../"
 
-  queue_name                  = "test-high-throughput-fifo.fifo" # Explicit .fifo suffix
+  queue_name                  = "test-high-throughput-fifo-queue"
   fifo_queue                  = true
   content_based_deduplication = true
 
@@ -167,14 +167,14 @@ output "encrypted_queue_kms_enabled" {
   value       = module.test_encrypted_queue.sqs_managed_sse_enabled
 }
 
-output "high_throughput_fifo_name" {
+output "high_throughput_fifo_queue_name" {
   description = "Name of the high throughput FIFO queue"
-  value       = module.test_high_throughput_fifo.queue_name
+  value       = module.test_high_throughput_fifo_queue.queue_name
 }
 
 output "high_throughput_deduplication_scope" {
   description = "Deduplication scope for high throughput queue"
-  value       = module.test_high_throughput_fifo.deduplication_scope
+  value       = module.test_high_throughput_fifo_queue.deduplication_scope
 }
 
 output "delayed_queue_delay" {
