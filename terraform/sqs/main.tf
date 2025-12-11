@@ -20,8 +20,8 @@ resource "aws_sqs_queue" "dlq" {
   delay_seconds              = var.dlq_delay_seconds
 
   # Encryption configuration
-  sqs_managed_sse_enabled = var.kms_master_key_id == null ? true : null
-  kms_master_key_id       = var.kms_master_key_id
+  sqs_managed_sse_enabled           = var.kms_master_key_id == null ? true : null
+  kms_master_key_id                 = var.kms_master_key_id
   kms_data_key_reuse_period_seconds = var.kms_master_key_id != null ? var.kms_data_key_reuse_period_seconds : null
 
   tags = merge(
@@ -64,8 +64,8 @@ resource "aws_sqs_queue" "this" {
 
   # Encryption configuration
   # Use SQS-managed encryption (SSE-SQS) if no KMS key is specified, otherwise use KMS (SSE-KMS)
-  sqs_managed_sse_enabled = var.kms_master_key_id == null ? true : null
-  kms_master_key_id       = var.kms_master_key_id
+  sqs_managed_sse_enabled           = var.kms_master_key_id == null ? true : null
+  kms_master_key_id                 = var.kms_master_key_id
   kms_data_key_reuse_period_seconds = var.kms_master_key_id != null ? var.kms_data_key_reuse_period_seconds : null
 
   tags = merge(
