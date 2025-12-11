@@ -63,7 +63,7 @@ module "eventbridge" {
   source = "../.."
 
   # Use default event bus
-  event_bus_name  = "default"
+  event_bus_name   = "default"
   create_event_bus = false
 
   # Simple scheduled rule - runs every 5 minutes

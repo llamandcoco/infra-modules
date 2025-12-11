@@ -97,7 +97,7 @@ module "eventbridge_daily" {
         event_type = "daily_report"
         timestamp  = "scheduled"
         config = {
-          report_format = "json"
+          report_format   = "json"
           include_metrics = true
         }
       })
@@ -115,8 +115,8 @@ module "eventbridge_daily" {
   ]
 
   # Auto-create IAM role with custom name
-  create_role = true
-  role_name   = "eventbridge-daily-scheduler-role"
+  create_role      = true
+  role_name        = "eventbridge-daily-scheduler-role"
   role_description = "Allows EventBridge to invoke Lambda and send messages to SQS for daily scheduled events"
 
   tags = {
@@ -194,7 +194,7 @@ module "eventbridge_weekday" {
       arn       = aws_lambda_function.processor.arn
 
       input = jsonencode({
-        event_type = "weekday_morning"
+        event_type     = "weekday_morning"
         business_hours = true
       })
     }

@@ -28,11 +28,11 @@ provider "aws" {
   skip_metadata_api_check     = true
 
   endpoints {
-    events      = "http://localhost:4566"
-    iam         = "http://localhost:4566"
-    lambda      = "http://localhost:4566"
-    sns         = "http://localhost:4566"
-    sqs         = "http://localhost:4566"
+    events        = "http://localhost:4566"
+    iam           = "http://localhost:4566"
+    lambda        = "http://localhost:4566"
+    sns           = "http://localhost:4566"
+    sqs           = "http://localhost:4566"
     stepfunctions = "http://localhost:4566"
   }
 }

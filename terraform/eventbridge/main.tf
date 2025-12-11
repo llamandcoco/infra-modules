@@ -211,14 +211,14 @@ resource "aws_iam_role_policy" "eventbridge" {
   role = aws_iam_role.eventbridge[0].id
 
   policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = concat(
       # Target-specific permissions
       local.iam_policy_statements,
       # ECS PassRole permissions if needed
       local.has_ecs_targets ? [{
-        Effect = "Allow"
-        Action = "iam:PassRole"
+        Effect   = "Allow"
+        Action   = "iam:PassRole"
         Resource = "*"
         Condition = {
           StringLike = {
@@ -299,11 +299,11 @@ resource "aws_cloudwatch_event_target" "this" {
   dynamic "ecs_parameters" {
     for_each = var.targets[count.index].ecs_parameters != null ? [var.targets[count.index].ecs_parameters] : []
     content {
-      task_definition_arn = ecs_parameters.value.task_definition_arn
-      task_count          = ecs_parameters.value.task_count
-      launch_type         = ecs_parameters.value.launch_type
-      platform_version    = ecs_parameters.value.platform_version
-      group               = ecs_parameters.value.group
+      task_definition_arn     = ecs_parameters.value.task_definition_arn
+      task_count              = ecs_parameters.value.task_count
+      launch_type             = ecs_parameters.value.launch_type
+      platform_version        = ecs_parameters.value.platform_version
+      group                   = ecs_parameters.value.group
       enable_ecs_managed_tags = ecs_parameters.value.enable_ecs_managed_tags
       enable_execute_command  = ecs_parameters.value.enable_execute_command
       propagate_tags          = ecs_parameters.value.propagate_tags

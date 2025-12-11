@@ -185,7 +185,7 @@ variable "targets" {
       arn = string
     }))
     retry_policy = optional(object({
-      maximum_retry_attempts        = optional(number)
+      maximum_retry_attempts       = optional(number)
       maximum_event_age_in_seconds = optional(number)
     }))
 
