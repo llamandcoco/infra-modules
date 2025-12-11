@@ -47,7 +47,7 @@ module "networking" {
 }
 ```
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -105,7 +105,7 @@ No resources.
 | <a name="output_route_tables"></a> [route\_tables](#output\_route\_tables) | Route table identifiers. |
 | <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | Security groups created by the stack. |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | ID of the created VPC. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 
 ## Testing
 

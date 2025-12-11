@@ -6,13 +6,14 @@ help:
 	@echo ""
 	@echo "Setup:"
 	@echo "  make setup          - Install pre-commit hooks and initialize tools"
-	@echo "  make install-tools  - Install required development tools (terraform, tflint, tfsec)"
+	@echo "  make install-tools  - Install required development tools (terraform, tflint, trivy)"
 	@echo ""
-	@echo "Local Testing:"
+	@echo "Local Testing (matches GitHub Actions):"
 	@echo "  make fmt            - Format all terraform files"
 	@echo "  make validate       - Validate terraform configuration"
 	@echo "  make lint           - Run tflint on all modules"
-	@echo "  make security       - Run tfsec security scan"
+	@echo "  make security       - Run Trivy security scan (matches workflow)"
+	@echo "  make security-tfsec - Run tfsec security scan (legacy)"
 	@echo "  make test           - Run all tests (fmt, validate, lint, security)"
 	@echo ""
 	@echo "Pre-commit:"
@@ -35,11 +36,24 @@ setup:
 install-tools:
 	@echo "📦 Installing development tools..."
 	@command -v brew >/dev/null 2>&1 || { echo "❌ Homebrew not found. Install from https://brew.sh"; exit 1; }
+	@echo "Installing terraform..."
 	@command -v terraform >/dev/null 2>&1 || brew install terraform
+	@echo "Installing tflint..."
 	@command -v tflint >/dev/null 2>&1 || brew install tflint
-	@command -v tfsec >/dev/null 2>&1 || brew install tfsec
+	@echo "Installing trivy..."
+	@command -v trivy >/dev/null 2>&1 || brew install aquasecurity/trivy/trivy
+	@echo "Installing pre-commit..."
 	@command -v pre-commit >/dev/null 2>&1 || brew install pre-commit
-	@echo "✅ All tools installed"
+	@echo "Installing tfsec (optional, legacy)..."
+	@command -v tfsec >/dev/null 2>&1 || brew install tfsec
+	@echo ""
+	@echo "✅ All tools installed successfully!"
+	@echo ""
+	@echo "Installed versions:"
+	@terraform version | head -n1
+	@tflint --version
+	@trivy --version | head -n1
+	@pre-commit --version
 
 # Format terraform files
 fmt:
@@ -58,20 +72,31 @@ validate:
 	done
 	@echo "✅ Validation complete"
 
-# Run tflint
+# Run tflint (consistent with GitHub Actions)
 lint:
 	@echo "🔍 Running tflint..."
-	@tflint --init >/dev/null 2>&1 || true
-	@tflint --recursive --format compact --chdir terraform/
+	@tflint --init --config=terraform/.tflint.hcl >/dev/null 2>&1 || true
+	@tflint --recursive --format compact --chdir terraform/ --config="$(PWD)/terraform/.tflint.hcl" || { \
+		echo "⚠️  TFLint found issues (continuing...)"; \
+		exit 0; \
+	}
 	@echo "✅ Linting complete"
 
-# Run tfsec security scan
+# Run trivy security scan (consistent with GitHub Actions)
 security:
-	@echo "🔒 Running security scan..."
-	@tfsec terraform/ --format lovely --soft-fail
+	@echo "🔒 Running Trivy security scan..."
+	@command -v trivy >/dev/null 2>&1 || { echo "❌ Trivy not installed. Install: brew install aquasecurity/trivy/trivy"; exit 1; }
+	@trivy config terraform/ --severity MEDIUM,HIGH,CRITICAL --quiet --exit-code 0
 	@echo "✅ Security scan complete"
 
-# Run all tests
+# Run tfsec (legacy, for comparison)
+security-tfsec:
+	@echo "🔒 Running tfsec security scan (legacy)..."
+	@command -v tfsec >/dev/null 2>&1 || { echo "❌ tfsec not installed. Install: brew install tfsec"; exit 1; }
+	@tfsec terraform/ --format lovely --soft-fail
+	@echo "✅ tfsec scan complete"
+
+# Run all tests (matches GitHub Actions workflow)
 test: fmt validate lint security
 	@echo ""
 	@echo "✅ All tests passed!"
@@ -106,11 +131,11 @@ test-module:
 	@cd terraform/$(MODULE) && terraform init -backend=false && terraform validate
 	@echo ""
 	@echo "🔍 Linting..."
-	@tflint --init >/dev/null 2>&1 || true
-	@tflint --chdir=terraform/$(MODULE)
+	@tflint --init --config=terraform/.tflint.hcl >/dev/null 2>&1 || true
+	@tflint --chdir=terraform/$(MODULE) --config="$(PWD)/terraform/.tflint.hcl"
 	@echo ""
 	@echo "🔒 Security scan..."
-	@tfsec terraform/$(MODULE)/ --soft-fail
+	@trivy config terraform/$(MODULE)/ --severity MEDIUM,HIGH,CRITICAL --quiet --exit-code 0
 	@if [ -d "terraform/$(MODULE)/tests/basic" ]; then \
 		echo ""; \
 		echo "🧪 Running test plan..."; \

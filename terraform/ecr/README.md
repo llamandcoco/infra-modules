@@ -118,7 +118,7 @@ module "ecr" {
 }
 ```
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -172,7 +172,7 @@ No modules.
 | <a name="output_repository_url"></a> [repository\_url](#output\_repository\_url) | The URL of the ECR repository. Use this as the Docker image repository URL for pushing and pulling images (e.g., in CI/CD pipelines). |
 | <a name="output_scan_on_push_enabled"></a> [scan\_on\_push\_enabled](#output\_scan\_on\_push\_enabled) | Whether image scanning on push is enabled. Important for security compliance verification. |
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the repository, including default and custom tags. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 
 ## Security Considerations
 
