@@ -246,7 +246,7 @@ Enable long polling by setting `receive_wait_time_seconds` to 1-20 seconds:
 
 **Recommendation:** Set to 20 seconds for most use cases
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -329,7 +329,7 @@ No modules.
 | <a name="output_sqs_managed_sse_enabled"></a> [sqs\_managed\_sse\_enabled](#output\_sqs\_managed\_sse\_enabled) | Whether SQS-managed server-side encryption (SSE-SQS) is enabled. Returns true if no customer-managed KMS key is used. |
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the queue, including default and custom tags. |
 | <a name="output_visibility_timeout_seconds"></a> [visibility\_timeout\_seconds](#output\_visibility\_timeout\_seconds) | The visibility timeout configured for the queue in seconds. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 
 ## Security Best Practices
 
