@@ -149,13 +149,13 @@ output "cluster_addons" {
   EOT
   value = {
     for addon_key, addon_value in aws_eks_addon.this : addon_key => {
-      id                           = addon_value.id
-      arn                          = addon_value.arn
-      addon_version                = addon_value.addon_version
-      service_account_role_arn     = addon_value.service_account_role_arn
-      configuration_values         = addon_value.configuration_values
-      created_at                   = addon_value.created_at
-      modified_at                  = addon_value.modified_at
+      id                       = addon_value.id
+      arn                      = addon_value.arn
+      addon_version            = addon_value.addon_version
+      service_account_role_arn = addon_value.service_account_role_arn
+      configuration_values     = addon_value.configuration_values
+      created_at               = addon_value.created_at
+      modified_at              = addon_value.modified_at
     }
   }
 }

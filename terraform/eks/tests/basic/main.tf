@@ -166,15 +166,15 @@ module "secure_cluster" {
   enable_oidc_provider = true
 
   # Full logging for security and compliance
-  cluster_enabled_log_types      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  cloudwatch_log_retention_days  = 365
-  cloudwatch_log_kms_key_id      = local.mock_kms_key_arn
+  cluster_enabled_log_types     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  cloudwatch_log_retention_days = 365
+  cloudwatch_log_kms_key_id     = local.mock_kms_key_arn
 
   # Encrypt Kubernetes secrets at rest
   encryption_config_kms_key_arn = local.mock_kms_key_arn
 
   # Use API-only authentication mode (no ConfigMap)
-  authentication_mode = "API"
+  authentication_mode                         = "API"
   bootstrap_cluster_creator_admin_permissions = false
 
   # Access entries for fine-grained access control
@@ -284,7 +284,7 @@ module "mixed_auth_cluster" {
   enable_oidc_provider = true
 
   # Mixed authentication mode for migration scenarios
-  authentication_mode = "API_AND_CONFIG_MAP"
+  authentication_mode                         = "API_AND_CONFIG_MAP"
   bootstrap_cluster_creator_admin_permissions = true
 
   tags = {
