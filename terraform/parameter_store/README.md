@@ -103,7 +103,7 @@ module "large_config" {
 }
 ```
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -154,7 +154,7 @@ No modules.
 | <a name="output_parameter_type"></a> [parameter\_type](#output\_parameter\_type) | The type of the parameter (String, StringList, or SecureString). Useful for validation and documentation. |
 | <a name="output_parameter_version"></a> [parameter\_version](#output\_parameter\_version) | The version number of the parameter. Increments with each update, useful for change tracking and rollback scenarios. |
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the parameter, including default and custom tags. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 
 ## Parameter Types
 

@@ -311,7 +311,7 @@ module "api_gateway" {
 }
 ```
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -425,7 +425,7 @@ No modules.
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the API and related resources, including defaults and custom tags. |
 | <a name="output_usage_plan_ids"></a> [usage\_plan\_ids](#output\_usage\_plan\_ids) | Map of usage plan names to their IDs. Use these for associating API keys or monitoring usage. |
 | <a name="output_xray_tracing_enabled"></a> [xray\_tracing\_enabled](#output\_xray\_tracing\_enabled) | Whether X-Ray tracing is enabled. Indicates if detailed request tracing is available. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 
 ## Security Considerations
 

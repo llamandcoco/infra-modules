@@ -78,7 +78,8 @@ jobs:
       - name: Run TFLint (Changed Modules Only)
         id: tflint
         run: |
-          tflint --init
+          # Initialize TFLint with config from terraform/.tflint.hcl
+          tflint --init --config=terraform/.tflint.hcl
 
           CHANGED_MODULES='${{ steps.changed-modules.outputs.changed_modules }}'
 
@@ -93,7 +94,7 @@ jobs:
             while IFS= read -r module_path; do
               if [ -d "$module_path" ] && [ -n "$module_path" ]; then
                 echo "=== Checking $module_path ===" >> tflint_output.txt
-                tflint --chdir="$module_path" --format compact --enable-rule=terraform_naming_convention --minimum-failure-severity=notice --no-color >> tflint_output.txt 2>&1 || true
+                tflint --chdir="$module_path" --config="$GITHUB_WORKSPACE/terraform/.tflint.hcl" --format compact --enable-rule=terraform_naming_convention --minimum-failure-severity=notice --no-color >> tflint_output.txt 2>&1 || true
                 echo "" >> tflint_output.txt
               fi
             done <<< "$CHANGED_MODULES"
@@ -129,7 +130,7 @@ jobs:
             while IFS= read -r module_path; do
               if [ -d "$module_path" ] && [ -n "$module_path" ]; then
                 echo "=== Scanning $module_path ===" >> trivy_output.txt
-                trivy config "$module_path" --severity MEDIUM,HIGH,CRITICAL --exit-code 0 --no-progress >> trivy_output.txt 2>&1 || true
+                trivy config "$module_path" --severity MEDIUM,HIGH,CRITICAL --exit-code 0 --quiet >> trivy_output.txt 2>&1 || true
                 echo "" >> trivy_output.txt
               fi
             done <<< "$CHANGED_MODULES"
@@ -148,45 +149,88 @@ jobs:
             const fs = require('fs');
             const path = require('path');
 
-            // Read TFLint output
+            // Helper function to get status icon
+            const getStatusIcon = (outcome) => {
+              switch(outcome) {
+                case 'success': return '✅';
+                case 'failure': return '❌';
+                case 'skipped': return '⏭️';
+                default: return '❓';
+              }
+            };
+
+            // Helper function to parse changed modules
+            const getChangedModules = () => {
+              const changedModules = '${{ steps.changed-modules.outputs.changed_modules }}';
+              if (!changedModules || changedModules.trim() === '') {
+                return 'None';
+              }
+              return changedModules.split('\n')
+                .filter(m => m.trim())
+                .map(m => `\`${m.replace('terraform/', '')}\``)
+                .join(', ');
+            };
+
+            // Read TFLint output and count issues
             let tflintResults = 'No issues found or TFLint did not run';
+            let tflintIssueCount = 0;
             const tflintPath = path.join(process.env.GITHUB_WORKSPACE, 'tflint_output.txt');
             if (fs.existsSync(tflintPath)) {
               tflintResults = fs.readFileSync(tflintPath, 'utf8').trim() || 'No issues found';
+              // Count issues (lines with file paths and line numbers)
+              const issueLines = tflintResults.match(/\.tf:\d+:\d+:/g);
+              tflintIssueCount = issueLines ? issueLines.length : 0;
             }
 
-            // Read Trivy output
+            // Read Trivy output and count issues
             let trivyResults = 'No issues found or Trivy did not run';
+            let trivyCritical = 0;
+            let trivyHigh = 0;
             const trivyPath = path.join(process.env.GITHUB_WORKSPACE, 'trivy_output.txt');
             if (fs.existsSync(trivyPath)) {
               trivyResults = fs.readFileSync(trivyPath, 'utf8').trim() || 'No issues found';
+              // Count CRITICAL and HIGH severity issues
+              trivyCritical = (trivyResults.match(/CRITICAL:/g) || []).length;
+              trivyHigh = (trivyResults.match(/HIGH:/g) || []).length;
             }
 
-            const output = `## Terraform Check Results
+            // Determine overall status
+            const fmtStatus = '${{ steps.fmt.outcome }}';
+            const validateStatus = '${{ steps.validate.outcome }}';
+            const tflintStatus = tflintIssueCount > 0 ? 'failure' : 'success';
+            const trivyStatus = (trivyCritical > 0 || trivyHigh > 0) ? 'failure' : 'success';
 
-            ### 🖌 Terraform Format and Style (All Modules)
-            **Status:** \`${{ steps.fmt.outcome }}\`
+            const allPassed = fmtStatus === 'success' &&
+                             validateStatus === 'success' &&
+                             tflintStatus === 'success' &&
+                             trivyStatus === 'success';
 
-            ### 🤖 Terraform Validation (All Modules)
-            **Status:** \`${{ steps.validate.outcome }}\`
-            > Validates all modules including dependencies
+            const changedModules = getChangedModules();
 
-            ### 🔍 TFLint Analysis (Changed Modules Only)
-            **Status:** \`${{ steps.tflint.outcome }}\`
+            const output = `## 🔍 Terraform Check Results
+
+            ### 📊 Summary
+            ${allPassed ? '✅ **All checks passed!**' : '🔴 **Some checks failed**'}
+
+            | Check | Status | Issues | Scope |
+            |-------|--------|--------|-------|
+            | 🖌 **Format** | ${getStatusIcon(fmtStatus)} ${fmtStatus} | - | All modules |
+            | 🤖 **Validate** | ${getStatusIcon(validateStatus)} ${validateStatus} | - | All modules |
+            | 🔍 **TFLint** | ${getStatusIcon(tflintStatus)} ${tflintStatus} | ${tflintIssueCount} issue(s) | ${changedModules} |
+            | 🔒 **Trivy** | ${getStatusIcon(trivyStatus)} ${trivyStatus} | ${trivyCritical} critical, ${trivyHigh} high | ${changedModules} |
+
+            ---
 
             <details>
-            <summary>View TFLint Output</summary>
+            <summary>🔍 TFLint Details (${tflintIssueCount} issue(s))</summary>
 
             \`\`\`
             ${tflintResults}
             \`\`\`
             </details>
 
-            ### 🔒 Trivy Security Scan (Changed Modules Only)
-            **Status:** \`${{ steps.trivy.outcome }}\`
-
             <details>
-            <summary>View Trivy Output</summary>
+            <summary>🔒 Trivy Security Details (${trivyCritical + trivyHigh} issue(s))</summary>
 
             \`\`\`
             ${trivyResults}
@@ -194,7 +238,7 @@ jobs:
             </details>
 
             ---
-            *Pusher: @${{ github.actor }} | Action: \`${{ github.event_name }}\` | Workflow: \`${{ github.workflow }}\`*`;
+            <sub>👤 Pusher: @${{ github.actor }} | 🔄 Action: \`${{ github.event_name }}\` | ⚙️ Workflow: \`${{ github.workflow }}\`</sub>`;
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

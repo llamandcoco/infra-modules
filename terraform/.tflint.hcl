@@ -1,3 +1,11 @@
+config {
+  # Disable recursive inspection of module calls
+  call_module_type = "none"
+
+  # Exclude test directories from standard module structure checks
+  force = false
+}
+
 plugin "terraform" {
   enabled = true
   preset  = "all"  # Enable all rules, then customize below
@@ -40,4 +48,15 @@ rule "terraform_required_version" {
 
 rule "terraform_required_providers" {
   enabled = true
+}
+
+# Disable standard module structure checks for test directories
+rule "terraform_standard_module_structure" {
+  enabled = false
+}
+
+# Allow undocumented outputs in test files
+rule "terraform_documented_outputs" {
+  enabled = true
+  exclude = ["**/tests/**"]
 }

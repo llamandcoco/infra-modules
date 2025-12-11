@@ -9,9 +9,11 @@ This repository contains well-tested, production-ready Terraform modules for man
 ## Features
 
 - **Credential-less Testing**: All tests run in GitHub Actions without AWS/cloud credentials
-- **Automated Validation**: Terraform fmt, validate, tflint, and trivy checks on every PR
+- **Automated Validation**: Terraform fmt, validate, TFLint (with AWS rules), and Trivy checks on every PR
+- **Local = CI/CD**: Same tools and configurations for local development and GitHub Actions
 - **Auto-discovery**: Test modules are automatically discovered and executed
-- **Security First**: All modules scanned with trivy for security best practices
+- **Security First**: All modules scanned with Trivy (MEDIUM, HIGH, CRITICAL severity)
+- **Smart PR Comments**: Table format with issue counts and expandable details
 - **Well Documented**: Each module includes comprehensive documentation and examples
 
 ## Quick Start
@@ -77,11 +79,17 @@ infra-modules/
 
 ### Terraform Check
 
-Runs on every PR and validates:
-- Code formatting (`terraform fmt`)
-- Configuration validity (`terraform validate`)
-- Linting with TFLint
-- Security scanning with trivy
+Runs on every PR and validates changed modules:
+- **Code formatting** (`terraform fmt`) - All modules
+- **Configuration validity** (`terraform validate`) - All modules
+- **Linting with TFLint** (AWS plugin enabled) - Changed modules only
+- **Security scanning with Trivy** (MEDIUM, HIGH, CRITICAL) - Changed modules only
+
+**PR Comments** include:
+- ✅/❌ Summary table with pass/fail status
+- 📊 Issue counts (TFLint warnings, Trivy vulnerabilities)
+- 📦 List of changed modules
+- Expandable details for each check
 
 ### Module Tests
 
@@ -182,15 +190,20 @@ pre-commit run --all-files
 ### Make Commands
 
 ```bash
-make help              # Show all commands
-make test              # Run all tests (fmt, validate, lint, security)
-make fmt               # Format terraform files
-make validate          # Validate configuration
-make lint              # Run tflint
-make security          # Run trivy
-make test-module MODULE=s3  # Test specific module
-make clean             # Clean artifacts
+make help                    # Show all commands
+make install-tools           # Install required tools (terraform, tflint, trivy)
+make test                    # Run all tests (fmt, validate, lint, security)
+make fmt                     # Format terraform files
+make validate                # Validate configuration
+make lint                    # Run tflint (with AWS plugin)
+make security                # Run Trivy security scan (matches CI/CD)
+make security-tfsec          # Run tfsec (legacy)
+make pre-commit              # Run pre-commit on all files
+make test-module MODULE=sqs  # Test specific module
+make clean                   # Clean artifacts
 ```
+
+**Local testing matches GitHub Actions workflow** - Same tools, same configurations!
 
 ### Local Testing (Manual)
 
@@ -209,14 +222,17 @@ terraform init -backend=false
 terraform plan
 ```
 
-### Running Linters
+### Running Linters and Security Scans
 
 ```bash
-# TFLint
-tflint --init
-tflint --recursive terraform/
+# TFLint (with AWS plugin)
+tflint --init --config=terraform/.tflint.hcl
+tflint --recursive --chdir terraform/ --config="$(PWD)/terraform/.tflint.hcl"
 
-# tfsec
+# Trivy (matches GitHub Actions)
+trivy config terraform/ --severity MEDIUM,HIGH,CRITICAL --quiet
+
+# tfsec (legacy, for comparison)
 tfsec terraform/
 ```
 

@@ -129,7 +129,7 @@ module "dynamodb_table" {
 }
 ```
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -217,7 +217,7 @@ No modules.
 | <a name="output_ttl_attribute_name"></a> [ttl\_attribute\_name](#output\_ttl\_attribute\_name) | The attribute name used for TTL, if configured. |
 | <a name="output_ttl_enabled"></a> [ttl\_enabled](#output\_ttl\_enabled) | Whether Time To Live (TTL) is enabled on the table. |
 | <a name="output_write_capacity"></a> [write\_capacity](#output\_write\_capacity) | The provisioned write capacity units for the table (only applicable for PROVISIONED billing mode). |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 
 ## Security Best Practices
 
