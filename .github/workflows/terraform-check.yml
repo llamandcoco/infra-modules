@@ -186,12 +186,14 @@ jobs:
             let trivyResults = 'No issues found or Trivy did not run';
             let trivyCritical = 0;
             let trivyHigh = 0;
+            let trivyMedium = 0;
             const trivyPath = path.join(process.env.GITHUB_WORKSPACE, 'trivy_output.txt');
             if (fs.existsSync(trivyPath)) {
               trivyResults = fs.readFileSync(trivyPath, 'utf8').trim() || 'No issues found';
-              // Count CRITICAL and HIGH severity issues
-              trivyCritical = (trivyResults.match(/CRITICAL:/g) || []).length;
-              trivyHigh = (trivyResults.match(/HIGH:/g) || []).length;
+              // Count severity issues from actual findings (AVD-XXX-XXXX (SEVERITY): pattern)
+              trivyCritical = (trivyResults.match(/\(CRITICAL\):/g) || []).length;
+              trivyHigh = (trivyResults.match(/\(HIGH\):/g) || []).length;
+              trivyMedium = (trivyResults.match(/\(MEDIUM\):/g) || []).length;
             }
 
             // Determine overall status
@@ -217,7 +219,7 @@ jobs:
             | 🖌 **Format** | ${getStatusIcon(fmtStatus)} ${fmtStatus} | - | All modules |
             | 🤖 **Validate** | ${getStatusIcon(validateStatus)} ${validateStatus} | - | All modules |
             | 🔍 **TFLint** | ${getStatusIcon(tflintStatus)} ${tflintStatus} | ${tflintIssueCount} issue(s) | ${changedModules} |
-            | 🔒 **Trivy** | ${getStatusIcon(trivyStatus)} ${trivyStatus} | ${trivyCritical} critical, ${trivyHigh} high | ${changedModules} |
+            | 🔒 **Trivy** | ${getStatusIcon(trivyStatus)} ${trivyStatus} | ${trivyCritical} critical, ${trivyHigh} high, ${trivyMedium} medium | ${changedModules} |
 
             ---
 
@@ -230,7 +232,7 @@ jobs:
             </details>
 
             <details>
-            <summary>🔒 Trivy Security Details (${trivyCritical + trivyHigh} issue(s))</summary>
+            <summary>🔒 Trivy Security Details (${trivyCritical + trivyHigh + trivyMedium} issue(s))</summary>
 
             \`\`\`
             ${trivyResults}
