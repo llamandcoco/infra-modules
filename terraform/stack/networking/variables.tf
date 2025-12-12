@@ -29,7 +29,7 @@ variable "public_subnet_cidrs" {
   default     = null
 
   validation {
-    condition     = var.public_subnet_cidrs == null || alltrue([for cidr in var.public_subnet_cidrs : can(cidrnetmask(cidr))])
+    condition     = var.public_subnet_cidrs == null ? true : alltrue([for cidr in var.public_subnet_cidrs : can(cidrnetmask(cidr))])
     error_message = "All public_subnet_cidrs must be valid IPv4 CIDRs."
   }
 }
@@ -40,7 +40,7 @@ variable "private_subnet_cidrs" {
   default     = null
 
   validation {
-    condition     = var.private_subnet_cidrs == null || alltrue([for cidr in var.private_subnet_cidrs : can(cidrnetmask(cidr))])
+    condition     = var.private_subnet_cidrs == null ? true : alltrue([for cidr in var.private_subnet_cidrs : can(cidrnetmask(cidr))])
     error_message = "All private_subnet_cidrs must be valid IPv4 CIDRs."
   }
 }
@@ -51,7 +51,7 @@ variable "database_subnet_cidrs" {
   default     = null
 
   validation {
-    condition     = var.database_subnet_cidrs == null || alltrue([for cidr in var.database_subnet_cidrs : can(cidrnetmask(cidr))])
+    condition     = var.database_subnet_cidrs == null ? true : alltrue([for cidr in var.database_subnet_cidrs : can(cidrnetmask(cidr))])
     error_message = "All database_subnet_cidrs must be valid IPv4 CIDRs."
   }
 }
