@@ -131,29 +131,22 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_allowed_pattern"></a> [allowed\_pattern](#input\_allowed\_pattern) | Regular expression pattern to validate parameter values. Useful for enforcing value formats. Example: '^[a-zA-Z0-9]*$' for alphanumeric only. | `string` | `null` | no |
-| <a name="input_data_type"></a> [data\_type](#input\_data\_type) | Data type for the parameter value. Used for validation. Common values: text (AWS default when not specified), aws:ec2:image (for AMI IDs). Defaults to null, which allows AWS to use its default (text). | `string` | `null` | no |
-| <a name="input_description"></a> [description](#input\_description) | Description of the parameter. Explain what the parameter is used for and any important context. | `string` | `null` | no |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | KMS key ID, ARN, alias, or alias ARN to use for encrypting SecureString parameters. If not specified, uses the default AWS-managed key (alias/aws/ssm). Only applies to SecureString type. | `string` | `null` | no |
-| <a name="input_overwrite"></a> [overwrite](#input\_overwrite) | Whether to overwrite an existing parameter. Set to true to update existing parameters, false to prevent accidental overwrites. | `bool` | `true` | no |
-| <a name="input_parameter_name"></a> [parameter\_name](#input\_parameter\_name) | Name of the SSM parameter. Should follow a hierarchical naming pattern like /app/environment/config. Must start with forward slash. | `string` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to the parameter. Use this for resource organization, cost allocation, and governance. | `map(string)` | `{}` | no |
-| <a name="input_tier"></a> [tier](#input\_tier) | Parameter tier determines storage limits and pricing. Standard (up to 4KB, free), Advanced (up to 8KB, charges apply), Intelligent-Tiering (automatic tier selection). | `string` | `"Standard"` | no |
-| <a name="input_type"></a> [type](#input\_type) | Type of parameter. String for plain text, SecureString for encrypted sensitive data (recommended), StringList for comma-separated values. | `string` | `"SecureString"` | no |
-| <a name="input_value"></a> [value](#input\_value) | Value of the parameter. For SecureString types, this should be sensitive data like passwords or API keys. For StringList, use comma-separated values. | `string` | n/a | yes |
+| <a name="input_common_tags"></a> [common\_tags](#input\_common\_tags) | Common tags to add to all parameters. Use this for resource organization, cost allocation, and governance. Individual parameter tags will be merged with these. | `map(string)` | `{}` | no |
+| <a name="input_default_kms_key_id"></a> [default\_kms\_key\_id](#input\_default\_kms\_key\_id) | Default KMS key ID for SecureString parameters if not specified per parameter. If not specified, uses the default AWS-managed key (alias/aws/ssm). | `string` | `null` | no |
+| <a name="input_default_overwrite"></a> [default\_overwrite](#input\_default\_overwrite) | Default overwrite behavior if not specified per parameter. Set to true to update existing parameters, false to prevent accidental overwrites. | `bool` | `true` | no |
+| <a name="input_default_tier"></a> [default\_tier](#input\_default\_tier) | Default parameter tier if not specified per parameter. Standard (up to 4KB, free), Advanced (up to 8KB, charges apply), Intelligent-Tiering (automatic tier selection). | `string` | `"Standard"` | no |
+| <a name="input_default_type"></a> [default\_type](#input\_default\_type) | Default parameter type if not specified per parameter. String for plain text, SecureString for encrypted sensitive data (recommended), StringList for comma-separated values. | `string` | `"SecureString"` | no |
+| <a name="input_parameters"></a> [parameters](#input\_parameters) | Map of SSM parameters to create. Key is the parameter name (must start with /),<br/>value is an object with parameter configuration.<br/><br/>Example:<br/>  parameters = {<br/>    "/app/db/host" = {<br/>      value       = "db.example.com"<br/>      type        = "String"<br/>      description = "Database hostname"<br/>    }<br/>    "/app/api/key" = {<br/>      value       = "secret-key"<br/>      type        = "SecureString"<br/>      kms\_key\_id  = "alias/app-secrets"<br/>      description = "API key for external service"<br/>    }<br/>  } | <pre>map(object({<br/>    value           = string<br/>    type            = optional(string)<br/>    description     = optional(string)<br/>    tier            = optional(string)<br/>    kms_key_id      = optional(string)<br/>    overwrite       = optional(bool)<br/>    data_type       = optional(string)<br/>    allowed_pattern = optional(string)<br/>    tags            = optional(map(string))<br/>  }))</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_data_type"></a> [data\_type](#output\_data\_type) | The data type of the parameter (e.g., text, aws:ec2:image). Used for parameter value validation. |
-| <a name="output_kms_key_id"></a> [kms\_key\_id](#output\_kms\_key\_id) | The KMS key ID used for encryption, if SSE-KMS is enabled for SecureString. Returns null for non-SecureString types or when using AWS-managed keys. |
-| <a name="output_parameter_arn"></a> [parameter\_arn](#output\_parameter\_arn) | The ARN of the SSM parameter. Use this for IAM policies, cross-account access, and resource tagging. |
-| <a name="output_parameter_name"></a> [parameter\_name](#output\_parameter\_name) | The name of the SSM parameter. Use this to reference the parameter in other resources or data sources. |
-| <a name="output_parameter_tier"></a> [parameter\_tier](#output\_parameter\_tier) | The tier of the parameter (Standard, Advanced, or Intelligent-Tiering). Important for cost tracking and capacity planning. |
-| <a name="output_parameter_type"></a> [parameter\_type](#output\_parameter\_type) | The type of the parameter (String, StringList, or SecureString). Useful for validation and documentation. |
-| <a name="output_parameter_version"></a> [parameter\_version](#output\_parameter\_version) | The version number of the parameter. Increments with each update, useful for change tracking and rollback scenarios. |
-| <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the parameter, including default and custom tags. |
+| <a name="output_parameter_arns"></a> [parameter\_arns](#output\_parameter\_arns) | Map of parameter ARNs. Use this for IAM policies, cross-account access, and resource tagging. |
+| <a name="output_parameter_names"></a> [parameter\_names](#output\_parameter\_names) | Map of parameter names. Use this to reference parameters in other resources or data sources. |
+| <a name="output_parameter_types"></a> [parameter\_types](#output\_parameter\_types) | Map of parameter types (String, StringList, or SecureString). Useful for validation and documentation. |
+| <a name="output_parameter_versions"></a> [parameter\_versions](#output\_parameter\_versions) | Map of parameter versions. Increments with each update, useful for change tracking and rollback scenarios. |
+| <a name="output_parameters"></a> [parameters](#output\_parameters) | Complete map of all parameter details including name, ARN, type, version, etc. |
 <!-- END_TF_DOCS -->
 
 ## Parameter Types

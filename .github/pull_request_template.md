@@ -13,34 +13,26 @@
 
 ## Checklist
 
-### Code Quality
-
-- [ ] Code follows the repository's style guidelines
-- [ ] `terraform fmt` has been run on all changed files
-- [ ] All new code has been documented (variables, outputs, README)
-- [ ] Module README includes usage examples
+> **Note:** Code formatting, validation, linting, and security scans are automatically checked by pre-commit hooks and CI/CD.
 
 ### Testing
 
-- [ ] At least one test case has been added in `tests/` directory
-- [ ] Tests use mock provider configuration (no real credentials required)
-- [ ] Local testing completed successfully:
-  - [ ] `terraform init -backend=false`
-  - [ ] `terraform validate`
-  - [ ] `terraform plan`
+- [ ] Test case added/updated in `tests/` directory
+- [ ] Tests use mock provider (no real credentials)
+- [ ] Local `terraform plan` verified manually
 
-### Security
+### Security & Best Practices
 
-- [ ] trivy scan passes without critical issues
-- [ ] No sensitive data (credentials, keys, etc.) included
-- [ ] Security best practices followed (encryption enabled, public access blocked, etc.)
+- [ ] No sensitive data (credentials, keys) in code
+- [ ] Security best practices applied (encryption, access control, etc.)
+- [ ] IAM policies follow least-privilege principle
 
 ### Documentation
 
-- [ ] Module variables are documented with descriptions and types
-- [ ] Module outputs are documented with descriptions
-- [ ] README.md updated with module usage and examples
-- [ ] Breaking changes are clearly documented (if applicable)
+- [ ] Variable descriptions are clear and accurate
+- [ ] Output descriptions explain usage
+- [ ] README includes practical usage examples
+- [ ] **Breaking changes documented** (if applicable)
 
 ## Module Information
 

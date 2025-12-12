@@ -20,9 +20,6 @@ locals {
 
   # Ensure exactly one deployment method is specified
   deployment_methods_count = (local.using_s3 ? 1 : 0) + (local.using_local ? 1 : 0)
-
-  # Validate deployment method configuration
-  validate_deployment = local.deployment_methods_count == 1 ? true : tobool("Exactly one deployment method must be specified: either (s3_bucket AND s3_key) OR filename")
 }
 
 # -----------------------------------------------------------------------------
@@ -153,6 +150,14 @@ resource "aws_lambda_function" "this" {
       Name = var.function_name
     }
   )
+
+  # Validate deployment method configuration
+  lifecycle {
+    precondition {
+      condition     = local.deployment_methods_count == 1
+      error_message = "Exactly one deployment method must be specified: either (s3_bucket AND s3_key) OR filename."
+    }
+  }
 
   # Ensure log group is created before function
   depends_on = [
