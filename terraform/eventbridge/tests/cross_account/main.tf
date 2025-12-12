@@ -83,6 +83,12 @@ resource "aws_sns_topic" "cross_account_alerts" {
 module "eventbridge_receiver" {
   source = "../.."
 
+  caller_identity_override = {
+    account_id = "123456789012"
+    arn        = "arn:aws:iam::123456789012:user/mock"
+    user_id    = "AIDAMOCK"
+  }
+
   # Create custom event bus for cross-account events
   event_bus_name   = "cross-account-events-bus"
   create_event_bus = true
@@ -173,6 +179,12 @@ module "eventbridge_receiver" {
 
 module "eventbridge_receiver_custom_policy" {
   source = "../.."
+
+  caller_identity_override = {
+    account_id = "123456789012"
+    arn        = "arn:aws:iam::123456789012:user/mock"
+    user_id    = "AIDAMOCK"
+  }
 
   event_bus_name   = "cross-account-custom-policy-bus"
   create_event_bus = true

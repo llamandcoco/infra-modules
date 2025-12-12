@@ -18,7 +18,6 @@ terraform {
   }
 }
 
-# Mock AWS provider configuration (no real credentials needed for plan)
 provider "aws" {
   region = "us-east-1"
 
@@ -61,6 +60,12 @@ resource "aws_lambda_function" "example" {
 
 module "eventbridge" {
   source = "../.."
+
+  caller_identity_override = {
+    account_id = "123456789012"
+    arn        = "arn:aws:iam::123456789012:user/mock"
+    user_id    = "AIDAMOCK"
+  }
 
   # Use default event bus
   event_bus_name   = "default"

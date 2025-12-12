@@ -19,7 +19,6 @@ terraform {
   }
 }
 
-# Mock AWS provider configuration
 provider "aws" {
   region = "us-east-1"
 
@@ -75,6 +74,12 @@ resource "aws_sqs_queue" "events" {
 
 module "eventbridge_daily" {
   source = "../.."
+
+  caller_identity_override = {
+    account_id = "123456789012"
+    arn        = "arn:aws:iam::123456789012:user/mock"
+    user_id    = "AIDAMOCK"
+  }
 
   # Create custom event bus for scheduled events
   event_bus_name   = "scheduled-events-bus"
@@ -136,6 +141,12 @@ module "eventbridge_daily" {
 module "eventbridge_frequent" {
   source = "../.."
 
+  caller_identity_override = {
+    account_id = "123456789012"
+    arn        = "arn:aws:iam::123456789012:user/mock"
+    user_id    = "AIDAMOCK"
+  }
+
   # Use default event bus for frequent events
   event_bus_name   = "default"
   create_event_bus = false
@@ -176,6 +187,12 @@ module "eventbridge_frequent" {
 
 module "eventbridge_weekday" {
   source = "../.."
+
+  caller_identity_override = {
+    account_id = "123456789012"
+    arn        = "arn:aws:iam::123456789012:user/mock"
+    user_id    = "AIDAMOCK"
+  }
 
   event_bus_name   = "default"
   create_event_bus = false

@@ -345,6 +345,16 @@ variable "additional_policy_arns" {
   default     = []
 }
 
+variable "caller_identity_override" {
+  description = "Optional override for caller identity (account_id/arn/user_id) to avoid STS calls during tests."
+  type = object({
+    account_id = string
+    arn        = string
+    user_id    = string
+  })
+  default = null
+}
+
 # -----------------------------------------------------------------------------
 # Cross-Account Configuration
 # -----------------------------------------------------------------------------

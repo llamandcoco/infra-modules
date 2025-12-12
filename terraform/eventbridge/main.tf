@@ -21,7 +21,9 @@ terraform {
 # Data Sources
 # -----------------------------------------------------------------------------
 
-data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {
+  count = var.caller_identity_override == null ? 1 : 0
+}
 data "aws_region" "current" {}
 
 # -----------------------------------------------------------------------------
@@ -33,6 +35,8 @@ locals {
   has_schedule      = var.schedule_expression != null
   has_event_pattern = var.event_pattern != null
   rule_type_valid   = (local.has_schedule && !local.has_event_pattern) || (!local.has_schedule && local.has_event_pattern)
+
+  caller_identity = var.caller_identity_override != null ? var.caller_identity_override : data.aws_caller_identity.current[0]
 
   # Event bus name to use
   event_bus_name = var.create_event_bus ? aws_cloudwatch_event_bus.this[0].name : var.event_bus_name

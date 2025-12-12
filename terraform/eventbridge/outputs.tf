@@ -4,7 +4,7 @@
 
 output "event_bus_arn" {
   description = "ARN of the EventBridge event bus. Use this to reference the event bus in other resources or for cross-account configuration."
-  value       = var.create_event_bus ? aws_cloudwatch_event_bus.this[0].arn : "arn:aws:events:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:event-bus/default"
+  value       = var.create_event_bus ? aws_cloudwatch_event_bus.this[0].arn : "arn:aws:events:${data.aws_region.current.id}:${local.caller_identity.account_id}:event-bus/default"
 }
 
 output "event_bus_name" {
