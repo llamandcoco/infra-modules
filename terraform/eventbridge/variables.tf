@@ -264,7 +264,11 @@ variable "targets" {
   validation {
     condition = alltrue([
       for target in var.targets :
-      target.retry_policy == null || target.retry_policy.maximum_retry_attempts == null || (target.retry_policy.maximum_retry_attempts >= 0 && target.retry_policy.maximum_retry_attempts <= 185)
+      target.retry_policy == null ? true : (
+        target.retry_policy.maximum_retry_attempts == null ? true : (
+          target.retry_policy.maximum_retry_attempts >= 0 && target.retry_policy.maximum_retry_attempts <= 185
+        )
+      )
     ])
     error_message = "Retry policy maximum_retry_attempts must be between 0 and 185."
   }
@@ -272,7 +276,11 @@ variable "targets" {
   validation {
     condition = alltrue([
       for target in var.targets :
-      target.retry_policy == null || target.retry_policy.maximum_event_age_in_seconds == null || (target.retry_policy.maximum_event_age_in_seconds >= 60 && target.retry_policy.maximum_event_age_in_seconds <= 86400)
+      target.retry_policy == null ? true : (
+        target.retry_policy.maximum_event_age_in_seconds == null ? true : (
+          target.retry_policy.maximum_event_age_in_seconds >= 60 && target.retry_policy.maximum_event_age_in_seconds <= 86400
+        )
+      )
     ])
     error_message = "Retry policy maximum_event_age_in_seconds must be between 60 and 86400 (1 minute to 24 hours)."
   }
@@ -298,12 +306,12 @@ variable "role_name" {
   default     = null
 
   validation {
-    condition     = var.role_name == null || can(regex("^[a-zA-Z0-9_+=,.@-]+$", var.role_name))
+    condition     = var.role_name == null ? true : can(regex("^[a-zA-Z0-9_+=,.@-]+$", var.role_name))
     error_message = "Role name must only contain alphanumeric characters and +=,.@-_ characters."
   }
 
   validation {
-    condition     = var.role_name == null || (length(var.role_name) >= 1 && length(var.role_name) <= 64)
+    condition     = var.role_name == null ? true : (length(var.role_name) >= 1 && length(var.role_name) <= 64)
     error_message = "Role name must be between 1 and 64 characters long."
   }
 }
