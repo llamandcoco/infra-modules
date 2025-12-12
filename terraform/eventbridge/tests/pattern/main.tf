@@ -36,12 +36,28 @@ provider "aws" {
   }
 }
 
+locals {
+  use_localstack = false
+
+  mock_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:ec2-state-change-processor"
+  mock_sqs_arn    = "arn:aws:sqs:us-east-1:123456789012:eventbridge-dlq"
+  mock_sfn_arn    = "arn:aws:states:us-east-1:123456789012:stateMachine:ec2-workflow"
+  mock_sns_arn    = "arn:aws:sns:us-east-1:123456789012:ec2-state-change-alerts"
+
+  lambda_arn = local.use_localstack ? aws_lambda_function.ec2_processor[0].arn : local.mock_lambda_arn
+  dlq_arn    = local.use_localstack ? aws_sqs_queue.dlq[0].arn : local.mock_sqs_arn
+  sfn_arn    = local.use_localstack ? aws_sfn_state_machine.workflow[0].arn : local.mock_sfn_arn
+  sns_arn    = local.use_localstack ? aws_sns_topic.alerts[0].arn : local.mock_sns_arn
+}
+
 # -----------------------------------------------------------------------------
 # Mock Resources
 # -----------------------------------------------------------------------------
 
 # Lambda function to process EC2 state changes
 resource "aws_lambda_function" "ec2_processor" {
+  count = local.use_localstack ? 1 : 0
+
   function_name = "ec2-state-change-processor"
   role          = "arn:aws:iam::123456789012:role/lambda-role"
   handler       = "index.handler"
@@ -52,11 +68,15 @@ resource "aws_lambda_function" "ec2_processor" {
 # SNS topic for notifications
 # tfsec:ignore:AVD-AWS-0095 - Test resource, encryption not required
 resource "aws_sns_topic" "alerts" {
+  count = local.use_localstack ? 1 : 0
+
   name = "ec2-state-change-alerts"
 }
 
 # Step Functions state machine for workflow orchestration
 resource "aws_sfn_state_machine" "workflow" {
+  count = local.use_localstack ? 1 : 0
+
   name     = "ec2-workflow"
   role_arn = "arn:aws:iam::123456789012:role/stepfunctions-role"
 
@@ -75,6 +95,8 @@ resource "aws_sfn_state_machine" "workflow" {
 # Dead letter queue for failed invocations
 # tfsec:ignore:AVD-AWS-0096 - Test resource, encryption not required
 resource "aws_sqs_queue" "dlq" {
+  count = local.use_localstack ? 1 : 0
+
   name                      = "eventbridge-dlq"
   message_retention_seconds = 1209600 # 14 days
 
@@ -118,7 +140,7 @@ module "eventbridge_ec2_running" {
   targets = [
     {
       target_id = "lambda-processor"
-      arn       = aws_lambda_function.ec2_processor.arn
+      arn       = local.lambda_arn
 
       # Input transformer: Extract specific fields from the event
       input_transformer = {
@@ -153,12 +175,12 @@ module "eventbridge_ec2_running" {
 
       # Dead letter queue for failed invocations
       dead_letter_config = {
-        arn = aws_sqs_queue.dlq.arn
+        arn = local.dlq_arn
       }
     },
     {
       target_id = "sns-notification"
-      arn       = aws_sns_topic.alerts.arn
+      arn       = local.sns_arn
 
       # Static input with event details
       input = jsonencode({
@@ -169,7 +191,7 @@ module "eventbridge_ec2_running" {
     },
     {
       target_id = "stepfunctions-workflow"
-      arn       = aws_sfn_state_machine.workflow.arn
+      arn       = local.sfn_arn
 
       # Use input_path to send only specific part of the event
       input_path = "$.detail"
@@ -228,7 +250,7 @@ module "eventbridge_s3_created" {
   targets = [
     {
       target_id = "s3-lambda-processor"
-      arn       = aws_lambda_function.ec2_processor.arn
+      arn       = local.lambda_arn
 
       input_transformer = {
         input_paths_map = {
@@ -253,7 +275,7 @@ module "eventbridge_s3_created" {
       }
 
       dead_letter_config = {
-        arn = aws_sqs_queue.dlq.arn
+        arn = local.dlq_arn
       }
     }
   ]
@@ -304,7 +326,7 @@ module "eventbridge_custom_app" {
   targets = [
     {
       target_id = "order-processor"
-      arn       = aws_lambda_function.ec2_processor.arn
+      arn       = local.lambda_arn
 
       input_transformer = {
         input_paths_map = {
@@ -331,7 +353,7 @@ module "eventbridge_custom_app" {
       }
 
       dead_letter_config = {
-        arn = aws_sqs_queue.dlq.arn
+        arn = local.dlq_arn
       }
     }
   ]
@@ -372,5 +394,5 @@ output "custom_app_rule_arn" {
 
 output "dlq_arn" {
   description = "ARN of the dead letter queue"
-  value       = aws_sqs_queue.dlq.arn
+  value       = local.dlq_arn
 }
