@@ -4,6 +4,12 @@ variable "public_subnet_ids" {
   default     = []
 }
 
+variable "availability_zones" {
+  description = "Availability zones corresponding to public_subnet_ids (used for naming)."
+  type        = list(string)
+  default     = []
+}
+
 variable "create_per_az" {
   description = "Create one NAT Gateway per provided subnet for high availability."
   type        = bool

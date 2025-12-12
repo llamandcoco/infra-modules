@@ -52,6 +52,7 @@ No modules.
 |------|-------------|
 | <a name="output_internet_gateway_arn"></a> [internet\_gateway\_arn](#output\_internet\_gateway\_arn) | ARN of the Internet Gateway. |
 | <a name="output_internet_gateway_id"></a> [internet\_gateway\_id](#output\_internet\_gateway\_id) | ID of the Internet Gateway. |
+| <a name="output_internet_gateway_tags"></a> [internet\_gateway\_tags](#output\_internet\_gateway\_tags) | Tags applied to the Internet Gateway. |
 <!-- END_TF_DOCS -->
 
 ## Testing

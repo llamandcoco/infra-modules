@@ -107,6 +107,7 @@ No resources.
 | <a name="output_nat_gateway_ids"></a> [nat\_gateway\_ids](#output\_nat\_gateway\_ids) | IDs of NAT Gateways (empty map if not created). |
 | <a name="output_private_subnet_ids"></a> [private\_subnet\_ids](#output\_private\_subnet\_ids) | IDs of private subnets. |
 | <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | IDs of public subnets. |
+| <a name="output_resource_names"></a> [resource\_names](#output\_resource\_names) | Key resource Name tags for validation. |
 | <a name="output_route_tables"></a> [route\_tables](#output\_route\_tables) | Route table identifiers. |
 | <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | Security groups created by the stack. |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | ID of the created VPC. |

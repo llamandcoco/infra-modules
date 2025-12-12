@@ -53,6 +53,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | Availability zones corresponding to subnets (used for naming). | `list(string)` | `[]` | no |
 | <a name="input_database_route_via_nat"></a> [database\_route\_via\_nat](#input\_database\_route\_via\_nat) | Route database subnets through the first NAT Gateway. | `bool` | `false` | no |
 | <a name="input_database_subnet_ids"></a> [database\_subnet\_ids](#input\_database\_subnet\_ids) | List of database subnet IDs to associate with the database route table. | `list(string)` | `[]` | no |
 | <a name="input_enable_private_default_route"></a> [enable\_private\_default\_route](#input\_enable\_private\_default\_route) | Create default routes for private subnets using NAT. | `bool` | `true` | no |
@@ -70,8 +71,11 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_database_route_table_id"></a> [database\_route\_table\_id](#output\_database\_route\_table\_id) | ID of the database route table, if created. |
+| <a name="output_database_route_table_name"></a> [database\_route\_table\_name](#output\_database\_route\_table\_name) | Name tag of the database route table, if created. |
 | <a name="output_private_route_table_ids"></a> [private\_route\_table\_ids](#output\_private\_route\_table\_ids) | IDs of private route tables. |
+| <a name="output_private_route_table_names"></a> [private\_route\_table\_names](#output\_private\_route\_table\_names) | Name tags of private route tables keyed by index. |
 | <a name="output_public_route_table_id"></a> [public\_route\_table\_id](#output\_public\_route\_table\_id) | ID of the public route table. |
+| <a name="output_public_route_table_name"></a> [public\_route\_table\_name](#output\_public\_route\_table\_name) | Name tag of the public route table. |
 <!-- END_TF_DOCS -->
 
 ## Testing

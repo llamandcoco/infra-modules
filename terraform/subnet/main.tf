@@ -56,7 +56,7 @@ resource "aws_subnet" "public" {
     var.tags,
     var.public_subnet_tags,
     {
-      Name = "${var.name_prefix}-public-${each.value.az}"
+      Name = "${var.name_prefix}-subnet-public-${regex("[a-z]$", each.value.az)}"
       Tier = "public"
     }
   )
@@ -80,7 +80,7 @@ resource "aws_subnet" "private" {
     var.tags,
     var.private_subnet_tags,
     {
-      Name = "${var.name_prefix}-private-${each.value.az}"
+      Name = "${var.name_prefix}-subnet-private-${regex("[a-z]$", each.value.az)}"
       Tier = "private"
     }
   )
@@ -104,7 +104,7 @@ resource "aws_subnet" "database" {
     var.tags,
     var.database_subnet_tags,
     {
-      Name = "${var.name_prefix}-database-${each.value.az}"
+      Name = "${var.name_prefix}-subnet-database-${regex("[a-z]$", each.value.az)}"
       Tier = "database"
     }
   )

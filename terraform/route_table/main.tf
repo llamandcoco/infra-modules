@@ -14,6 +14,7 @@ locals {
   public_subnet_map   = { for idx, subnet_id in var.public_subnet_ids : idx => subnet_id }
   database_subnet_map = { for idx, subnet_id in var.database_subnet_ids : idx => subnet_id }
   nat_gateway_default = try(var.nat_gateway_ids[try(keys(var.nat_gateway_ids)[0], "")], null)
+  az_suffixes         = { for idx, az in var.availability_zones : tostring(idx) => regex("[a-z]$", az) }
 }
 
 resource "aws_route_table" "public" {
@@ -23,7 +24,7 @@ resource "aws_route_table" "public" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.name_prefix}-public"
+      Name = "${var.name_prefix}-rt-public"
       Tier = "public"
     }
   )
@@ -49,7 +50,7 @@ resource "aws_route_table" "private" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.name_prefix}-private-${each.key}"
+      Name = "${var.name_prefix}-rt-private-${coalesce(try(local.az_suffixes[each.key], null), each.key)}"
       Tier = "private"
     }
   )
@@ -77,7 +78,7 @@ resource "aws_route_table" "database" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.name_prefix}-database"
+      Name = "${var.name_prefix}-rt-database"
       Tier = "database"
     }
   )

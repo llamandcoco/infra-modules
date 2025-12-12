@@ -52,3 +52,24 @@ output "computed_subnet_cidrs" {
     database = local.database_subnet_cidrs
   }
 }
+
+output "resource_names" {
+  description = "Key resource Name tags for validation."
+  value = {
+    vpc              = module.vpc.tags["Name"]
+    internet_gateway = local.create_igw ? module.internet_gateway[0].internet_gateway_tags["Name"] : null
+    subnets = {
+      public   = module.subnets.public_subnet_names
+      private  = module.subnets.private_subnet_names
+      database = module.subnets.database_subnet_names
+    }
+    route_tables = {
+      public   = module.route_tables.public_route_table_name
+      private  = module.route_tables.private_route_table_names
+      database = module.route_tables.database_route_table_name
+    }
+    nat_gateways = local.create_nat ? [
+      for k in sort(keys(module.nat_gateway[0].nat_gateway_names)) : module.nat_gateway[0].nat_gateway_names[k]
+    ] : []
+  }
+}

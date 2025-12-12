@@ -85,10 +85,11 @@ module "nat_gateway" {
   count  = local.create_nat ? 1 : 0
   source = "../../nat_gateway"
 
-  public_subnet_ids = module.subnets.public_subnet_ids
-  create_per_az     = local.nat_per_az
-  name_prefix       = var.name
-  tags              = local.common_tags
+  public_subnet_ids  = module.subnets.public_subnet_ids
+  create_per_az      = local.nat_per_az
+  name_prefix        = var.name
+  availability_zones = var.azs
+  tags               = local.common_tags
 }
 
 module "route_tables" {
@@ -102,6 +103,7 @@ module "route_tables" {
   database_subnet_ids    = module.subnets.database_subnet_ids
   database_route_via_nat = var.database_route_via_nat
   name_prefix            = var.name
+  availability_zones     = var.azs
   tags                   = local.common_tags
 }
 
