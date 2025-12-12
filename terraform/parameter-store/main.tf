@@ -9,28 +9,31 @@ terraform {
   }
 }
 
-# SSM Parameter
-# Creates a parameter in AWS Systems Manager Parameter Store
+# SSM Parameters
+# Creates multiple parameters in AWS Systems Manager Parameter Store
 # Supports String, StringList, and SecureString types with optional KMS encryption
 resource "aws_ssm_parameter" "this" {
-  name        = var.parameter_name
-  description = var.description
-  type        = var.type
-  value       = var.value
-  tier        = var.tier
-  key_id      = var.type == "SecureString" && var.kms_key_id != null ? var.kms_key_id : null
-  overwrite   = var.overwrite
+  for_each = var.parameters
+
+  name        = each.key
+  description = try(each.value.description, null)
+  type        = try(each.value.type, var.default_type)
+  value       = each.value.value
+  tier        = try(each.value.tier, var.default_tier)
+  key_id      = try(each.value.type, var.default_type) == "SecureString" ? try(each.value.kms_key_id, var.default_kms_key_id) : null
+  overwrite   = try(each.value.overwrite, var.default_overwrite)
 
   # Data type validation for StringList parameters
-  data_type = var.data_type
+  data_type = try(each.value.data_type, null)
 
   # Allowed patterns for parameter values (optional validation)
-  allowed_pattern = var.allowed_pattern
+  allowed_pattern = try(each.value.allowed_pattern, null)
 
   tags = merge(
-    var.tags,
+    var.common_tags,
+    try(each.value.tags, {}),
     {
-      Name = var.parameter_name
+      Name = each.key
     }
   )
 }

@@ -1,59 +1,43 @@
 # -----------------------------------------------------------------------------
-# Parameter Identification Outputs
+# Parameter Outputs
 # -----------------------------------------------------------------------------
 
-output "parameter_name" {
-  description = "The name of the SSM parameter. Use this to reference the parameter in other resources or data sources."
-  value       = aws_ssm_parameter.this.name
+output "parameter_names" {
+  description = "Map of parameter names. Use this to reference parameters in other resources or data sources."
+  value       = { for k, v in aws_ssm_parameter.this : k => v.name }
 }
 
-output "parameter_arn" {
-  description = "The ARN of the SSM parameter. Use this for IAM policies, cross-account access, and resource tagging."
-  value       = aws_ssm_parameter.this.arn
+output "parameter_arns" {
+  description = "Map of parameter ARNs. Use this for IAM policies, cross-account access, and resource tagging."
+  value       = { for k, v in aws_ssm_parameter.this : k => v.arn }
 }
 
-# -----------------------------------------------------------------------------
-# Parameter Configuration Outputs
-# -----------------------------------------------------------------------------
-
-output "parameter_type" {
-  description = "The type of the parameter (String, StringList, or SecureString). Useful for validation and documentation."
-  value       = aws_ssm_parameter.this.type
+output "parameter_types" {
+  description = "Map of parameter types (String, StringList, or SecureString). Useful for validation and documentation."
+  value       = { for k, v in aws_ssm_parameter.this : k => v.type }
 }
 
-output "parameter_tier" {
-  description = "The tier of the parameter (Standard, Advanced, or Intelligent-Tiering). Important for cost tracking and capacity planning."
-  value       = aws_ssm_parameter.this.tier
-}
-
-output "parameter_version" {
-  description = "The version number of the parameter. Increments with each update, useful for change tracking and rollback scenarios."
-  value       = aws_ssm_parameter.this.version
+output "parameter_versions" {
+  description = "Map of parameter versions. Increments with each update, useful for change tracking and rollback scenarios."
+  value       = { for k, v in aws_ssm_parameter.this : k => v.version }
 }
 
 # -----------------------------------------------------------------------------
-# Security Outputs
+# Full Parameter Details
 # -----------------------------------------------------------------------------
 
-output "kms_key_id" {
-  description = "The KMS key ID used for encryption, if SSE-KMS is enabled for SecureString. Returns null for non-SecureString types or when using AWS-managed keys."
-  value       = aws_ssm_parameter.this.key_id
-}
-
-# -----------------------------------------------------------------------------
-# Data Type Outputs
-# -----------------------------------------------------------------------------
-
-output "data_type" {
-  description = "The data type of the parameter (e.g., text, aws:ec2:image). Used for parameter value validation."
-  value       = aws_ssm_parameter.this.data_type
-}
-
-# -----------------------------------------------------------------------------
-# Reference Outputs
-# -----------------------------------------------------------------------------
-
-output "tags" {
-  description = "All tags applied to the parameter, including default and custom tags."
-  value       = aws_ssm_parameter.this.tags_all
+output "parameters" {
+  description = "Complete map of all parameter details including name, ARN, type, version, etc."
+  value = {
+    for k, v in aws_ssm_parameter.this : k => {
+      name      = v.name
+      arn       = v.arn
+      type      = v.type
+      tier      = v.tier
+      version   = v.version
+      key_id    = v.key_id
+      data_type = v.data_type
+      tags      = v.tags_all
+    }
+  }
 }
