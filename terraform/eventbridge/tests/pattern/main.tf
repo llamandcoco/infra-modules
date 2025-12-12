@@ -51,6 +51,7 @@ resource "aws_lambda_function" "ec2_processor" {
 }
 
 # SNS topic for notifications
+# tfsec:ignore:AVD-AWS-0095 - Test resource, encryption not required
 resource "aws_sns_topic" "alerts" {
   name = "ec2-state-change-alerts"
 }
@@ -73,6 +74,7 @@ resource "aws_sfn_state_machine" "workflow" {
 }
 
 # Dead letter queue for failed invocations
+# tfsec:ignore:AVD-AWS-0096 - Test resource, encryption not required
 resource "aws_sqs_queue" "dlq" {
   name                      = "eventbridge-dlq"
   message_retention_seconds = 1209600 # 14 days

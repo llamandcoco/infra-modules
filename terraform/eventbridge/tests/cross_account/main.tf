@@ -59,6 +59,7 @@ resource "aws_lambda_function" "cross_account_processor" {
 }
 
 # SQS queue for event buffering
+# tfsec:ignore:AVD-AWS-0096 - Test resource, encryption not required
 resource "aws_sqs_queue" "cross_account_events" {
   name                      = "cross-account-events-queue"
   message_retention_seconds = 345600 # 4 days
@@ -69,6 +70,7 @@ resource "aws_sqs_queue" "cross_account_events" {
 }
 
 # SNS topic for alerting
+# tfsec:ignore:AVD-AWS-0095 - Test resource, encryption not required
 resource "aws_sns_topic" "cross_account_alerts" {
   name = "cross-account-alerts"
 }

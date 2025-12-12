@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.0"
     }
+    null = {
+      source  = "hashicorp/null"
+      version = ">= 3.0"
+    }
   }
 }
 
@@ -90,11 +94,6 @@ locals {
 
   # Add ECS-specific IAM PassRole permissions if ECS targets exist
   has_ecs_targets = contains(local.target_services, "ecs")
-  ecs_task_role_arns = local.has_ecs_targets ? [
-    for target in var.targets :
-    target.ecs_parameters != null ? target.ecs_parameters.task_definition_arn : null
-    if target.ecs_parameters != null
-  ] : []
 
   # Cross-account event bus policy
   should_create_bus_policy = var.create_event_bus && (length(var.allow_account_ids) > 0 || var.event_bus_policy_statement != null)
@@ -165,8 +164,8 @@ resource "aws_cloudwatch_event_rule" "this" {
   schedule_expression = var.schedule_expression
   event_pattern       = var.event_pattern
 
-  is_enabled = var.is_enabled
-  tags       = var.tags
+  state = var.is_enabled ? "ENABLED" : "DISABLED"
+  tags  = var.tags
 
   depends_on = [
     null_resource.validate_rule_type,
@@ -288,29 +287,29 @@ resource "aws_cloudwatch_event_target" "this" {
   }
 
   # SQS-specific parameters
-  dynamic "sqs_parameters" {
+  dynamic "sqs_target" {
     for_each = var.targets[count.index].sqs_parameters != null ? [var.targets[count.index].sqs_parameters] : []
     content {
-      message_group_id = sqs_parameters.value.message_group_id
+      message_group_id = sqs_target.value.message_group_id
     }
   }
 
   # ECS-specific parameters
-  dynamic "ecs_parameters" {
+  dynamic "ecs_target" {
     for_each = var.targets[count.index].ecs_parameters != null ? [var.targets[count.index].ecs_parameters] : []
     content {
-      task_definition_arn     = ecs_parameters.value.task_definition_arn
-      task_count              = ecs_parameters.value.task_count
-      launch_type             = ecs_parameters.value.launch_type
-      platform_version        = ecs_parameters.value.platform_version
-      group                   = ecs_parameters.value.group
-      enable_ecs_managed_tags = ecs_parameters.value.enable_ecs_managed_tags
-      enable_execute_command  = ecs_parameters.value.enable_execute_command
-      propagate_tags          = ecs_parameters.value.propagate_tags
-      tags                    = ecs_parameters.value.tags
+      task_definition_arn     = ecs_target.value.task_definition_arn
+      task_count              = ecs_target.value.task_count
+      launch_type             = ecs_target.value.launch_type
+      platform_version        = ecs_target.value.platform_version
+      group                   = ecs_target.value.group
+      enable_ecs_managed_tags = ecs_target.value.enable_ecs_managed_tags
+      enable_execute_command  = ecs_target.value.enable_execute_command
+      propagate_tags          = ecs_target.value.propagate_tags
+      tags                    = ecs_target.value.tags
 
       dynamic "network_configuration" {
-        for_each = ecs_parameters.value.network_configuration != null ? [ecs_parameters.value.network_configuration] : []
+        for_each = ecs_target.value.network_configuration != null ? [ecs_target.value.network_configuration] : []
         content {
           subnets          = network_configuration.value.subnets
           security_groups  = network_configuration.value.security_groups
@@ -319,7 +318,7 @@ resource "aws_cloudwatch_event_target" "this" {
       }
 
       dynamic "capacity_provider_strategy" {
-        for_each = ecs_parameters.value.capacity_provider_strategy != null ? ecs_parameters.value.capacity_provider_strategy : []
+        for_each = ecs_target.value.capacity_provider_strategy != null ? ecs_target.value.capacity_provider_strategy : []
         content {
           capacity_provider = capacity_provider_strategy.value.capacity_provider
           weight            = capacity_provider_strategy.value.weight
@@ -328,75 +327,51 @@ resource "aws_cloudwatch_event_target" "this" {
       }
 
       dynamic "placement_constraint" {
-        for_each = ecs_parameters.value.placement_constraints != null ? ecs_parameters.value.placement_constraints : []
+        for_each = ecs_target.value.placement_constraints != null ? ecs_target.value.placement_constraints : []
         content {
           type       = placement_constraint.value.type
           expression = placement_constraint.value.expression
         }
       }
 
-      dynamic "placement_strategy" {
-        for_each = ecs_parameters.value.placement_strategy != null ? ecs_parameters.value.placement_strategy : []
-        content {
-          type  = placement_strategy.value.type
-          field = placement_strategy.value.field
-        }
-      }
     }
   }
 
   # Batch-specific parameters
-  dynamic "batch_parameters" {
+  dynamic "batch_target" {
     for_each = var.targets[count.index].batch_parameters != null ? [var.targets[count.index].batch_parameters] : []
     content {
-      job_definition = batch_parameters.value.job_definition
-      job_name       = batch_parameters.value.job_name
-
-      dynamic "array_properties" {
-        for_each = batch_parameters.value.array_properties != null ? [batch_parameters.value.array_properties] : []
-        content {
-          size = array_properties.value.size
-        }
-      }
-
-      dynamic "retry_strategy" {
-        for_each = batch_parameters.value.retry_strategy != null ? [batch_parameters.value.retry_strategy] : []
-        content {
-          attempts = retry_strategy.value.attempts
-        }
-      }
+      job_definition = batch_target.value.job_definition
+      job_name       = batch_target.value.job_name
+      array_size     = try(batch_target.value.array_properties.size, null)
+      job_attempts   = try(batch_target.value.retry_strategy.attempts, null)
     }
   }
 
   # Kinesis-specific parameters
-  dynamic "kinesis_parameters" {
+  dynamic "kinesis_target" {
     for_each = var.targets[count.index].kinesis_parameters != null ? [var.targets[count.index].kinesis_parameters] : []
     content {
-      partition_key_path = kinesis_parameters.value.partition_key_path
+      partition_key_path = kinesis_target.value.partition_key_path
     }
   }
 
   # Run Command-specific parameters
-  dynamic "run_command_parameters" {
-    for_each = var.targets[count.index].run_command_parameters != null ? [var.targets[count.index].run_command_parameters] : []
+  dynamic "run_command_targets" {
+    for_each = var.targets[count.index].run_command_parameters != null ? var.targets[count.index].run_command_parameters.run_command_targets : []
     content {
-      dynamic "run_command_targets" {
-        for_each = run_command_parameters.value.run_command_targets
-        content {
-          key    = run_command_targets.value.key
-          values = run_command_targets.value.values
-        }
-      }
+      key    = run_command_targets.value.key
+      values = run_command_targets.value.values
     }
   }
 
   # HTTP-specific parameters (API Destinations)
-  dynamic "http_parameters" {
+  dynamic "http_target" {
     for_each = var.targets[count.index].http_parameters != null ? [var.targets[count.index].http_parameters] : []
     content {
-      path_parameter_values   = http_parameters.value.path_parameter_values
-      header_parameters       = http_parameters.value.header_parameters
-      query_string_parameters = http_parameters.value.query_string_parameters
+      path_parameter_values   = http_target.value.path_parameter_values
+      header_parameters       = http_target.value.header_parameters
+      query_string_parameters = http_target.value.query_string_parameters
     }
   }
 

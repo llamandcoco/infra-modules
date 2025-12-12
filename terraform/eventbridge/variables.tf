@@ -65,9 +65,7 @@ variable "schedule_expression" {
   default     = null
 
   validation {
-    condition = var.schedule_expression == null || (
-      can(regex("^(rate|cron)\\(.+\\)$", var.schedule_expression))
-    )
+    condition     = var.schedule_expression == null || can(regex("^(rate|cron)\\(.+\\)$", var.schedule_expression))
     error_message = "Schedule expression must be a valid rate() or cron() expression."
   }
 }
@@ -266,10 +264,7 @@ variable "targets" {
   validation {
     condition = alltrue([
       for target in var.targets :
-      target.retry_policy == null || (
-        target.retry_policy.maximum_retry_attempts == null ||
-        (target.retry_policy.maximum_retry_attempts >= 0 && target.retry_policy.maximum_retry_attempts <= 185)
-      )
+      target.retry_policy == null || target.retry_policy.maximum_retry_attempts == null || (target.retry_policy.maximum_retry_attempts >= 0 && target.retry_policy.maximum_retry_attempts <= 185)
     ])
     error_message = "Retry policy maximum_retry_attempts must be between 0 and 185."
   }
@@ -277,10 +272,7 @@ variable "targets" {
   validation {
     condition = alltrue([
       for target in var.targets :
-      target.retry_policy == null || (
-        target.retry_policy.maximum_event_age_in_seconds == null ||
-        (target.retry_policy.maximum_event_age_in_seconds >= 60 && target.retry_policy.maximum_event_age_in_seconds <= 86400)
-      )
+      target.retry_policy == null || target.retry_policy.maximum_event_age_in_seconds == null || (target.retry_policy.maximum_event_age_in_seconds >= 60 && target.retry_policy.maximum_event_age_in_seconds <= 86400)
     ])
     error_message = "Retry policy maximum_event_age_in_seconds must be between 60 and 86400 (1 minute to 24 hours)."
   }

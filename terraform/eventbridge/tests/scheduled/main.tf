@@ -55,6 +55,7 @@ resource "aws_lambda_function" "processor" {
 }
 
 # SQS queue for event buffering
+# tfsec:ignore:AVD-AWS-0096 - Test resource, encryption not required
 resource "aws_sqs_queue" "events" {
   name                      = "scheduled-events-queue"
   delay_seconds             = 0
