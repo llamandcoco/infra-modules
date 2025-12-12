@@ -45,6 +45,12 @@ variable "database_subnet_ids" {
   default     = []
 }
 
+variable "availability_zones" {
+  description = "Availability zones corresponding to subnets (used for naming)."
+  type        = list(string)
+  default     = []
+}
+
 variable "database_route_via_nat" {
   description = "Route database subnets through the first NAT Gateway."
   type        = bool

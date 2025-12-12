@@ -24,32 +24,34 @@ variable "azs" {
 }
 
 variable "public_subnet_cidrs" {
-  description = "CIDR blocks for public subnets."
+  description = "CIDR blocks for public subnets. If null, automatically calculated from VPC CIDR."
   type        = list(string)
+  default     = null
 
   validation {
-    condition     = alltrue([for cidr in var.public_subnet_cidrs : can(cidrnetmask(cidr))])
+    condition     = var.public_subnet_cidrs == null ? true : alltrue([for cidr in var.public_subnet_cidrs : can(cidrnetmask(cidr))])
     error_message = "All public_subnet_cidrs must be valid IPv4 CIDRs."
   }
 }
 
 variable "private_subnet_cidrs" {
-  description = "CIDR blocks for private subnets."
+  description = "CIDR blocks for private subnets. If null, automatically calculated from VPC CIDR."
   type        = list(string)
+  default     = null
 
   validation {
-    condition     = alltrue([for cidr in var.private_subnet_cidrs : can(cidrnetmask(cidr))])
+    condition     = var.private_subnet_cidrs == null ? true : alltrue([for cidr in var.private_subnet_cidrs : can(cidrnetmask(cidr))])
     error_message = "All private_subnet_cidrs must be valid IPv4 CIDRs."
   }
 }
 
 variable "database_subnet_cidrs" {
-  description = "CIDR blocks for database subnets."
+  description = "CIDR blocks for database subnets. If null, automatically calculated from VPC CIDR. Use [] to disable database subnets."
   type        = list(string)
-  default     = []
+  default     = null
 
   validation {
-    condition     = alltrue([for cidr in var.database_subnet_cidrs : can(cidrnetmask(cidr))])
+    condition     = var.database_subnet_cidrs == null ? true : alltrue([for cidr in var.database_subnet_cidrs : can(cidrnetmask(cidr))])
     error_message = "All database_subnet_cidrs must be valid IPv4 CIDRs."
   }
 }
@@ -84,16 +86,33 @@ variable "enable_ipv6" {
   default     = false
 }
 
+variable "internet_gateway_enabled" {
+  description = "Create an Internet Gateway. Automatically enabled if public subnets are configured."
+  type        = bool
+  default     = true
+}
+
 variable "map_public_ip_on_launch" {
   description = "Auto-assign public IPs to instances in public subnets."
   type        = bool
   default     = true
 }
 
+variable "nat_gateway_mode" {
+  description = "NAT Gateway deployment strategy: 'per_az' (HA, one per AZ), 'single' (cost-optimized, one NAT), or 'none' (no NAT)."
+  type        = string
+  default     = "per_az"
+
+  validation {
+    condition     = contains(["per_az", "single", "none"], var.nat_gateway_mode)
+    error_message = "nat_gateway_mode must be one of: per_az, single, none."
+  }
+}
+
 variable "nat_per_az" {
-  description = "Create one NAT Gateway per AZ for high availability."
+  description = "DEPRECATED: Use nat_gateway_mode instead. Create one NAT Gateway per AZ for high availability."
   type        = bool
-  default     = true
+  default     = null
 }
 
 variable "database_route_via_nat" {

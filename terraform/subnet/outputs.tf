@@ -17,3 +17,18 @@ output "availability_zones" {
   description = "Availability zones used for subnets."
   value       = var.azs
 }
+
+output "public_subnet_names" {
+  description = "Name tags for public subnets."
+  value       = [for s in aws_subnet.public : s.tags["Name"]]
+}
+
+output "private_subnet_names" {
+  description = "Name tags for private subnets."
+  value       = [for s in aws_subnet.private : s.tags["Name"]]
+}
+
+output "database_subnet_names" {
+  description = "Name tags for database subnets."
+  value       = [for s in aws_subnet.database : s.tags["Name"]]
+}
