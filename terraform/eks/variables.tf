@@ -550,7 +550,7 @@ variable "node_groups" {
   validation {
     condition = alltrue([
       for ng_key, ng_value in var.node_groups :
-      try(ng_value.capacity_type, "ON_DEMAND") == "ON_DEMAND" || try(ng_value.capacity_type, "ON_DEMAND") == "SPOT"
+      contains(["ON_DEMAND", "SPOT"], coalesce(ng_value.capacity_type, "ON_DEMAND"))
     ])
     error_message = "Node group capacity_type must be either 'ON_DEMAND' or 'SPOT'."
   }
@@ -558,11 +558,13 @@ variable "node_groups" {
   validation {
     condition = alltrue([
       for ng_key, ng_value in var.node_groups :
-      try(ng_value.ami_type, "AL2_x86_64") == "AL2_x86_64" ||
-      try(ng_value.ami_type, "AL2_x86_64") == "AL2_x86_64_GPU" ||
-      try(ng_value.ami_type, "AL2_x86_64") == "AL2_ARM_64" ||
-      try(ng_value.ami_type, "AL2_x86_64") == "BOTTLEROCKET_x86_64" ||
-      try(ng_value.ami_type, "AL2_x86_64") == "BOTTLEROCKET_ARM_64"
+      contains([
+        "AL2_x86_64",
+        "AL2_x86_64_GPU",
+        "AL2_ARM_64",
+        "BOTTLEROCKET_x86_64",
+        "BOTTLEROCKET_ARM_64"
+      ], coalesce(ng_value.ami_type, "AL2_x86_64"))
     ])
     error_message = "Node group ami_type must be one of: AL2_x86_64, AL2_x86_64_GPU, AL2_ARM_64, BOTTLEROCKET_x86_64, BOTTLEROCKET_ARM_64."
   }

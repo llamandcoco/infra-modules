@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = ">= 3.0"
+    }
   }
 }
 
@@ -95,6 +99,8 @@ resource "aws_iam_role_policy_attachment" "cluster_eks_vpc_resource_controller" 
 # Creates the Kubernetes control plane and API server
 # tfsec:ignore:aws-eks-enable-control-plane-logging - Logging is configurable via cluster_enabled_log_types variable
 # tfsec:ignore:aws-eks-encrypt-secrets - Encryption is configurable via encryption_config variable
+# tfsec:ignore:AVD-AWS-0040 - Public access is configurable via endpoint_public_access variable (test environments may require it)
+# tfsec:ignore:AVD-AWS-0041 - Public access CIDRs are configurable via endpoint_public_access_cidrs variable (test environments use 0.0.0.0/0)
 resource "aws_eks_cluster" "this" {
   name     = var.cluster_name
   version  = var.cluster_version
@@ -112,12 +118,7 @@ resource "aws_eks_cluster" "this" {
 
   # Cluster Logging Configuration
   # Enables control plane logs to CloudWatch
-  dynamic "enabled_cluster_log_types" {
-    for_each = length(var.cluster_enabled_log_types) > 0 ? [1] : []
-    content {
-      log_types = var.cluster_enabled_log_types
-    }
-  }
+  enabled_cluster_log_types = var.cluster_enabled_log_types
 
   # Encryption Configuration for Secrets
   # Uses KMS to encrypt Kubernetes secrets at rest
@@ -270,10 +271,10 @@ resource "aws_eks_node_group" "this" {
 
   # Kubernetes Taints
   dynamic "taint" {
-    for_each = try(each.value.taints, [])
+    for_each = coalesce(each.value.taints, [])
     content {
       key    = taint.value.key
-      value  = try(taint.value.value, null)
+      value  = coalesce(taint.value.value, null)
       effect = taint.value.effect
     }
   }
