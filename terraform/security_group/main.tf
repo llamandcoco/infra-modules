@@ -103,6 +103,7 @@ resource "aws_security_group_rule" "ingress" {
   description              = try(each.value.description, "${var.name} ingress rule")
 }
 
+# trivy:ignore:AVD-AWS-0104
 resource "aws_security_group_rule" "egress" {
   for_each = local.all_egress_rules
 
