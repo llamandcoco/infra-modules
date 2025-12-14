@@ -115,5 +115,9 @@ module "security_group" {
   vpc_id        = module.vpc.vpc_id
   ingress_rules = var.workload_security_group_ingress
   egress_rules  = var.workload_security_group_egress
-  tags          = local.common_tags
+
+  # Disable default egress if custom rules are provided
+  enable_default_egress_rule = length(var.workload_security_group_egress) == 0
+
+  tags = local.common_tags
 }
