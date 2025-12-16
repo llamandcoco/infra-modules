@@ -33,9 +33,9 @@ module "test_s3_oac" {
   price_class         = "PriceClass_100"
 
   # Create Origin Access Control resource
-  create_origin_access_control       = true
-  origin_access_control_name         = "test-s3-oac"
-  origin_access_control_description  = "OAC for S3 bucket access"
+  create_origin_access_control           = true
+  origin_access_control_name             = "test-s3-oac"
+  origin_access_control_description      = "OAC for S3 bucket access"
   origin_access_control_signing_behavior = "always"
   origin_access_control_signing_protocol = "sigv4"
   origin_access_control_origin_type      = "s3"
@@ -91,15 +91,15 @@ module "test_s3_oac" {
   # Redirect 403/404 to index.html for client-side routing
   custom_error_responses = [
     {
-      error_code         = 403
-      response_code      = 200
-      response_page_path = "/index.html"
+      error_code            = 403
+      response_code         = 200
+      response_page_path    = "/index.html"
       error_caching_min_ttl = 300
     },
     {
-      error_code         = 404
-      response_code      = 200
-      response_page_path = "/index.html"
+      error_code            = 404
+      response_code         = 200
+      response_page_path    = "/index.html"
       error_caching_min_ttl = 300
     }
   ]
@@ -147,7 +147,7 @@ output "invalidation_command" {
 # This would be applied to the S3 bucket to allow CloudFront access
 output "example_s3_bucket_policy" {
   description = "Example S3 bucket policy for OAC (apply this to your S3 bucket)"
-  value = <<-EOT
+  value       = <<-EOT
     {
       "Version": "2012-10-17",
       "Statement": [

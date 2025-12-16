@@ -44,10 +44,10 @@ module "test_alb_origin" {
 
       # Custom origin configuration for ALB
       custom_origin_config = {
-        http_port              = 80
-        https_port             = 443
-        origin_protocol_policy = "https-only" # Always use HTTPS to origin
-        origin_ssl_protocols   = ["TLSv1.2"]
+        http_port                = 80
+        https_port               = 443
+        origin_protocol_policy   = "https-only" # Always use HTTPS to origin
+        origin_ssl_protocols     = ["TLSv1.2"]
         origin_keepalive_timeout = 5
         origin_read_timeout      = 30
       }
@@ -113,21 +113,21 @@ module "test_alb_origin" {
   # Custom error responses for better user experience
   custom_error_responses = [
     {
-      error_code         = 404
-      response_code      = 404
-      response_page_path = "/errors/404.html"
+      error_code            = 404
+      response_code         = 404
+      response_page_path    = "/errors/404.html"
       error_caching_min_ttl = 300
     },
     {
-      error_code         = 500
-      response_code      = 500
-      response_page_path = "/errors/500.html"
+      error_code            = 500
+      response_code         = 500
+      response_page_path    = "/errors/500.html"
       error_caching_min_ttl = 60
     },
     {
-      error_code         = 503
-      response_code      = 503
-      response_page_path = "/errors/503.html"
+      error_code            = 503
+      response_code         = 503
+      response_page_path    = "/errors/503.html"
       error_caching_min_ttl = 0
     }
   ]

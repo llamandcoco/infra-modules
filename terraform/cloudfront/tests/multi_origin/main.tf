@@ -54,10 +54,10 @@ module "test_multi_origin" {
       origin_path = ""
 
       custom_origin_config = {
-        http_port              = 80
-        https_port             = 443
-        origin_protocol_policy = "https-only"
-        origin_ssl_protocols   = ["TLSv1.2"]
+        http_port                = 80
+        https_port               = 443
+        origin_protocol_policy   = "https-only"
+        origin_ssl_protocols     = ["TLSv1.2"]
         origin_keepalive_timeout = 60
         origin_read_timeout      = 60
       }
@@ -159,7 +159,7 @@ module "test_multi_origin" {
       cache_policy_id = "b2884449-e4de-46a7-ac36-70bc7f1ddd6d" # CachingOptimizedForUncompressedObjects
 
       min_ttl     = 86400
-      default_ttl = 604800  # 7 days
+      default_ttl = 604800 # 7 days
       max_ttl     = 31536000
     },
     # Images with specific extensions - long caching
@@ -174,7 +174,7 @@ module "test_multi_origin" {
       cache_policy_id = "b2884449-e4de-46a7-ac36-70bc7f1ddd6d" # CachingOptimizedForUncompressedObjects
 
       min_ttl     = 86400
-      default_ttl = 2592000  # 30 days
+      default_ttl = 2592000 # 30 days
       max_ttl     = 31536000
     }
   ]
@@ -193,15 +193,15 @@ module "test_multi_origin" {
   # Custom error responses
   custom_error_responses = [
     {
-      error_code         = 403
-      response_code      = 404
-      response_page_path = "/404.html"
+      error_code            = 403
+      response_code         = 404
+      response_page_path    = "/404.html"
       error_caching_min_ttl = 300
     },
     {
-      error_code         = 404
-      response_code      = 404
-      response_page_path = "/404.html"
+      error_code            = 404
+      response_code         = 404
+      response_page_path    = "/404.html"
       error_caching_min_ttl = 300
     }
   ]

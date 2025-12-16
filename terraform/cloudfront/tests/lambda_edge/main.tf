@@ -173,7 +173,7 @@ output "distribution_url" {
 # Example Lambda@Edge function code snippets
 output "example_cloudfront_function_url_rewrite" {
   description = "Example CloudFront Function for URL rewriting"
-  value = <<-EOT
+  value       = <<-EOT
     // CloudFront Function - URL Rewrite
     // Redirects /old-path to /new-path
     function handler(event) {
@@ -197,7 +197,7 @@ output "example_cloudfront_function_url_rewrite" {
 
 output "example_cloudfront_function_security_headers" {
   description = "Example CloudFront Function for adding security headers"
-  value = <<-EOT
+  value       = <<-EOT
     // CloudFront Function - Add Security Headers
     function handler(event) {
         var response = event.response;
@@ -217,7 +217,7 @@ output "example_cloudfront_function_security_headers" {
 
 output "example_lambda_edge_ab_testing" {
   description = "Example Lambda@Edge function for A/B testing (Node.js)"
-  value = <<-EOT
+  value       = <<-EOT
     // Lambda@Edge - A/B Testing (viewer-request)
     exports.handler = async (event) => {
         const request = event.Records[0].cf.request;
@@ -255,7 +255,7 @@ output "example_lambda_edge_ab_testing" {
 
 output "example_lambda_edge_image_resize" {
   description = "Example Lambda@Edge concept for image resizing (origin-response)"
-  value = <<-EOT
+  value       = <<-EOT
     // Lambda@Edge - Image Resize (origin-response)
     // Note: Actual implementation requires Sharp library
     exports.handler = async (event) => {
