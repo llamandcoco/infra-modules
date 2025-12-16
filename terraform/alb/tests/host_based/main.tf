@@ -134,9 +134,9 @@ module "host_based_alb" {
   # HTTPS listener with SNI support (multiple certificates)
   listeners = [
     {
-      port        = 443
-      protocol    = "HTTPS"
-      ssl_policy  = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+      port       = 443
+      protocol   = "HTTPS"
+      ssl_policy = "ELBSecurityPolicy-TLS13-1-2-2021-06"
       # Default certificate for www.example.com
       certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/11111111-1111-1111-1111-111111111111"
 

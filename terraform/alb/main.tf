@@ -279,7 +279,7 @@ resource "aws_lb_listener_certificate" "this" {
     for listener in var.listeners : {
       for idx, cert_arn in listener.additional_certificate_arns :
       "${listener.port}-${idx}" => {
-        listener_port = listener.port
+        listener_port   = listener.port
         certificate_arn = cert_arn
       }
     } if listener.protocol == "HTTPS" && length(listener.additional_certificate_arns) > 0

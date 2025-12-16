@@ -158,9 +158,9 @@ module "https_alb_production" {
   enable_deletion_protection = true
 
   # Enable access logs
-  enable_access_logs  = true
-  access_logs_bucket  = "my-alb-logs-bucket"
-  access_logs_prefix  = "prod-alb"
+  enable_access_logs = true
+  access_logs_bucket = "my-alb-logs-bucket"
+  access_logs_prefix = "prod-alb"
 
   # Drop invalid headers for security
   drop_invalid_header_fields = true
@@ -305,9 +305,9 @@ module "https_alb_sni" {
   # HTTPS listener with primary certificate and additional certificates for SNI
   listeners = [
     {
-      port        = 443
-      protocol    = "HTTPS"
-      ssl_policy  = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+      port            = 443
+      protocol        = "HTTPS"
+      ssl_policy      = "ELBSecurityPolicy-TLS13-1-2-2021-06"
       certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/11111111-1111-1111-1111-111111111111"
 
       # Additional certificates for SNI (different domains)
