@@ -127,6 +127,8 @@ resource "azurerm_storage_management_policy" "this" {
 
       actions {
         # Base blob actions
+        # Note: Azure resource property names are verbose but match the official Azure API
+        # to ensure compatibility and clarity with Azure documentation
         dynamic "base_blob" {
           for_each = rule.value.base_blob_actions != null ? [rule.value.base_blob_actions] : []
 

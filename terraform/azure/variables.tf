@@ -251,6 +251,9 @@ variable "lifecycle_rules" {
       - delete_after_last_access_days: Days since last access to delete
     - snapshot_actions: Actions for snapshots
     - version_actions: Actions for older versions
+
+    Note: This type structure mirrors Azure's Lifecycle Management API structure.
+    Complex nested objects are required to support all Azure lifecycle features.
   EOT
   type = list(object({
     name         = string
