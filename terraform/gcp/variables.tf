@@ -7,8 +7,14 @@ variable "bucket_name" {
   type        = string
 
   validation {
-    condition     = can(regex("^[a-z0-9][a-z0-9-_.]*[a-z0-9]$", var.bucket_name))
-    error_message = "Bucket name must start and end with a lowercase letter or number, and can only contain lowercase letters, numbers, hyphens, underscores, and dots."
+    condition = alltrue([
+      can(regex("^[a-z0-9][a-z0-9_.-]*[a-z0-9]$", var.bucket_name)),
+      !can(regex("\\.\\.", var.bucket_name)),
+      !can(regex("\\.-", var.bucket_name)),
+      !can(regex("-\\.", var.bucket_name)),
+      !can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$", var.bucket_name))
+    ])
+    error_message = "Bucket name must start and end with a lowercase letter or number, can only contain lowercase letters, numbers, hyphens, underscores, and dots. Cannot contain consecutive dots (..), dots adjacent to hyphens (.- or .-), or resemble an IP address."
   }
 
   validation {
