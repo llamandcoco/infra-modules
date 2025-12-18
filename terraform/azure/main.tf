@@ -82,7 +82,7 @@ resource "azurerm_linux_function_app" "this" {
 
       content {
         dotnet_version              = var.runtime_stack == "dotnet" ? var.runtime_version : null
-        use_dotnet_isolated_runtime = var.runtime_stack == "dotnet" && var.use_dotnet_isolated_runtime ? true : null
+        use_dotnet_isolated_runtime = var.runtime_stack == "dotnet" ? var.use_dotnet_isolated_runtime : null
         java_version                = var.runtime_stack == "java" ? var.runtime_version : null
         node_version                = var.runtime_stack == "node" ? var.runtime_version : null
         python_version              = var.runtime_stack == "python" ? var.runtime_version : null
@@ -151,7 +151,7 @@ resource "azurerm_windows_function_app" "this" {
 
       content {
         dotnet_version              = var.runtime_stack == "dotnet" ? var.runtime_version : null
-        use_dotnet_isolated_runtime = var.runtime_stack == "dotnet" && var.use_dotnet_isolated_runtime ? true : null
+        use_dotnet_isolated_runtime = var.runtime_stack == "dotnet" ? var.use_dotnet_isolated_runtime : null
         java_version                = var.runtime_stack == "java" ? var.runtime_version : null
         node_version                = var.runtime_stack == "node" ? var.runtime_version : null
         powershell_core_version     = var.runtime_stack == "powershell" ? var.runtime_version : null
