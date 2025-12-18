@@ -115,11 +115,11 @@ variable "lifecycle_rules" {
     - matches_storage_class: List of storage classes to match
   EOT
   type = list(object({
-    action_type          = string
-    action_storage_class = optional(string)
-    age                  = optional(number)
-    created_before       = optional(string)
-    custom_time_before   = optional(string)
+    action_type                = string
+    action_storage_class       = optional(string)
+    age                        = optional(number)
+    created_before             = optional(string)
+    custom_time_before         = optional(string)
     days_since_custom_time     = optional(number)
     days_since_noncurrent_time = optional(number)
     noncurrent_time_before     = optional(string)

@@ -26,9 +26,7 @@ resource "google_storage_bucket" "this" {
   )
 
   # Uniform bucket-level access for modern IAM management
-  uniform_bucket_level_access {
-    enabled = var.uniform_bucket_level_access
-  }
+  uniform_bucket_level_access = var.uniform_bucket_level_access
 
   # Public access prevention for security
   public_access_prevention = var.public_access_prevention

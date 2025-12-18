@@ -11,11 +11,10 @@ terraform {
 
 # Mock Google provider for testing without credentials
 provider "google" {
-  project                     = "test-project-12345"
-  region                      = "us-central1"
-  credentials                 = "test"
-  access_token                = "test"
-  skip_credentials_validation = true
+  project = "test-project-12345"
+  region  = "us-central1"
+  # Use fake credentials for testing - provider will accept any token format
+  access_token = "test-token"
 }
 
 # -----------------------------------------------------------------------------
@@ -63,7 +62,7 @@ module "lifecycle_bucket" {
   source = "../../"
 
   bucket_name = "test-lifecycle-bucket-12345"
-  location    = "us"  # Multi-region
+  location    = "us" # Multi-region
 
   lifecycle_rules = [
     {
@@ -71,27 +70,27 @@ module "lifecycle_bucket" {
       action_storage_class = "NEARLINE"
       age                  = 30
       matches_prefix       = ["logs/"]
-      with_state          = "LIVE"
+      with_state           = "LIVE"
     },
     {
       action_type          = "SetStorageClass"
       action_storage_class = "COLDLINE"
       age                  = 90
       matches_prefix       = ["logs/"]
-      with_state          = "LIVE"
+      with_state           = "LIVE"
     },
     {
       action_type          = "SetStorageClass"
       action_storage_class = "ARCHIVE"
       age                  = 180
       matches_prefix       = ["logs/"]
-      with_state          = "LIVE"
+      with_state           = "LIVE"
     },
     {
       action_type    = "Delete"
       age            = 365
       matches_prefix = ["logs/"]
-      with_state    = "LIVE"
+      with_state     = "LIVE"
     },
     {
       action_type    = "Delete"
@@ -101,7 +100,7 @@ module "lifecycle_bucket" {
     {
       action_type        = "Delete"
       num_newer_versions = 3
-      with_state        = "ARCHIVED"
+      with_state         = "ARCHIVED"
     },
     {
       action_type = "AbortIncompleteMultipartUpload"
@@ -142,7 +141,7 @@ module "multiregion_bucket" {
   source = "../../"
 
   bucket_name   = "test-multiregion-bucket-12345"
-  location      = "EU"  # Multi-region
+  location      = "EU" # Multi-region
   storage_class = "STANDARD"
 
   labels = {
