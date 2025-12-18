@@ -10,17 +10,17 @@ terraform {
 }
 
 # Mock Google provider for testing without credentials
-# Using a minimal valid JSON structure for credentials
+# Using obviously fake credentials for testing purposes only
 provider "google" {
   project = "test-project-12345"
   region  = "us-central1"
   credentials = jsonencode({
     type                        = "service_account"
-    project_id                  = "test-project-12345"
-    private_key_id              = "test-key-id"
-    private_key                 = "-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----\n"
-    client_email                = "test@test-project-12345.iam.gserviceaccount.com"
-    client_id                   = "123456789"
+    project_id                  = "FAKE_TEST_PROJECT"
+    private_key_id              = "FAKE_KEY_ID_FOR_TESTING"
+    private_key                 = "-----BEGIN PRIVATE KEY-----\nFAKE_PRIVATE_KEY_FOR_TESTING_ONLY\n-----END PRIVATE KEY-----\n"
+    client_email                = "fake-test-sa@fake-test-project.iam.gserviceaccount.com"
+    client_id                   = "000000000000000000000"
     auth_uri                    = "https://accounts.google.com/o/oauth2/auth"
     token_uri                   = "https://oauth2.googleapis.com/token"
     auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
