@@ -90,7 +90,7 @@ variable "encryption_key_name" {
 # -----------------------------------------------------------------------------
 
 variable "logging_config" {
-  description = "Logging configuration for the bucket. If not specified, logging is disabled."
+  description = "Logging configuration for the bucket. If not specified, logging is disabled. The log_bucket should be the name (not a resource path) of the destination bucket for logs."
   type = object({
     log_bucket        = string
     log_object_prefix = optional(string, "")

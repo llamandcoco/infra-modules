@@ -10,11 +10,12 @@ terraform {
 }
 
 # Mock Google provider for testing without credentials
+# Note: In real usage, configure the provider with proper authentication
+# See: https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference
 provider "google" {
-  project = "test-project-12345"
-  region  = "us-central1"
-  # Use fake credentials for testing - provider will accept any token format
-  access_token = "test-token"
+  project      = "test-project-12345"
+  region       = "us-central1"
+  access_token = "test-token" # For testing only - use proper auth in production
 }
 
 # -----------------------------------------------------------------------------

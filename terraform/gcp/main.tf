@@ -18,12 +18,7 @@ resource "google_storage_bucket" "this" {
   storage_class = var.storage_class
   force_destroy = var.force_destroy
 
-  labels = merge(
-    var.labels,
-    {
-      name = var.bucket_name
-    }
-  )
+  labels = var.labels
 
   # Uniform bucket-level access for modern IAM management
   uniform_bucket_level_access = var.uniform_bucket_level_access
