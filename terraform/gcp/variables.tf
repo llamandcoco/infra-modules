@@ -148,7 +148,7 @@ variable "lifecycle_rules" {
   validation {
     condition = alltrue([
       for rule in var.lifecycle_rules :
-      rule.action_type != "SetStorageClass" || (rule.action_storage_class != null && contains(["NEARLINE", "COLDLINE", "ARCHIVE"], rule.action_storage_class))
+      rule.action_type != "SetStorageClass" || (rule.action_storage_class != null && try(contains(["NEARLINE", "COLDLINE", "ARCHIVE"], rule.action_storage_class), false))
     ])
     error_message = "When action_type is SetStorageClass, action_storage_class must be one of: NEARLINE, COLDLINE, ARCHIVE."
   }
