@@ -297,13 +297,3 @@ Run all validation checks:
 terraform fmt -check
 terraform validate
 ```
-
-## Contributing
-
-When making changes to this module:
-
-1. Update the code following the existing patterns
-2. Run `terraform fmt` to format the code
-3. Update tests if adding new features
-4. Run the test suite to ensure nothing breaks
-5. Update this README if adding new variables or outputs
