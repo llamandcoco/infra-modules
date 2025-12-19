@@ -15,10 +15,11 @@ provider "google" {
   project = "test-project-12345"
   region  = "us-central1"
   credentials = jsonencode({
-    type                        = "service_account"
-    project_id                  = "FAKE_TEST_PROJECT"
-    private_key_id              = "FAKE_KEY_ID_FOR_TESTING"
-    private_key                 = "-----BEGIN PRIVATE KEY-----\nFAKE_PRIVATE_KEY_FOR_TESTING_ONLY\n-----END PRIVATE KEY-----\n"
+    type           = "service_account"
+    project_id     = "FAKE_TEST_PROJECT"
+    private_key_id = "FAKE_KEY_ID_FOR_TESTING"
+    # Avoid real/marker private key to satisfy pre-commit detect-private-key
+    private_key                 = "FAKE_PRIVATE_KEY_FOR_TESTING_ONLY"
     client_email                = "fake-test-sa@fake-test-project.iam.gserviceaccount.com"
     client_id                   = "000000000000000000000"
     auth_uri                    = "https://accounts.google.com/o/oauth2/auth"
