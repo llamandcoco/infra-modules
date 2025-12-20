@@ -71,8 +71,8 @@ module "test_ec2_with_eip" {
       from_port   = 0
       to_port     = 0
       protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "Allow all outbound traffic"
+      cidr_blocks = ["10.0.0.0/8"]
+      description = "Restrict outbound traffic to internal network"
     }
   ]
 

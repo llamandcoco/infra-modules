@@ -14,7 +14,7 @@ output "instance_arn" {
 
 output "instance_state" {
   description = "The state of the instance (running, stopped, etc.)."
-  value       = var.enable_spot_instance ? (length(aws_spot_instance_request.this) > 0 ? aws_spot_instance_request.this[0].spot_instance_state : null) : (length(aws_instance.this) > 0 ? aws_instance.this[0].instance_state : null)
+  value       = var.enable_spot_instance ? (length(data.aws_instance.spot) > 0 ? data.aws_instance.spot[0].instance_state : null) : (length(aws_instance.this) > 0 ? aws_instance.this[0].instance_state : null)
 }
 
 output "private_ip" {

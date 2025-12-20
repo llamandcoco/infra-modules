@@ -1,13 +1,28 @@
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 # -----------------------------------------------------------------------------
 # Data Sources
 # -----------------------------------------------------------------------------
 
-# Get the current AWS region
-data "aws_region" "current" {}
-
 # Get the availability zone of the subnet
 data "aws_subnet" "selected" {
   id = var.subnet_id
+}
+
+# Used to fetch instance state for spot requests after fulfillment
+data "aws_instance" "spot" {
+  count = var.enable_spot_instance ? 1 : 0
+
+  instance_id = aws_spot_instance_request.this[0].spot_instance_id
 }
 
 # -----------------------------------------------------------------------------
