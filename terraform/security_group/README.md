@@ -1,37 +1,49 @@
 # Security Group Terraform Module
 
-Creates a security group with structured ingress and egress rules. Defaults to denying all traffic unless rules are provided.
+A flexible Terraform module for creating and managing AWS Security Groups with support for ingress/egress rules, VPC integration, and comprehensive tagging.
 
-## Usage
+## Features
+
+- Ingress Rules Configure inbound traffic rules with flexible protocol support
+- Egress Rules Define outbound traffic with multiple target options
+- CIDR Management Support for CIDR blocks, security groups, and prefix lists
+- VPC Integration Create security groups within specific VPCs
+
+## Quick Start
 
 ```hcl
-module "web_sg" {
-  source = "github.com/your-org/infra-modules//terraform/security_group"
+module "security_group" {
+  source = "github.com/llamandcoco/infra-modules//terraform/security_group?ref=<commit-sha>"
 
-  name   = "web-sg"
-  vpc_id = module.vpc.vpc_id
-
-  ingress_rules = [
-    {
-      description = "Allow HTTPS"
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["10.0.0.0/8"]
-    }
-  ]
-
-  egress_rules = [
-    {
-      description = "Allow outbound to internet"
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
+  # Add required variables here
 }
 ```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -82,11 +94,4 @@ No modules.
 | <a name="output_security_group_arn"></a> [security\_group\_arn](#output\_security\_group\_arn) | ARN of the security group. |
 | <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | ID of the security group. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
+</details>

@@ -1,17 +1,49 @@
 # Internet Gateway Terraform Module
 
-Creates an Internet Gateway optionally attached to a VPC with tagging support.
+A simple Terraform module for creating and managing AWS Internet Gateway resources with VPC attachment and tagging support.
 
-## Usage
+## Features
+
+- VPC Integration Attach internet gateway to VPC for public internet access
+- Flexible Naming Customizable naming and tagging conventions
+- Easy Attachment Simple VPC association management
+- Tag Support Resource tagging for organization and cost allocation
+
+## Quick Start
 
 ```hcl
-module "igw" {
-  source = "github.com/your-org/infra-modules//terraform/internet_gateway"
+module "internet_gateway" {
+  source = "github.com/llamandcoco/infra-modules//terraform/internet_gateway?ref=<commit-sha>"
 
-  name   = "core-igw"
-  vpc_id = module.vpc.vpc_id
+  # Add required variables here
 }
 ```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -54,11 +86,4 @@ No modules.
 | <a name="output_internet_gateway_id"></a> [internet\_gateway\_id](#output\_internet\_gateway\_id) | ID of the Internet Gateway. |
 | <a name="output_internet_gateway_tags"></a> [internet\_gateway\_tags](#output\_internet\_gateway\_tags) | Tags applied to the Internet Gateway. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
+</details>

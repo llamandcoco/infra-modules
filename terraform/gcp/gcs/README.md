@@ -1,172 +1,52 @@
 # Google Cloud Storage (GCS) Bucket Terraform Module
 
-Production-ready Terraform module for creating secure, well-configured Google Cloud Storage buckets with versioning, encryption, and lifecycle management.
+A secure Terraform module for creating and managing Google Cloud Storage buckets with encryption, versioning, lifecycle management, and unified access controls.
 
 ## Features
 
-- **Security First**: Google-managed encryption by default, optional CMEK support
-- **Public Access Prevention**: Public access blocked by default
-- **Versioning**: Enabled by default to protect against accidental deletion
-- **Uniform Bucket-Level Access**: IAM-only access control enabled by default
-- **Lifecycle Management**: Flexible lifecycle rules for cost optimization
-- **Compliance Ready**: Follows Google Cloud security best practices
-- **Fully Tested**: Includes test configurations and passes trivy security scans
+- Security First Google-managed encryption by default, optional CMEK support
+- Public Access Prevention Public access blocked by default
+- Versioning Enabled by default to protect against accidental deletion
+- Uniform Bucket-Level Access IAM-only access control enabled by default
+- Lifecycle Management Flexible lifecycle rules for cost optimization
+- Compliance Ready Follows Google Cloud security best practices
+- Fully Tested Includes test configurations and passes trivy security scans
 
-## Usage
-
-### Basic Example
+## Quick Start
 
 ```hcl
-module "my_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
+module "gcs" {
+  source = "github.com/llamandcoco/infra-modules//terraform/gcp/gcs?ref=<commit-sha>"
 
-  bucket_name = "my-application-data-bucket"
-  location    = "us-central1"
-
-  labels = {
-    environment = "production"
-    application = "my-app"
-    managed_by  = "terraform"
-  }
+  # Add required variables here
 }
 ```
 
-### Advanced Example with CMEK Encryption
+## Examples
 
-```hcl
-module "secure_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
+Complete, tested configurations in [`tests/`](tests/):
 
-  bucket_name = "my-secure-bucket"
-  location    = "us-central1"
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
 
-  # Use Customer-Managed Encryption Key (CMEK) instead of Google-managed
-  encryption_key_name = "projects/my-project/locations/us-central1/keyRings/my-keyring/cryptoKeys/my-key"
+**Usage:**
+```bash
+# View example
+cat tests/basic/
 
-  # Enable versioning for compliance
-  versioning_enabled = true
-
-  # Uniform bucket-level access for IAM-only control
-  uniform_bucket_level_access = true
-
-  labels = {
-    environment = "production"
-    compliance  = "required"
-    data_class  = "sensitive"
-  }
-}
+# Copy and adapt
+cp -r tests/basic/ my-project/
 ```
 
-### Example with Lifecycle Rules
+## Testing
 
-```hcl
-module "archive_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  bucket_name = "my-archive-bucket"
-  location    = "us"  # Multi-region
-
-  # Define lifecycle rules for cost optimization
-  lifecycle_rules = [
-    {
-      action_type          = "SetStorageClass"
-      action_storage_class = "NEARLINE"
-      age                  = 30
-      matches_prefix       = ["logs/"]
-      with_state          = "LIVE"
-    },
-    {
-      action_type          = "SetStorageClass"
-      action_storage_class = "COLDLINE"
-      age                  = 90
-      matches_prefix       = ["logs/"]
-      with_state          = "LIVE"
-    },
-    {
-      action_type          = "SetStorageClass"
-      action_storage_class = "ARCHIVE"
-      age                  = 180
-      matches_prefix       = ["logs/"]
-      with_state          = "LIVE"
-    },
-    {
-      action_type    = "Delete"
-      age            = 2555  # 7 years
-      matches_prefix = ["logs/"]
-      with_state    = "LIVE"
-    },
-    {
-      action_type        = "Delete"
-      num_newer_versions = 3
-      with_state        = "ARCHIVED"
-    },
-    {
-      action_type = "AbortIncompleteMultipartUpload"
-      age         = 7
-    }
-  ]
-
-  labels = {
-    environment = "production"
-    purpose     = "archival"
-  }
-}
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
-### Example with Logging
-
-```hcl
-# First, create a bucket for logs
-module "logs_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  bucket_name = "my-logs-bucket"
-  location    = "us-central1"
-
-  labels = {
-    environment = "production"
-    purpose     = "logging"
-  }
-}
-
-# Then, create a bucket with logging enabled
-module "monitored_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  bucket_name = "my-monitored-bucket"
-  location    = "us-central1"
-
-  logging_config = {
-    log_bucket        = module.logs_bucket.bucket_name
-    log_object_prefix = "bucket-access-logs/"
-  }
-
-  labels = {
-    environment = "production"
-    purpose     = "data-storage"
-  }
-}
-```
-
-### Example with Public Access (Use with Caution)
-
-```hcl
-module "public_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  bucket_name = "my-public-assets"
-  location    = "us"
-
-  # Allow public access (for static website hosting, CDN, etc.)
-  public_access_prevention = "inherited"
-  # Note: You'll also need to set appropriate IAM bindings for public access
-
-  labels = {
-    environment = "production"
-    purpose     = "public-assets"
-  }
-}
-```
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -224,76 +104,4 @@ No modules.
 | <a name="output_uniform_bucket_level_access"></a> [uniform\_bucket\_level\_access](#output\_uniform\_bucket\_level\_access) | Whether uniform bucket-level access is enabled for IAM-only access control. |
 | <a name="output_versioning_enabled"></a> [versioning\_enabled](#output\_versioning\_enabled) | Whether versioning is enabled on the bucket. Important for compliance and data protection verification. |
 <!-- END_TF_DOCS -->
-
-## Security Considerations
-
-### Default Security Posture
-
-This module implements security best practices by default:
-
-1. **Encryption**: All objects are encrypted at rest using Google-managed encryption keys by default
-2. **Public Access Prevention**: Set to "enforced" by default to block all public access
-3. **Uniform Bucket-Level Access**: Enabled by default for simplified IAM management
-4. **Versioning**: Enabled by default to protect against accidental deletion
-5. **Force Destroy**: Disabled by default to prevent accidental data loss
-
-### Using Customer-Managed Encryption Keys (CMEK)
-
-For sensitive data or compliance requirements, use Customer-Managed Encryption Keys:
-
-```hcl
-encryption_key_name = "projects/PROJECT_ID/locations/LOCATION/keyRings/KEY_RING/cryptoKeys/KEY_NAME"
-```
-
-Benefits:
-- Full control over encryption key lifecycle
-- Audit trail of encryption key usage in Cloud Audit Logs
-- Fine-grained access control via Cloud IAM
-- Support for automatic or manual key rotation
-
-### Lifecycle Best Practices
-
-Use lifecycle rules to:
-1. Reduce storage costs by transitioning to cheaper storage classes (NEARLINE, COLDLINE, ARCHIVE)
-2. Meet compliance requirements for data retention
-3. Clean up incomplete multipart uploads
-4. Manage versioned objects efficiently
-5. Automatically delete old data
-
-### Storage Classes
-
-- **STANDARD**: Best for frequently accessed data (hot data)
-- **NEARLINE**: Best for data accessed less than once per month
-- **COLDLINE**: Best for data accessed less than once per quarter
-- **ARCHIVE**: Best for data accessed less than once per year (lowest cost)
-
-## Differences from AWS S3 Module
-
-This GCS module is based on the S3 module but adapted for Google Cloud Platform:
-
-| Feature | AWS S3 | Google Cloud Storage |
-|---------|--------|---------------------|
-| Encryption | SSE-S3 or SSE-KMS | Google-managed or CMEK |
-| Access Control | Bucket Policies + ACLs | IAM with Uniform Bucket-Level Access |
-| Public Access | Block Public Access settings | Public Access Prevention |
-| Locations | Regions | Regions or Multi-regions (US, EU, ASIA) |
-| Lifecycle Actions | Transition, Expiration | SetStorageClass, Delete, AbortIncompleteMultipartUpload |
-| Metadata | Tags | Labels |
-
-## Testing
-
-Run the basic test:
-
-```bash
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
-
-Run all validation checks:
-
-```bash
-# From the terraform/gcp directory
-terraform fmt -check
-terraform validate
-```
+</details>

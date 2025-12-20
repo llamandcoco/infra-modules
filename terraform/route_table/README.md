@@ -1,21 +1,49 @@
 # Route Table Terraform Module
 
-Creates public, private, and database route tables with associations supporting Internet Gateway and NAT Gateway routing.
+A Terraform module for creating and managing AWS Route Table resources with flexible route configuration and subnet associations.
 
-## Usage
+## Features
+
+- Multiple Routes Support for multiple destination CIDR blocks and targets
+- Flexible Targets Routes to Internet Gateway, NAT Gateway, VPN, or VPC Peering
+- Subnet Association Easy attachment to multiple subnets
+- Tag Support Resource tagging for organization and cost tracking
+
+## Quick Start
 
 ```hcl
-module "route_tables" {
-  source = "github.com/your-org/infra-modules//terraform/route_table"
+module "route_table" {
+  source = "github.com/llamandcoco/infra-modules//terraform/route_table?ref=<commit-sha>"
 
-  vpc_id              = module.vpc.vpc_id
-  internet_gateway_id = module.igw.internet_gateway_id
-  nat_gateway_ids     = module.nat.nat_gateway_ids
-  public_subnet_ids   = module.subnets.public_subnet_ids
-  private_subnet_ids  = module.subnets.private_subnet_ids
-  database_subnet_ids = module.subnets.database_subnet_ids
+  # Add required variables here
 }
 ```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -77,11 +105,4 @@ No modules.
 | <a name="output_public_route_table_id"></a> [public\_route\_table\_id](#output\_public\_route\_table\_id) | ID of the public route table. |
 | <a name="output_public_route_table_name"></a> [public\_route\_table\_name](#output\_public\_route\_table\_name) | Name tag of the public route table. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
+</details>

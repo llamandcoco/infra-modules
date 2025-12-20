@@ -1,226 +1,53 @@
 # GCP Cloud Functions (2nd Gen) Terraform Module
 
-Production-ready Terraform module for creating secure, well-configured Google Cloud Functions (2nd generation) with automatic source storage, IAM management, and comprehensive configuration options.
+A comprehensive Terraform module for deploying and managing Google Cloud Functions (2nd Gen) with private deployment, secret management, and VPC connectivity.
 
 ## Features
 
-- **Security First**: Private by default with explicit IAM controls
-- **Serverless Architecture**: Auto-scaling with configurable limits
-- **Secret Management**: Native integration with Google Secret Manager
-- **VPC Connectivity**: Optional private network access via VPC connectors
-- **Source Management**: Automated Cloud Storage bucket for function code
-- **Service Account**: Automatic creation with least privilege access
-- **Production Ready**: Follows Google Cloud best practices
-- **Fully Tested**: Includes test configurations and security scanning
+- Security First Private by default with explicit IAM controls
+- Serverless Architecture Auto-scaling with configurable limits
+- Secret Management Native integration with Google Secret Manager
+- VPC Connectivity Optional private network access via VPC connectors
+- Source Management Automated Cloud Storage bucket for function code
+- Service Account Automatic creation with least privilege access
+- Production Ready Follows Google Cloud best practices
+- Fully Tested Includes test configurations and security scanning
 
-## Usage
-
-### Basic HTTP Function
+## Quick Start
 
 ```hcl
-module "my_function" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
+module "cloud-functions" {
+  source = "github.com/llamandcoco/infra-modules//terraform/gcp/cloud-functions?ref=<commit-sha>"
 
-  function_name         = "my-http-function"
-  project_id            = "my-gcp-project"
-  region                = "us-central1"
-  runtime               = "python311"
-  entry_point           = "handle_request"
-  source_archive_object = "function-source.zip"
-
-  labels = {
-    environment = "production"
-    team        = "platform"
-    managed-by  = "terraform"
-  }
+  # Add required variables here
 }
 ```
 
-### Function with Environment Variables
+## Examples
 
-```hcl
-module "api_function" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
+Complete, tested configurations in [`tests/`](tests/):
 
-  function_name         = "api-handler"
-  project_id            = "my-gcp-project"
-  region                = "us-central1"
-  runtime               = "nodejs20"
-  entry_point           = "handleRequest"
-  source_archive_object = "api-handler.zip"
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
 
-  description      = "API request handler for customer data"
-  available_memory = "512M"
-  timeout_seconds  = 120
+**Usage:**
+```bash
+# View example
+cat tests/basic/
 
-  environment_variables = {
-    LOG_LEVEL    = "info"
-    API_VERSION  = "v2"
-    ENVIRONMENT  = "production"
-  }
-
-  labels = {
-    environment = "production"
-    service     = "api"
-  }
-}
+# Copy and adapt
+cp -r tests/basic/ my-project/
 ```
 
-### Function with Secret Manager Integration
+## Testing
 
-```hcl
-module "secure_function" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  function_name         = "secure-processor"
-  project_id            = "my-gcp-project"
-  region                = "us-central1"
-  runtime               = "python311"
-  entry_point           = "process_data"
-  source_archive_object = "processor.zip"
-
-  # Use Secret Manager for sensitive configuration
-  secret_environment_variables = [
-    {
-      key        = "DATABASE_PASSWORD"
-      project_id = "my-gcp-project"
-      secret     = "db-password"
-      version    = "latest"
-    },
-    {
-      key        = "API_KEY"
-      project_id = "my-gcp-project"
-      secret     = "external-api-key"
-      version    = "1"
-    }
-  ]
-
-  # Mount secrets as files
-  secret_volumes = [
-    {
-      mount_path = "/etc/secrets"
-      project_id = "my-gcp-project"
-      secret     = "service-credentials"
-      versions = [
-        {
-          version = "latest"
-          path    = "credentials.json"
-        }
-      ]
-    }
-  ]
-
-  labels = {
-    environment = "production"
-    security    = "high"
-  }
-}
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
-### Function with VPC Connectivity
-
-```hcl
-module "private_function" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  function_name         = "database-worker"
-  project_id            = "my-gcp-project"
-  region                = "us-central1"
-  runtime               = "go121"
-  entry_point           = "ProcessRecords"
-  source_archive_object = "worker.zip"
-
-  # Configure VPC access for private resources
-  vpc_connector                 = "projects/my-gcp-project/locations/us-central1/connectors/my-connector"
-  vpc_connector_egress_settings = "PRIVATE_RANGES_ONLY"
-
-  # Restrict to internal traffic only
-  ingress_settings = "ALLOW_INTERNAL_ONLY"
-
-  labels = {
-    environment = "production"
-    network     = "private"
-  }
-}
-```
-
-### High-Performance Function with Scaling
-
-```hcl
-module "high_traffic_function" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  function_name         = "high-traffic-api"
-  project_id            = "my-gcp-project"
-  region                = "us-central1"
-  runtime               = "java21"
-  entry_point           = "com.example.ApiHandler"
-  source_archive_object = "api-handler.jar"
-
-  # Optimize for high traffic
-  available_memory                 = "2G"
-  available_cpu                    = "2"
-  timeout_seconds                  = 300
-  max_instance_count               = 500
-  min_instance_count               = 10  # Keep warm instances
-  max_instance_request_concurrency = 80
-
-  labels = {
-    environment = "production"
-    performance = "high"
-  }
-}
-```
-
-### Public API Function
-
-```hcl
-module "public_api" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  function_name         = "public-webhook"
-  project_id            = "my-gcp-project"
-  region                = "us-central1"
-  runtime               = "nodejs20"
-  entry_point           = "webhook"
-  source_archive_object = "webhook.zip"
-
-  # Allow public invocations (use with caution)
-  allow_unauthenticated_invocations = true
-
-  labels = {
-    environment = "production"
-    access      = "public"
-  }
-}
-```
-
-### Function with Specific IAM Members
-
-```hcl
-module "restricted_function" {
-  source = "github.com/your-org/infra-modules//terraform/gcp?ref=v1.0.0"
-
-  function_name         = "restricted-processor"
-  project_id            = "my-gcp-project"
-  region                = "us-central1"
-  runtime               = "python311"
-  entry_point           = "process"
-  source_archive_object = "processor.zip"
-
-  # Grant specific members permission to invoke
-  invoker_members = [
-    "serviceAccount:invoker@my-project.iam.gserviceaccount.com",
-    "user:admin@example.com",
-    "group:developers@example.com"
-  ]
-
-  labels = {
-    environment = "production"
-    access      = "restricted"
-  }
-}
-```
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -307,124 +134,4 @@ No modules.
 | <a name="output_state"></a> [state](#output\_state) | The current state of the Cloud Function. |
 | <a name="output_timeout_seconds"></a> [timeout\_seconds](#output\_timeout\_seconds) | The timeout setting of the Cloud Function in seconds. |
 <!-- END_TF_DOCS -->
-
-## Security Considerations
-
-### Default Security Posture
-
-This module implements security best practices by default:
-
-1. **Private by Default**: Functions are not publicly accessible unless explicitly configured
-2. **IAM Controls**: Explicit IAM member grants required for invocation
-3. **Dedicated Service Account**: Each function gets its own service account with least privilege
-4. **Source Code Protection**: Versioned Cloud Storage bucket for function source
-5. **Secret Management**: Native integration with Google Secret Manager for sensitive data
-6. **Network Isolation**: Support for VPC connectors and ingress controls
-
-### IAM Best Practices
-
-**For internal services:**
-```hcl
-invoker_members = [
-  "serviceAccount:backend@project.iam.gserviceaccount.com"
-]
-```
-
-**For public APIs (use with caution):**
-```hcl
-allow_unauthenticated_invocations = true
-```
-
-**Recommendation**: Always use the most restrictive access level possible. Prefer service accounts over user accounts for production workloads.
-
-### Secret Management
-
-**Never use environment_variables for sensitive data**. Instead, use Secret Manager:
-
-```hcl
-secret_environment_variables = [
-  {
-    key        = "DATABASE_PASSWORD"
-    project_id = var.project_id
-    secret     = "db-password"
-    version    = "latest"
-  }
-]
-```
-
-Benefits:
-- Centralized secret management
-- Automatic rotation support
-- Audit logging of secret access
-- Encryption at rest and in transit
-
-### Network Security
-
-**For private resources:**
-```hcl
-ingress_settings = "ALLOW_INTERNAL_ONLY"
-vpc_connector    = "projects/PROJECT/locations/REGION/connectors/CONNECTOR"
-```
-
-**Ingress options:**
-- `ALLOW_ALL`: Accept traffic from anywhere (default)
-- `ALLOW_INTERNAL_ONLY`: Only internal Google Cloud traffic
-- `ALLOW_INTERNAL_AND_GCLB`: Internal + Google Cloud Load Balancer
-
-### Cost Optimization
-
-**Control scaling to manage costs:**
-```hcl
-max_instance_count = 50   # Prevent runaway costs
-min_instance_count = 0    # Avoid idle costs (or set > 0 to reduce cold starts)
-```
-
-**Optimize memory and CPU:**
-```hcl
-available_memory = "256M"  # Start small and scale as needed
-timeout_seconds  = 60      # Prevent long-running functions from accumulating costs
-```
-
-## Runtime Support
-
-Supported runtimes (as of 2nd generation):
-- **Node.js**: 16, 18, 20, 22
-- **Python**: 3.8, 3.9, 3.10, 3.11, 3.12
-- **Go**: 1.16, 1.18, 1.19, 1.20, 1.21, 1.22
-- **Java**: 11, 17, 21
-- **.NET**: 3, 6, 8
-- **Ruby**: 3.0, 3.2, 3.3
-- **PHP**: 8.1, 8.2, 8.3
-
-## Testing
-
-Run the basic test:
-
-```bash
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
-
-## Migration from 1st Gen
-
-If migrating from Cloud Functions 1st generation:
-1. Update runtime versions (2nd gen uses newer versions)
-2. Review memory and CPU allocations (2nd gen has different options)
-3. Update environment variable access patterns if using secrets
-4. Test thoroughly before deploying to production
-
-## Known Limitations
-
-- The source code must be uploaded to Cloud Storage separately
-- Function deployment can take several minutes
-- Cold starts may occur with `min_instance_count = 0`
-- Maximum timeout is 3600 seconds (60 minutes)
-- Maximum memory is 32GB
-
-## Additional Resources
-
-- [Cloud Functions Documentation](https://cloud.google.com/functions/docs)
-- [Cloud Functions Pricing](https://cloud.google.com/functions/pricing)
-- [Best Practices](https://cloud.google.com/functions/docs/bestpractices/tips)
-- [Terraform Google Provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs)
+</details>

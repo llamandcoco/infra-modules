@@ -1,21 +1,49 @@
 # Module Name
 
-Brief description of what this module does.
+A template Terraform module demonstrating the standard structure and conventions for the infra-modules repository.
 
-## Usage
+## Features
+
+- Modular Design Clean separation of variables, resources, and outputs
+- Comprehensive Outputs All important resource attributes exported
+- Documentation Best practices for README and code organization
+- Testing Includes test configurations demonstrating module usage
+
+## Quick Start
 
 ```hcl
 module "example" {
-  source = "github.com/your-org/infra-modules//terraform/module-name?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/module-name?ref=<commit-sha>"
 
-  resource_name = "my-resource"
-
-  tags = {
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
+  # Add required variables here
 }
 ```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 ## Requirements
 

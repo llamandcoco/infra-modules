@@ -1,122 +1,52 @@
 # ECR Module
 
-Terraform module for creating and managing AWS Elastic Container Registry (ECR) repositories.
+A secure Terraform module for creating and managing AWS Elastic Container Registry repositories with image scanning, lifecycle policies, and cross-account access controls.
 
 ## Features
 
-- **Security by Default**: Encryption (AES256 or KMS), image scanning on push, and immutable tags
-- **Lifecycle Management**: Optional image retention policies to reduce storage costs
-- **Access Control**: Optional repository policies for cross-account access and CI/CD integration
-- **Production Ready**: Follows AWS best practices and passes tfsec security checks
+- Security by Default Encryption (AES256 or KMS), image scanning on push, and immutable tags
+- Lifecycle Management Optional image retention policies to reduce storage costs
+- Access Control Optional repository policies for cross-account access and CI/CD integration
+- Production Ready Follows AWS best practices and passes tfsec security checks
 
-## Usage
-
-### Basic Example
+## Quick Start
 
 ```hcl
 module "ecr" {
-  source = "github.com/your-org/infra-modules//terraform/ecr?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/ecr?ref=<commit-sha>"
 
-  repository_name = "my-application"
-
-  tags = {
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
+  # Add required variables here
 }
 ```
 
-### With KMS Encryption
+## Examples
 
-```hcl
-module "ecr" {
-  source = "github.com/your-org/infra-modules//terraform/ecr?ref=v1.0.0"
+Complete, tested configurations in [`tests/`](tests/):
 
-  repository_name = "my-application"
-  kms_key_arn     = "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
 
-  tags = {
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
-}
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
 ```
 
-### With Lifecycle Policy
+## Testing
 
-```hcl
-module "ecr" {
-  source = "github.com/your-org/infra-modules//terraform/ecr?ref=v1.0.0"
+## Features
 
-  repository_name = "my-application"
+- Security by Default Encryption (AES256 or KMS), image scanning on push, and immutable tags
+- Lifecycle Management Optional image retention policies to reduce storage costs
+- Access Control Optional repository policies for cross-account access and CI/CD integration
+- Production Ready Follows AWS best practices and passes tfsec security checks
 
-  lifecycle_policy = [
-    {
-      description     = "Keep last 10 production images"
-      tag_status      = "tagged"
-      tag_prefix_list = ["prod-"]
-      count_type      = "imageCountMoreThan"
-      count_number    = 10
-    },
-    {
-      description  = "Remove untagged images older than 7 days"
-      tag_status   = "untagged"
-      count_type   = "sinceImagePushed"
-      count_unit   = "days"
-      count_number = 7
-    }
-  ]
-
-  tags = {
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
-}
-```
-
-### With Cross-Account Access
-
-```hcl
-module "ecr" {
-  source = "github.com/your-org/infra-modules//terraform/ecr?ref=v1.0.0"
-
-  repository_name = "my-application"
-
-  repository_policy_statements = [
-    {
-      sid        = "AllowCrossAccountPull"
-      effect     = "Allow"
-      principals = ["arn:aws:iam::123456789012:root"]
-      actions = [
-        "ecr:GetDownloadUrlForLayer",
-        "ecr:BatchGetImage",
-        "ecr:BatchCheckLayerAvailability"
-      ]
-    }
-  ]
-
-  tags = {
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
-}
-```
-
-### Development Environment (Mutable Tags)
-
-```hcl
-module "ecr" {
-  source = "github.com/your-org/infra-modules//terraform/ecr?ref=v1.0.0"
-
-  repository_name      = "my-application-dev"
-  image_tag_mutability = "MUTABLE"
-
-  tags = {
-    Environment = "development"
-    ManagedBy   = "terraform"
-  }
-}
-```
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -173,18 +103,4 @@ No modules.
 | <a name="output_scan_on_push_enabled"></a> [scan\_on\_push\_enabled](#output\_scan\_on\_push\_enabled) | Whether image scanning on push is enabled. Important for security compliance verification. |
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the repository, including default and custom tags. |
 <!-- END_TF_DOCS -->
-
-## Security Considerations
-
-- **Encryption**: All repositories use encryption at rest (AES256 by default, optional KMS)
-- **Image Scanning**: Enabled by default to detect vulnerabilities
-- **Tag Immutability**: Immutable by default to prevent tag overwrites
-- **Access Control**: Use repository policies for least-privilege access
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
+</details>
