@@ -17,7 +17,7 @@
 
 ```hcl
 module "sqs" {
-  source = "github.com/llamandcoco/infra-modules//terraform/sqs?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/sqs?ref=<commit-sha>"
 
   # Add required variables here
 }

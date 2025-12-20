@@ -6,7 +6,7 @@
 
 ```hcl
 module "networking" {
-  source = "github.com/llamandcoco/infra-modules//terraform/stack/networking?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/stack/networking?ref=<commit-sha>"
 
   # Add required variables here
 }

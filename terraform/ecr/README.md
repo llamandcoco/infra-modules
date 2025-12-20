@@ -13,7 +13,7 @@
 
 ```hcl
 module "ecr" {
-  source = "github.com/llamandcoco/infra-modules//terraform/ecr?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/ecr?ref=<commit-sha>"
 
   # Add required variables here
 }

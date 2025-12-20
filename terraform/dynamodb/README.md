@@ -17,7 +17,7 @@ The module includes test configurations in `tests/basic/` that can be run withou
 
 ```hcl
 module "dynamodb" {
-  source = "github.com/llamandcoco/infra-modules//terraform/dynamodb?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/dynamodb?ref=<commit-sha>"
 
   # Add required variables here
 }

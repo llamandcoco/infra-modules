@@ -15,7 +15,7 @@ Run the basic test:
 
 ```hcl
 module "s3" {
-  source = "github.com/llamandcoco/infra-modules//terraform/s3?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/s3?ref=<commit-sha>"
 
   # Add required variables here
 }

@@ -6,7 +6,7 @@
 
 ```hcl
 module "eks" {
-  source = "github.com/llamandcoco/infra-modules//terraform/eks?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/eks?ref=<commit-sha>"
 
   # Add required variables here
 }

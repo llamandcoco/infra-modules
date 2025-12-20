@@ -17,7 +17,7 @@
 
 ```hcl
 module "cloud-functions" {
-  source = "github.com/llamandcoco/infra-modules//terraform/gcp/cloud-functions?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/gcp/cloud-functions?ref=<commit-sha>"
 
   # Add required variables here
 }

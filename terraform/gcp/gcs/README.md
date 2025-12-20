@@ -16,7 +16,7 @@
 
 ```hcl
 module "gcs" {
-  source = "github.com/llamandcoco/infra-modules//terraform/gcp/gcs?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/gcp/gcs?ref=<commit-sha>"
 
   # Add required variables here
 }

@@ -14,7 +14,7 @@
 
 ```hcl
 module "audit-logging" {
-  source = "github.com/llamandcoco/infra-modules//terraform/stack/audit-logging?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/stack/audit-logging?ref=<commit-sha>"
 
   # Add required variables here
 }

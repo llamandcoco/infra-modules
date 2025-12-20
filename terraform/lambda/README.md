@@ -17,7 +17,7 @@
 
 ```hcl
 module "lambda" {
-  source = "github.com/llamandcoco/infra-modules//terraform/lambda?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/lambda?ref=<commit-sha>"
 
   # Add required variables here
 }

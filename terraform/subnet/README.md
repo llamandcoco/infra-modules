@@ -6,7 +6,7 @@
 
 ```hcl
 module "subnet" {
-  source = "github.com/llamandcoco/infra-modules//terraform/subnet?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/subnet?ref=<commit-sha>"
 
   # Add required variables here
 }

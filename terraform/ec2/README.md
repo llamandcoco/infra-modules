@@ -17,7 +17,7 @@
 
 ```hcl
 module "ec2" {
-  source = "github.com/llamandcoco/infra-modules//terraform/ec2?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/ec2?ref=<commit-sha>"
 
   # Add required variables here
 }

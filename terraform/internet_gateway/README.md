@@ -6,7 +6,7 @@
 
 ```hcl
 module "internet_gateway" {
-  source = "github.com/llamandcoco/infra-modules//terraform/internet_gateway?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/internet_gateway?ref=<commit-sha>"
 
   # Add required variables here
 }
