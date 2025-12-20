@@ -42,9 +42,16 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-```bash
-cd tests/basic && terraform init && terraform plan
-```
+## Features
+
+- REST API Full REST API configuration with multiple endpoint types (EDGE, REGIONAL, PRIVATE)
+- Resource Management Dynamic resource creation with hierarchical path support
+- Multiple Integration Types Lambda proxy, HTTP, Mock, and AWS service integrations
+- Security Resource policies, API keys, usage plans, Lambda/Cognito authorizers
+- CORS Support Built-in CORS configuration for browser-based applications
+- Request Validation Request validators and JSON Schema models for input validation
+- Logging & Monitoring CloudWatch logs, X-Ray tracing, and CloudWatch metrics
+- Caching Optional API Gateway caching with encryption support
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

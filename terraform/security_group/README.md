@@ -31,8 +31,14 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-```bash
-cd tests/basic && terraform init && terraform plan
+## Quick Start
+
+```hcl
+module "security_group" {
+  source = "github.com/llamandcoco/infra-modules//terraform/security_group?ref=<commit-sha>"
+
+  # Add required variables here
+}
 ```
 
 <!-- BEGIN_TF_DOCS -->

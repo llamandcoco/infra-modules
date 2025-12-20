@@ -31,8 +31,14 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-```bash
-cd tests/basic && terraform init && terraform plan
+## Quick Start
+
+```hcl
+module "internet_gateway" {
+  source = "github.com/llamandcoco/infra-modules//terraform/internet_gateway?ref=<commit-sha>"
+
+  # Add required variables here
+}
 ```
 
 <!-- BEGIN_TF_DOCS -->

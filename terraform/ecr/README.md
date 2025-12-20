@@ -38,9 +38,12 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-```bash
-cd tests/basic && terraform init && terraform plan
-```
+## Features
+
+- Security by Default Encryption (AES256 or KMS), image scanning on push, and immutable tags
+- Lifecycle Management Optional image retention policies to reduce storage costs
+- Access Control Optional repository policies for cross-account access and CI/CD integration
+- Production Ready Follows AWS best practices and passes tfsec security checks
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

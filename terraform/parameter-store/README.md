@@ -40,9 +40,14 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-```bash
-cd tests/basic && terraform init && terraform plan
-```
+## Features
+
+- Multiple Parameter Types String, StringList, and SecureString
+- KMS Encryption Optional customer-managed KMS keys for SecureString parameters
+- Flexible Tiers Support for Standard, Advanced, and Intelligent-Tiering
+- Data Validation Optional allowed patterns and data types
+- Secure by Default Uses SecureString type by default for sensitive data
+- Tag Support Comprehensive tagging for resource organization
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

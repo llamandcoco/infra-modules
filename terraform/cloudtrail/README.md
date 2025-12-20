@@ -38,9 +38,12 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-```bash
-cd tests/basic && terraform init && terraform plan
-```
+## Features
+
+- 🌍 Multi-region support - Capture events from all AWS regions
+- 🔒 Security - Log file validation, encryption support
+- 🎯 Flexible - Optional CloudWatch Logs, Insights, advanced selectors
+- 🔌 Composable - Works with existing S3 buckets
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
