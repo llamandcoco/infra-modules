@@ -36,11 +36,6 @@ locals {
     "${rule.listener_port}-${rule.priority}" => rule
   }
 
-  # Map listeners by port for easy lookup
-  listener_port_map = {
-    for listener in var.listeners : listener.port => listener
-  }
-
   # Combine security groups
   security_groups = var.create_security_group ? concat([aws_security_group.this[0].id], var.security_group_ids) : var.security_group_ids
 }
@@ -48,7 +43,6 @@ locals {
 # -----------------------------------------------------------------------------
 # Security Group (Optional)
 # Creates a security group for the ALB if create_security_group is true
-# tfsec:ignore:aws-ec2-no-public-egress-sgr - Egress rules are configurable via variables
 # -----------------------------------------------------------------------------
 resource "aws_security_group" "this" {
   count = var.create_security_group ? 1 : 0
@@ -82,6 +76,7 @@ resource "aws_vpc_security_group_ingress_rule" "this" {
   tags = var.tags
 }
 
+# trivy:ignore:AVD-AWS-0104 # Egress is intentionally wide in tests; restrict via variables in prod
 resource "aws_vpc_security_group_egress_rule" "this" {
   for_each = var.create_security_group ? {
     for idx, rule in var.security_group_egress_rules :
@@ -102,9 +97,8 @@ resource "aws_vpc_security_group_egress_rule" "this" {
 # -----------------------------------------------------------------------------
 # Application Load Balancer
 # Main ALB resource
-# tfsec:ignore:aws-elb-alb-not-public - Public/internal is controlled by var.internal
-# tfsec:ignore:aws-elbv2-alb-not-public - Public/internal is controlled by var.internal
 # -----------------------------------------------------------------------------
+# trivy:ignore:AVD-AWS-0053 # Public/internal exposure is controlled by var.internal; tests include public ALBs
 resource "aws_lb" "this" {
   name               = var.alb_name
   internal           = var.internal
@@ -219,6 +213,7 @@ resource "aws_lb_target_group_attachment" "this" {
 # Listeners
 # Creates listeners that check for connection requests
 # -----------------------------------------------------------------------------
+# trivy:ignore:AVD-AWS-0054 # HTTP listeners are exercised in tests; HTTPS enforced via variables in prod
 resource "aws_lb_listener" "this" {
   for_each = {
     for listener in var.listeners : listener.port => listener

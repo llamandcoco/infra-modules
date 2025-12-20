@@ -538,7 +538,7 @@ variable "listeners" {
   validation {
     condition = alltrue([
       for l in var.listeners :
-      l.default_action.redirect == null || contains(["HTTP_301", "HTTP_302"], l.default_action.redirect.status_code)
+      (l.default_action.redirect == null) || contains(["HTTP_301", "HTTP_302"], try(l.default_action.redirect.status_code, ""))
     ])
     error_message = "Redirect status_code must be HTTP_301 or HTTP_302."
   }
