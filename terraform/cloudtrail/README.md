@@ -1,5 +1,7 @@
 # CloudTrail Module
 
+A comprehensive Terraform module for creating and managing AWS CloudTrail with multi-region support, S3 logging, encryption, and optional CloudWatch Logs integration.
+
 ## Features
 
 - 🌍 Multi-region support - Capture events from all AWS regions

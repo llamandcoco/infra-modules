@@ -1,5 +1,14 @@
 # Internet Gateway Terraform Module
 
+A simple Terraform module for creating and managing AWS Internet Gateway resources with VPC attachment and tagging support.
+
+## Features
+
+- VPC Integration Attach internet gateway to VPC for public internet access
+- Flexible Naming Customizable naming and tagging conventions
+- Easy Attachment Simple VPC association management
+- Tag Support Resource tagging for organization and cost allocation
+
 ## Quick Start
 
 ```hcl

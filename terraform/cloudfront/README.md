@@ -1,9 +1,6 @@
 # CloudFront Terraform Module
 
-- [AWS CloudFront Documentation](https://docs.aws.amazon.com/cloudfront/)
-- [CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/)
-- [Lambda@Edge Guide](https://docs.aws.amazon.com/lambda/latest/dg/lambda-edge.html)
-- [CloudFront Functions Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-functions.html)
+A production-ready Terraform module for creating and managing AWS CloudFront distributions with support for multiple origins, origin access control, advanced caching strategies, and edge computing capabilities.
 
 ## Features
 
@@ -52,6 +49,13 @@ cp -r tests/alb_origin/ my-project/
 ```bash
 cd tests/alb_origin && terraform init && terraform plan
 ```
+
+## References
+
+- [AWS CloudFront Documentation](https://docs.aws.amazon.com/cloudfront/)
+- [CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/)
+- [Lambda@Edge Guide](https://docs.aws.amazon.com/lambda/latest/dg/lambda-edge.html)
+- [CloudFront Functions Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-functions.html)
 
 <details>
 <summary>Terraform Documentation</summary>

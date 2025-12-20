@@ -1,5 +1,14 @@
 # VPC Terraform Module
 
+A comprehensive Terraform module for creating and managing AWS VPC resources with configurable IPv4 CIDR blocks and flexible networking options.
+
+## Features
+
+- VPC Creation Easy creation of Virtual Private Clouds with custom CIDR blocks
+- DNS Support Configure DNS hostnames and resolution for VPC resources
+- Flow Logs Optional VPC Flow Logs for network traffic monitoring
+- Tag Support Resource tagging for organization and cost allocation
+
 ## Quick Start
 
 ```hcl

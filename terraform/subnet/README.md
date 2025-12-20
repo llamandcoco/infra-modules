@@ -1,5 +1,14 @@
 # Subnet Terraform Module
 
+A Terraform module for creating and managing AWS Subnet resources with support for public/private subnets, automatic IPv4 assignment, and availability zone configuration.
+
+## Features
+
+- Public/Private Subnets Support for both public and private subnet types
+- Auto IP Assignment Configure automatic public IPv4 assignment for public subnets
+- CIDR Management Flexible IPv4 CIDR block configuration
+- Availability Zone Control Explicit availability zone selection or automatic assignment
+
 ## Quick Start
 
 ```hcl

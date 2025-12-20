@@ -1,5 +1,7 @@
 # Audit Logging Stack
 
+A pre-built stack combining CloudTrail and S3 bucket for comprehensive audit logging across your AWS account with minimal configuration.
+
 ## Features
 
 - 📦 All-in-one - S3 bucket + CloudTrail configured together

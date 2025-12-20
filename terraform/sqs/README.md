@@ -1,5 +1,7 @@
 # SQS Queue Module
 
+A production-ready Terraform module for creating and managing AWS SQS queues with support for Standard and FIFO queue types, dead letter queues, KMS encryption, and cross-account policies.
+
 ## Features
 
 - Queue Types Support for both Standard and FIFO (First-In-First-Out) queues

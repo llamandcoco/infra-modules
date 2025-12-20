@@ -1,5 +1,7 @@
 # API Gateway Module
 
+A comprehensive Terraform module for creating and managing AWS API Gateway REST APIs with support for multiple integration types, authentication, CORS, and advanced request validation.
+
 ## Features
 
 - REST API Full REST API configuration with multiple endpoint types (EDGE, REGIONAL, PRIVATE)

@@ -1,6 +1,6 @@
 # Google Cloud Storage (GCS) Bucket Terraform Module
 
-```bash
+A secure Terraform module for creating and managing Google Cloud Storage buckets with encryption, versioning, lifecycle management, and unified access controls.
 
 ## Features
 

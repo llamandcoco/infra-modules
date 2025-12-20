@@ -1,5 +1,7 @@
 # AWS Service Control Policy (SCP) - Region Restriction
 
+A Terraform module for creating and managing AWS Service Control Policies to enforce organization-wide governance, with built-in support for region restrictions and service limitations.
+
 ## Features
 
 - Enforces region restriction at the organization level

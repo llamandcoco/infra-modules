@@ -1,6 +1,6 @@
 # AWS S3 Bucket Terraform Module
 
-Run the basic test:
+A production-ready Terraform module for creating and managing AWS S3 buckets with security best practices including encryption, versioning, public access protection, and lifecycle management.
 
 ## Features
 

@@ -1,5 +1,18 @@
 # EKS Module
 
+A comprehensive Terraform module for creating and managing Amazon EKS (Elastic Kubernetes Service) clusters with support for managed node groups, IAM roles for service accounts (IRSA), cluster add-ons, and advanced networking.
+
+## Features
+
+- Managed Kubernetes Clusters Production-ready EKS clusters with control plane management
+- Node Group Management Managed node groups with auto-scaling and flexible configuration
+- IRSA Support IAM Roles for Service Accounts for fine-grained pod permissions
+- Cluster Add-ons Automatic management of EKS add-ons (VPC CNI, CoreDNS, kube-proxy, EBS CSI)
+- Multi-Mode Authentication Support for both ConfigMap and API-based access control
+- Encryption & Logging KMS encryption for secrets and CloudWatch logging for audit trails
+- Security Best Practices Private API endpoints, IMDSv2, and network policies
+- Comprehensive Monitoring CloudWatch integration and cluster health visibility
+
 ## Quick Start
 
 ```hcl

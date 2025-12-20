@@ -1,5 +1,7 @@
 # ECR Module
 
+A secure Terraform module for creating and managing AWS Elastic Container Registry repositories with image scanning, lifecycle policies, and cross-account access controls.
+
 ## Features
 
 - Security by Default Encryption (AES256 or KMS), image scanning on push, and immutable tags

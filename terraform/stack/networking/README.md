@@ -1,5 +1,14 @@
 # Networking Stack
 
+A complete networking stack providing VPC, subnets, internet gateway, NAT gateway, and route tables for production-ready infrastructure.
+
+## Features
+
+- Complete VPC Setup VPC with configurable CIDR and DNS settings
+- Public Subnets Public subnets with internet gateway routing
+- Private Subnets Private subnets with NAT gateway support
+- Multi-AZ Ready Spread resources across multiple availability zones
+
 ## Quick Start
 
 ```hcl

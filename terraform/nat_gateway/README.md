@@ -1,5 +1,14 @@
 # NAT Gateway Terraform Module
 
+A straightforward Terraform module for creating and managing AWS NAT Gateway resources for private subnet internet access with elastic IP management.
+
+## Features
+
+- NAT Configuration Create and manage NAT Gateways in public subnets
+- Elastic IP Integration Automatic or manual Elastic IP management
+- Subnet Integration Attach to public subnets for high availability
+- Easy Routing Support for private subnet routing to NAT Gateway
+
 ## Quick Start
 
 ```hcl

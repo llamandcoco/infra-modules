@@ -1,6 +1,6 @@
 # EventBridge Module
 
-``` cd tests/basic terraform init -backend=false terraform plan ```
+A powerful Terraform module for creating and managing AWS EventBridge rules, event buses, and targets with support for scheduled events, event patterns, and cross-account delivery.
 
 ## Features
 

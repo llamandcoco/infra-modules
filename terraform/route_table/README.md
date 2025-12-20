@@ -1,5 +1,14 @@
 # Route Table Terraform Module
 
+A Terraform module for creating and managing AWS Route Table resources with flexible route configuration and subnet associations.
+
+## Features
+
+- Multiple Routes Support for multiple destination CIDR blocks and targets
+- Flexible Targets Routes to Internet Gateway, NAT Gateway, VPN, or VPC Peering
+- Subnet Association Easy attachment to multiple subnets
+- Tag Support Resource tagging for organization and cost tracking
+
 ## Quick Start
 
 ```hcl

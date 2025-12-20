@@ -1,5 +1,7 @@
 # GCP Cloud Functions (2nd Gen) Terraform Module
 
+A comprehensive Terraform module for deploying and managing Google Cloud Functions (2nd Gen) with private deployment, secret management, and VPC connectivity.
+
 ## Features
 
 - Security First Private by default with explicit IAM controls

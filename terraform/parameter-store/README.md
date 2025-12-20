@@ -1,5 +1,7 @@
 # AWS SSM Parameter Store Terraform Module
 
+A flexible Terraform module for creating and managing AWS Systems Manager Parameter Store parameters with support for multiple parameter types, KMS encryption, and comprehensive tagging.
+
 ## Features
 
 - Multiple Parameter Types String, StringList, and SecureString

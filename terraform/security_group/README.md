@@ -1,5 +1,14 @@
 # Security Group Terraform Module
 
+A flexible Terraform module for creating and managing AWS Security Groups with support for ingress/egress rules, VPC integration, and comprehensive tagging.
+
+## Features
+
+- Ingress Rules Configure inbound traffic rules with flexible protocol support
+- Egress Rules Define outbound traffic with multiple target options
+- CIDR Management Support for CIDR blocks, security groups, and prefix lists
+- VPC Integration Create security groups within specific VPCs
+
 ## Quick Start
 
 ```hcl

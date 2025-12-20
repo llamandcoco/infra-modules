@@ -1,6 +1,6 @@
 # DynamoDB Table Module
 
-The module includes test configurations in `tests/basic/` that can be run without AWS credentials:
+A comprehensive Terraform module for creating and managing AWS DynamoDB tables with support for on-demand and provisioned billing, auto-scaling, encryption, and advanced indexing strategies.
 
 ## Features
 
