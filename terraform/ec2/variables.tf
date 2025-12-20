@@ -45,6 +45,18 @@ variable "subnet_id" {
   }
 }
 
+variable "lookup_subnet_data" {
+  description = "Whether to lookup subnet details (availability zone) via data source. Disable for tests without AWS access."
+  type        = bool
+  default     = true
+}
+
+variable "fallback_availability_zone" {
+  description = "Availability zone to use when subnet data lookup is disabled. Required if EBS volumes need an AZ and lookup is false."
+  type        = string
+  default     = null
+}
+
 # -----------------------------------------------------------------------------
 # Network Configuration
 # -----------------------------------------------------------------------------

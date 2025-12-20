@@ -13,9 +13,10 @@ terraform {
 # Data Sources
 # -----------------------------------------------------------------------------
 
-# Get the availability zone of the subnet
+# Get the availability zone of the subnet (optional for tests)
 data "aws_subnet" "selected" {
-  id = var.subnet_id
+  count = var.lookup_subnet_data ? 1 : 0
+  id    = var.subnet_id
 }
 
 # Used to fetch instance state for spot requests after fulfillment
@@ -23,6 +24,10 @@ data "aws_instance" "spot" {
   count = var.enable_spot_instance ? 1 : 0
 
   instance_id = aws_spot_instance_request.this[0].spot_instance_id
+}
+
+locals {
+  subnet_availability_zone = var.lookup_subnet_data ? data.aws_subnet.selected[0].availability_zone : var.fallback_availability_zone
 }
 
 # -----------------------------------------------------------------------------
@@ -189,14 +194,6 @@ resource "aws_instance" "this" {
     encrypted             = var.root_block_device.encrypted
     kms_key_id            = var.root_block_device.kms_key_id
     delete_on_termination = var.root_block_device.delete_on_termination
-
-    tags = merge(
-      var.tags,
-      var.volume_tags,
-      {
-        Name = "${var.instance_name}-root"
-      }
-    )
   }
 
   tags = merge(
@@ -288,14 +285,6 @@ resource "aws_spot_instance_request" "this" {
     encrypted             = var.root_block_device.encrypted
     kms_key_id            = var.root_block_device.kms_key_id
     delete_on_termination = var.root_block_device.delete_on_termination
-
-    tags = merge(
-      var.tags,
-      var.volume_tags,
-      {
-        Name = "${var.instance_name}-root"
-      }
-    )
   }
 
   tags = merge(
@@ -324,7 +313,7 @@ resource "aws_ebs_volume" "this" {
     vol.device_name => vol
   }
 
-  availability_zone = each.value.availability_zone != null ? each.value.availability_zone : data.aws_subnet.selected.availability_zone
+  availability_zone = each.value.availability_zone != null ? each.value.availability_zone : local.subnet_availability_zone
   size              = each.value.volume_size
   type              = each.value.volume_type
   iops              = each.value.iops

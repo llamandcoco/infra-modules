@@ -32,6 +32,10 @@ module "test_basic_ec2" {
   instance_type = "t3.micro"
   subnet_id     = "subnet-12345678"
 
+  # Avoid real AWS calls in tests
+  lookup_subnet_data         = false
+  fallback_availability_zone = "us-east-1a"
+
   # Use existing security group (mock)
   vpc_security_group_ids = ["sg-12345678"]
 

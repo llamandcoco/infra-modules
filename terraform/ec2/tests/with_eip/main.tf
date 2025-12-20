@@ -32,6 +32,10 @@ module "test_ec2_with_eip" {
   instance_type = "t3.small"
   subnet_id     = "subnet-12345678" # Public subnet
 
+  # Avoid real AWS calls in tests
+  lookup_subnet_data         = false
+  fallback_availability_zone = "us-east-1a"
+
   # VPC configuration for security group
   vpc_id = "vpc-12345678"
 
