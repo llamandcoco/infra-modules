@@ -21,7 +21,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -32,6 +32,9 @@ cp -r tests/basic/ my-project/
 ```bash
 cd tests/basic && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -74,3 +77,4 @@ No modules.
 | <a name="output_internet_gateway_id"></a> [internet\_gateway\_id](#output\_internet\_gateway\_id) | ID of the Internet Gateway. |
 | <a name="output_internet_gateway_tags"></a> [internet\_gateway\_tags](#output\_internet\_gateway\_tags) | Tags applied to the Internet Gateway. |
 <!-- END_TF_DOCS -->
+</details>

@@ -38,7 +38,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/alb_origin/main.tf
+cat tests/alb_origin/
 
 # Copy and adapt
 cp -r tests/alb_origin/ my-project/
@@ -49,6 +49,9 @@ cp -r tests/alb_origin/ my-project/
 ```bash
 cd tests/alb_origin && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -134,3 +137,4 @@ No modules.
 | <a name="output_viewer_certificate"></a> [viewer\_certificate](#output\_viewer\_certificate) | The SSL/TLS certificate configuration for the distribution. |
 | <a name="output_web_acl_id"></a> [web\_acl\_id](#output\_web\_acl\_id) | The AWS WAF Web ACL ID associated with the distribution, if configured. |
 <!-- END_TF_DOCS -->
+</details>

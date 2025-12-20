@@ -32,7 +32,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -43,6 +43,9 @@ cp -r tests/basic/ my-project/
 ```bash
 cd tests/basic && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -128,3 +131,4 @@ No modules.
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the queue, including default and custom tags. |
 | <a name="output_visibility_timeout_seconds"></a> [visibility\_timeout\_seconds](#output\_visibility\_timeout\_seconds) | The visibility timeout configured for the queue in seconds. |
 <!-- END_TF_DOCS -->
+</details>

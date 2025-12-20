@@ -33,7 +33,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -44,6 +44,9 @@ cp -r tests/basic/ my-project/
 ```bash
 cd tests/basic && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -101,3 +104,4 @@ No modules.
 | <a name="output_uniform_bucket_level_access"></a> [uniform\_bucket\_level\_access](#output\_uniform\_bucket\_level\_access) | Whether uniform bucket-level access is enabled for IAM-only access control. |
 | <a name="output_versioning_enabled"></a> [versioning\_enabled](#output\_versioning\_enabled) | Whether versioning is enabled on the bucket. Important for compliance and data protection verification. |
 <!-- END_TF_DOCS -->
+</details>

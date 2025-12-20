@@ -21,7 +21,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -32,6 +32,9 @@ cp -r tests/basic/ my-project/
 ```bash
 cd tests/basic && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -88,3 +91,4 @@ No modules.
 | <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | IDs of public subnets. |
 | <a name="output_public_subnet_names"></a> [public\_subnet\_names](#output\_public\_subnet\_names) | Name tags for public subnets. |
 <!-- END_TF_DOCS -->
+</details>

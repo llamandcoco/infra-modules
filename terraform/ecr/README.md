@@ -28,7 +28,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -42,6 +42,9 @@ cp -r tests/basic/ my-project/
 - Lifecycle Management Optional image retention policies to reduce storage costs
 - Access Control Optional repository policies for cross-account access and CI/CD integration
 - Production Ready Follows AWS best practices and passes tfsec security checks
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -98,3 +101,4 @@ No modules.
 | <a name="output_scan_on_push_enabled"></a> [scan\_on\_push\_enabled](#output\_scan\_on\_push\_enabled) | Whether image scanning on push is enabled. Important for security compliance verification. |
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the repository, including default and custom tags. |
 <!-- END_TF_DOCS -->
+</details>

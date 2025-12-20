@@ -30,7 +30,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -46,6 +46,9 @@ cp -r tests/basic/ my-project/
 - Data Validation Optional allowed patterns and data types
 - Secure by Default Uses SecureString type by default for sensitive data
 - Tag Support Comprehensive tagging for resource organization
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -92,3 +95,4 @@ No modules.
 | <a name="output_parameter_versions"></a> [parameter\_versions](#output\_parameter\_versions) | Map of parameter versions. Increments with each update, useful for change tracking and rollback scenarios. |
 | <a name="output_parameters"></a> [parameters](#output\_parameters) | Complete map of all parameter details including name, ARN, type, version, etc. |
 <!-- END_TF_DOCS -->
+</details>

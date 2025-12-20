@@ -28,7 +28,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -42,6 +42,9 @@ cp -r tests/basic/ my-project/
 - 🔒 Security - Log file validation, encryption support
 - 🎯 Flexible - Optional CloudWatch Logs, Insights, advanced selectors
 - 🔌 Composable - Works with existing S3 buckets
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -100,3 +103,4 @@ No modules.
 | <a name="output_trail_home_region"></a> [trail\_home\_region](#output\_trail\_home\_region) | Region in which the CloudTrail trail was created. |
 | <a name="output_trail_id"></a> [trail\_id](#output\_trail\_id) | ID of the CloudTrail trail. |
 <!-- END_TF_DOCS -->
+</details>

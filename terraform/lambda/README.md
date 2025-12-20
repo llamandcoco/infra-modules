@@ -37,7 +37,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -48,6 +48,9 @@ cp -r tests/basic/ my-project/
 ```bash
 cd tests/basic && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -119,3 +122,4 @@ No modules.
 | <a name="output_timeout"></a> [timeout](#output\_timeout) | The maximum execution time of the Lambda function in seconds. |
 | <a name="output_version"></a> [version](#output\_version) | The version of the Lambda function. Increments with each publish operation. |
 <!-- END_TF_DOCS -->
+</details>

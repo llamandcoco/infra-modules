@@ -32,7 +32,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -50,6 +50,9 @@ cp -r tests/basic/ my-project/
 - Request Validation Request validators and JSON Schema models for input validation
 - Logging & Monitoring CloudWatch logs, X-Ray tracing, and CloudWatch metrics
 - Caching Optional API Gateway caching with encryption support
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -166,3 +169,4 @@ No modules.
 | <a name="output_usage_plan_ids"></a> [usage\_plan\_ids](#output\_usage\_plan\_ids) | Map of usage plan names to their IDs. Use these for associating API keys or monitoring usage. |
 | <a name="output_xray_tracing_enabled"></a> [xray\_tracing\_enabled](#output\_xray\_tracing\_enabled) | Whether X-Ray tracing is enabled. Indicates if detailed request tracing is available. |
 <!-- END_TF_DOCS -->
+</details>

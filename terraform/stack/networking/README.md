@@ -23,7 +23,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -40,6 +40,9 @@ module "networking" {
   # Add required variables here
 }
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -106,3 +109,4 @@ No resources.
 | <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | Security groups created by the stack. |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | ID of the created VPC. |
 <!-- END_TF_DOCS -->
+</details>

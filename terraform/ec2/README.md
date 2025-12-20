@@ -36,7 +36,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -47,6 +47,9 @@ cp -r tests/basic/ my-project/
 ```bash
 cd tests/basic && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -162,3 +165,4 @@ No modules.
 | <a name="output_spot_request_state"></a> [spot\_request\_state](#output\_spot\_request\_state) | The state of the spot instance request (active, cancelled, etc.). |
 | <a name="output_tags_all"></a> [tags\_all](#output\_tags\_all) | A map of all tags applied to the instance. |
 <!-- END_TF_DOCS -->
+</details>

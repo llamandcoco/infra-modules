@@ -35,7 +35,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/advanced/main.tf
+cat tests/advanced/
 
 # Copy and adapt
 cp -r tests/advanced/ my-project/
@@ -46,6 +46,9 @@ cp -r tests/advanced/ my-project/
 ```bash
 cd tests/advanced && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -136,3 +139,4 @@ No modules.
 | <a name="output_ttl_enabled"></a> [ttl\_enabled](#output\_ttl\_enabled) | Whether Time To Live (TTL) is enabled on the table. |
 | <a name="output_write_capacity"></a> [write\_capacity](#output\_write\_capacity) | The provisioned write capacity units for the table (only applicable for PROVISIONED billing mode). |
 <!-- END_TF_DOCS -->
+</details>

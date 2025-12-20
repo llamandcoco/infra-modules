@@ -37,7 +37,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/main.tf
+cat tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -48,6 +48,9 @@ cp -r tests/basic/ my-project/
 ```bash
 cd tests/basic && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -128,3 +131,4 @@ No modules.
 | <a name="output_target_arns"></a> [target\_arns](#output\_target\_arns) | List of target ARNs configured for the EventBridge rule. |
 | <a name="output_target_ids"></a> [target\_ids](#output\_target\_ids) | List of target IDs configured for the EventBridge rule. |
 <!-- END_TF_DOCS -->
+</details>
