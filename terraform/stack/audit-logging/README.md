@@ -4,11 +4,11 @@ A pre-built stack combining CloudTrail and S3 bucket for comprehensive audit log
 
 ## Features
 
-- 📦 All-in-one - S3 bucket + CloudTrail configured together
-- 💰 Cost optimized - First trail is free, S3-only storage (~$2-5/month)
-- 🔒 Secure by default - Versioning, encryption, public access blocked
-- 📊 Lifecycle managed - Auto-archive to Glacier and expiration
-- 🌍 Multi-region - Capture events from all AWS regions
+- All-in-one - S3 bucket + CloudTrail configured together
+- Cost optimized - First trail is free, S3-only storage (~$2-5/month)
+- Secure by default - Versioning, encryption, public access blocked
+- Lifecycle managed - Auto-archive to Glacier and expiration
+- Multi-region - Capture events from all AWS regions
 
 ## Quick Start
 

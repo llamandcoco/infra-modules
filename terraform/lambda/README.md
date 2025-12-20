@@ -2,14 +2,14 @@
 
 ## Features
 
-- ✅ Multi-Runtime Support Python, Node.js (TypeScript), and Go
-- ✅ Flexible Deployment S3 or local zip file deployment
-- ✅ Security Best Practices Least privilege IAM roles and policies
-- ✅ CloudWatch Integration Automatic log group creation with retention policies
-- ✅ Environment Variables Encrypted at rest with AWS managed keys
-- ✅ Custom Permissions Easy attachment of additional IAM policies
-- ✅ Concurrency Control Configurable reserved concurrent executions
-- ✅ Comprehensive Outputs All necessary ARNs and identifiers for integration
+- Multi-Runtime Support Python, Node.js (TypeScript), and Go
+- Flexible Deployment S3 or local zip file deployment
+- Security Best Practices Least privilege IAM roles and policies
+- CloudWatch Integration Automatic log group creation with retention policies
+- Environment Variables Encrypted at rest with AWS managed keys
+- Custom Permissions Easy attachment of additional IAM policies
+- Concurrency Control Configurable reserved concurrent executions
+- Comprehensive Outputs All necessary ARNs and identifiers for integration
 
 ## Quick Start
 

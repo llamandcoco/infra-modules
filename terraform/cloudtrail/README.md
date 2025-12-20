@@ -4,10 +4,10 @@ A comprehensive Terraform module for creating and managing AWS CloudTrail with m
 
 ## Features
 
-- 🌍 Multi-region support - Capture events from all AWS regions
-- 🔒 Security - Log file validation, encryption support
-- 🎯 Flexible - Optional CloudWatch Logs, Insights, advanced selectors
-- 🔌 Composable - Works with existing S3 buckets
+- Multi-region support - Capture events from all AWS regions
+- Security - Log file validation, encryption support
+- Flexible - Optional CloudWatch Logs, Insights, advanced selectors
+- Composable - Works with existing S3 buckets
 
 ## Quick Start
 
@@ -40,10 +40,10 @@ cp -r tests/basic/ my-project/
 
 ## Features
 
-- 🌍 Multi-region support - Capture events from all AWS regions
-- 🔒 Security - Log file validation, encryption support
-- 🎯 Flexible - Optional CloudWatch Logs, Insights, advanced selectors
-- 🔌 Composable - Works with existing S3 buckets
+- Multi-region support - Capture events from all AWS regions
+- Security - Log file validation, encryption support
+- Flexible - Optional CloudWatch Logs, Insights, advanced selectors
+- Composable - Works with existing S3 buckets
 
 <details>
 <summary>Terraform Documentation</summary>
