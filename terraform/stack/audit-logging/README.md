@@ -1,7 +1,5 @@
 # Audit Logging Stack
 
-## Related Modules
-
 ## Features
 
 - 📦 All-in-one - S3 bucket + CloudTrail configured together

@@ -1,7 +1,5 @@
 # Route Table Terraform Module
 
-## Testing
-
 ## Quick Start
 
 ```hcl

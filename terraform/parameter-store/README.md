@@ -1,7 +1,5 @@
 # AWS SSM Parameter Store Terraform Module
 
-## Testing
-
 ## Features
 
 - Multiple Parameter Types String, StringList, and SecureString

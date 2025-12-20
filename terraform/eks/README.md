@@ -1,7 +1,5 @@
 # EKS Module
 
-### IRSA not working
-
 ## Quick Start
 
 ```hcl

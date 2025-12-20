@@ -1,7 +1,5 @@
 # EC2 Terraform Module
 
-### Run All Tests ```bash for test in tests/*/; do   echo "Testing $test"   cd "$test"   terraform init && terraform plan   cd ../.. done ```
-
 ## Features
 
 - Flexible Instance Configuration Support for on-demand and spot instances

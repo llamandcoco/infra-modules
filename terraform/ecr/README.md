@@ -1,7 +1,5 @@
 # ECR Module
 
-## Testing
-
 ## Features
 
 - Security by Default Encryption (AES256 or KMS), image scanning on push, and immutable tags

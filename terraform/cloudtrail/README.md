@@ -1,7 +1,5 @@
 # CloudTrail Module
 
-## Testing
-
 ## Features
 
 - 🌍 Multi-region support - Capture events from all AWS regions

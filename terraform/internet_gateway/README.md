@@ -1,7 +1,5 @@
 # Internet Gateway Terraform Module
 
-## Testing
-
 ## Quick Start
 
 ```hcl

@@ -1,7 +1,5 @@
 # AWS Service Control Policy (SCP) - Region Restriction
 
-## Outputs
-
 ## Features
 
 - Enforces region restriction at the organization level

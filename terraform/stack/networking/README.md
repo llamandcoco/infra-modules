@@ -1,7 +1,5 @@
 # Networking Stack
 
-## Testing
-
 ## Quick Start
 
 ```hcl

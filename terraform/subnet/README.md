@@ -1,7 +1,5 @@
 # Subnet Terraform Module
 
-## Testing
-
 ## Quick Start
 
 ```hcl

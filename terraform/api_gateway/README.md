@@ -1,7 +1,5 @@
 # API Gateway Module
 
-## Testing
-
 ## Features
 
 - REST API Full REST API configuration with multiple endpoint types (EDGE, REGIONAL, PRIVATE)

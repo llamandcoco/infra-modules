@@ -1,7 +1,5 @@
 # GCP Cloud Functions (2nd Gen) Terraform Module
 
-## Additional Resources
-
 ## Features
 
 - Security First Private by default with explicit IAM controls

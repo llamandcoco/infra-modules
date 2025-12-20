@@ -1,7 +1,5 @@
 # SQS Queue Module
 
-### FIFO Queues - 300 TPS limit (3,000 with batching or high throughput mode) - Must end with `.fifo` suffix (automatically added by this module) - Cannot convert standard queue to FIFO or vice versa
-
 ## Features
 
 - Queue Types Support for both Standard and FIFO (First-In-First-Out) queues

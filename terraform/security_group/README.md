@@ -1,7 +1,5 @@
 # Security Group Terraform Module
 
-## Testing
-
 ## Quick Start
 
 ```hcl

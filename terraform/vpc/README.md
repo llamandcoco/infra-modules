@@ -1,7 +1,5 @@
 # VPC Terraform Module
 
-## Testing
-
 ## Quick Start
 
 ```hcl
