@@ -174,7 +174,7 @@ resource "aws_lb_target_group" "this" {
   }
 
   dynamic "stickiness" {
-    for_each = each.value.stickiness != null && each.value.stickiness.enabled ? [1] : []
+    for_each = try(each.value.stickiness.enabled, false) ? [1] : []
 
     content {
       type            = each.value.stickiness.type
