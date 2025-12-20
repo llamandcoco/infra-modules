@@ -9,10 +9,34 @@ terraform {
   }
 }
 
-# -----------------------------------------------------------------------------
-# Origin Access Control (OAC)
-# Recommended for S3 origins - supports all S3 features including SSE-KMS
-# -----------------------------------------------------------------------------
+# Local values for resolving S3 origin configuration
+# Handles AWS provider requirement that origin_access_identity must be present
+# even when using modern Origin Access Control (OAC)
+locals {
+  # Transform origins to ensure s3_origin_config has origin_access_identity set
+  # When using OAC, origin_access_identity is set to empty string (provider requirement)
+  # When using OAI, origin_access_identity is passed through as-is
+  transformed_origins = [
+    for origin in var.origins : merge(
+      origin,
+      origin.s3_origin_config != null ? {
+        s3_origin_config = merge(
+          origin.s3_origin_config,
+          {
+            # AWS provider requires origin_access_identity to be present in the schema
+            # even when using OAC. Set to empty string if using OAC (origin_access_control_id provided)
+            origin_access_identity = (
+              origin.s3_origin_config.origin_access_control_id != null && origin.s3_origin_config.origin_access_control_id != "" ?
+              "" :
+              origin.s3_origin_config.origin_access_identity
+            )
+          }
+        )
+      } : {}
+    )
+  ]
+}
+
 
 resource "aws_cloudfront_origin_access_control" "this" {
   count = var.create_origin_access_control ? 1 : 0
@@ -45,7 +69,7 @@ resource "aws_cloudfront_distribution" "this" {
 
   # Origins configuration
   dynamic "origin" {
-    for_each = var.origins
+    for_each = local.transformed_origins
 
     content {
       origin_id   = origin.value.origin_id
@@ -60,7 +84,7 @@ resource "aws_cloudfront_distribution" "this" {
         for_each = origin.value.s3_origin_config != null ? [origin.value.s3_origin_config] : []
 
         content {
-          origin_access_identity = try(s3_origin_config.value.origin_access_identity, "")
+          origin_access_identity = s3_origin_config.value.origin_access_identity
         }
       }
 
