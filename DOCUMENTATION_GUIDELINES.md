@@ -19,11 +19,13 @@ Brief description (1-2 sentences)
 
 ```hcl
 module "name" {
-  source = "github.com/llamandcoco/infra-modules//terraform/name?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/name?ref=<commit-sha>"
 
   # Add required variables
 }
 ```
+
+**Note:** Use commit SHA instead of version tags (e.g., `?ref=abc123def`) until a release policy is established.
 
 ## Examples
 
@@ -191,7 +193,7 @@ Excluding terraform-docs auto-generated content.
 
 ```hcl
 module "short_name" {
-  source = "github.com/llamandcoco/infra-modules//terraform/module?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/module?ref=<commit-sha>"
 
   # Only required variables
   name = "example"
