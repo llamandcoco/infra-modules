@@ -29,11 +29,11 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|----------|
-| Basic | [`tests/basic/`](tests/basic/) |
-| Host Based | [`tests/host_based/`](tests/host_based/) |
-| Https | [`tests/https/`](tests/https/) |
-| Multi Target | [`tests/multi_target/`](tests/multi_target/) |
-| Path Based | [`tests/path_based/`](tests/path_based/) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| Host Based | [`tests/host_based/main.tf`](tests/host_based/main.tf) |
+| Https | [`tests/https/main.tf`](tests/https/main.tf) |
+| Multi Target | [`tests/multi_target/main.tf`](tests/multi_target/main.tf) |
+| Path Based | [`tests/path_based/main.tf`](tests/path_based/main.tf) |
 
 **Usage:**
 ```bash

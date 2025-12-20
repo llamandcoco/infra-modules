@@ -29,8 +29,8 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|----------|
-| Advanced | [`tests/advanced/`](tests/advanced/) |
-| Basic | [`tests/basic/`](tests/basic/) |
+| Advanced | [`tests/advanced/main.tf`](tests/advanced/main.tf) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
 
 **Usage:**
 ```bash

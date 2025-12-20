@@ -29,11 +29,11 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|----------|
-| Alb Origin | [`tests/alb_origin/`](tests/alb_origin/) |
-| Basic | [`tests/basic/`](tests/basic/) |
-| Lambda Edge | [`tests/lambda_edge/`](tests/lambda_edge/) |
-| Multi Origin | [`tests/multi_origin/`](tests/multi_origin/) |
-| S3 Oac | [`tests/s3_oac/`](tests/s3_oac/) |
+| Alb Origin | [`tests/alb_origin/main.tf`](tests/alb_origin/main.tf) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| Lambda Edge | [`tests/lambda_edge/main.tf`](tests/lambda_edge/main.tf) |
+| Multi Origin | [`tests/multi_origin/main.tf`](tests/multi_origin/main.tf) |
+| S3 Oac | [`tests/s3_oac/main.tf`](tests/s3_oac/main.tf) |
 
 **Usage:**
 ```bash

@@ -33,7 +33,7 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|-----------|
-| Example Name | [`tests/example/`](tests/example/) |
+| Example Name | [`tests/example/main.tf`](tests/example/main.tf) |
 
 **Usage:**
 ```bash
@@ -204,9 +204,9 @@ Excluding terraform-docs auto-generated content.
 ```markdown
 | Example | Directory |
 |---------|-----------|
-| Basic Configuration | [`tests/basic/`](tests/basic/) |
-| Advanced Features | [`tests/advanced/`](tests/advanced/) |
-| Production Setup | [`tests/production/`](tests/production/) |
+| Basic Configuration | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| Advanced Features | [`tests/advanced/main.tf`](tests/advanced/main.tf) |
+| Production Setup | [`tests/production/main.tf`](tests/production/main.tf) |
 ```
 
 ### Quick Start Format

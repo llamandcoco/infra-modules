@@ -16,9 +16,9 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|----------|
-| Basic | [`tests/basic/`](tests/basic/) |
-| No Nat | [`tests/no-nat/`](tests/no-nat/) |
-| Single Nat | [`tests/single-nat/`](tests/single-nat/) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| No Nat | [`tests/no-nat/main.tf`](tests/no-nat/main.tf) |
+| Single Nat | [`tests/single-nat/main.tf`](tests/single-nat/main.tf) |
 
 **Usage:**
 ```bash

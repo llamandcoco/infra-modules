@@ -29,10 +29,10 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|----------|
-| Basic | [`tests/basic/`](tests/basic/) |
-| Go | [`tests/go/`](tests/go/) |
-| Python | [`tests/python/`](tests/python/) |
-| Typescript | [`tests/typescript/`](tests/typescript/) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| Go | [`tests/go/main.tf`](tests/go/main.tf) |
+| Python | [`tests/python/main.tf`](tests/python/main.tf) |
+| Typescript | [`tests/typescript/main.tf`](tests/typescript/main.tf) |
 
 **Usage:**
 ```bash

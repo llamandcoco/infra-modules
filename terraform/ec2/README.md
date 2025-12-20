@@ -27,11 +27,11 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|----------|
-| Basic | [`tests/basic/`](tests/basic/) |
-| Spot Instance | [`tests/spot_instance/`](tests/spot_instance/) |
-| User Data | [`tests/user_data/`](tests/user_data/) |
-| With Ebs | [`tests/with_ebs/`](tests/with_ebs/) |
-| With Eip | [`tests/with_eip/`](tests/with_eip/) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| Spot Instance | [`tests/spot_instance/main.tf`](tests/spot_instance/main.tf) |
+| User Data | [`tests/user_data/main.tf`](tests/user_data/main.tf) |
+| With Ebs | [`tests/with_ebs/main.tf`](tests/with_ebs/main.tf) |
+| With Eip | [`tests/with_eip/main.tf`](tests/with_eip/main.tf) |
 
 **Usage:**
 ```bash

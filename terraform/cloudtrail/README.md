@@ -23,7 +23,7 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|----------|
-| Basic | [`tests/basic/`](tests/basic/) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
 
 **Usage:**
 ```bash

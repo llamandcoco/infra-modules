@@ -29,10 +29,10 @@ Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
 |---------|----------|
-| Basic | [`tests/basic/`](tests/basic/) |
-| Cross Account | [`tests/cross_account/`](tests/cross_account/) |
-| Pattern | [`tests/pattern/`](tests/pattern/) |
-| Scheduled | [`tests/scheduled/`](tests/scheduled/) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| Cross Account | [`tests/cross_account/main.tf`](tests/cross_account/main.tf) |
+| Pattern | [`tests/pattern/main.tf`](tests/pattern/main.tf) |
+| Scheduled | [`tests/scheduled/main.tf`](tests/scheduled/main.tf) |
 
 **Usage:**
 ```bash
