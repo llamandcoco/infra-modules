@@ -1,17 +1,38 @@
 # NAT Gateway Terraform Module
 
-Creates NAT Gateways (optionally one per AZ) with Elastic IPs for private subnet outbound internet access.
+## Testing
 
-## Usage
+## Quick Start
 
 ```hcl
-module "nat" {
-  source = "github.com/your-org/infra-modules//terraform/nat_gateway"
+module "nat_gateway" {
+  source = "github.com/llamandcoco/infra-modules//terraform/nat_gateway?ref=v1.0.0"
 
-  public_subnet_ids = module.subnets.public_subnet_ids
-  create_per_az     = true
-  name_prefix       = "core"
+  # Add required variables here
 }
+```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
@@ -58,11 +79,3 @@ No modules.
 | <a name="output_nat_gateway_ids"></a> [nat\_gateway\_ids](#output\_nat\_gateway\_ids) | Map of NAT Gateway IDs keyed by index. |
 | <a name="output_nat_gateway_names"></a> [nat\_gateway\_names](#output\_nat\_gateway\_names) | Map of NAT Gateway Name tags keyed by index. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```

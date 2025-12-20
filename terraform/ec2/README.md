@@ -1,11 +1,6 @@
 # EC2 Terraform Module
 
-### Run EBS Test
-```bash
-cd tests/with_ebs
-terraform init
-terraform plan
-```
+### Run All Tests ```bash for test in tests/*/; do   echo "Testing $test"   cd "$test"   terraform init && terraform plan   cd ../.. done ```
 
 ## Features
 
@@ -33,7 +28,7 @@ module "ec2" {
 Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
-|---------|--------|
+|---------|----------|
 | Basic | [`tests/basic/`](tests/basic/) |
 | Spot Instance | [`tests/spot_instance/`](tests/spot_instance/) |
 | User Data | [`tests/user_data/`](tests/user_data/) |
@@ -169,73 +164,3 @@ No modules.
 | <a name="output_spot_request_state"></a> [spot\_request\_state](#output\_spot\_request\_state) | The state of the spot instance request (active, cancelled, etc.). |
 | <a name="output_tags_all"></a> [tags\_all](#output\_tags\_all) | A map of all tags applied to the instance. |
 <!-- END_TF_DOCS -->
-
-## Security Best Practices
-
-### IMDSv2 (Instance Metadata Service v2)
-
-Always require IMDSv2 for enhanced security:
-
-```hcl
-metadata_options = {
-  http_endpoint = "enabled"
-  http_tokens   = "required"  # Requires IMDSv2
-}
-```
-
-### EBS Encryption
-
-Enable encryption for all volumes:
-
-```hcl
-root_block_device = {
-  encrypted = true
-  # Optional: Use customer-managed key
-  # kms_key_id = "arn:aws:kms:region:account:key/key-id"
-}
-
-ebs_volumes = [
-  {
-    device_name = "/dev/sdf"
-    volume_size = 100
-    encrypted   = true
-  }
-]
-```
-
-### Termination Protection
-
-Enable for production instances:
-
-```hcl
-disable_api_termination = true
-```
-
-## Testing
-
-The module includes comprehensive test scenarios:
-
-### Run Basic Test
-```bash
-cd tests/basic
-terraform init
-terraform plan
-```
-
-### Run EBS Test
-```bash
-cd tests/with_ebs
-terraform init
-terraform plan
-```
-
-### Run All Tests
-```bash
-for test in tests/*/; do
-  echo "Testing $test"
-  cd "$test"
-  terraform init && terraform plan
-  cd ../..
-done
-```
-

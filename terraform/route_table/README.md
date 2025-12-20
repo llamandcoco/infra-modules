@@ -1,20 +1,38 @@
 # Route Table Terraform Module
 
-Creates public, private, and database route tables with associations supporting Internet Gateway and NAT Gateway routing.
+## Testing
 
-## Usage
+## Quick Start
 
 ```hcl
-module "route_tables" {
-  source = "github.com/your-org/infra-modules//terraform/route_table"
+module "route_table" {
+  source = "github.com/llamandcoco/infra-modules//terraform/route_table?ref=v1.0.0"
 
-  vpc_id              = module.vpc.vpc_id
-  internet_gateway_id = module.igw.internet_gateway_id
-  nat_gateway_ids     = module.nat.nat_gateway_ids
-  public_subnet_ids   = module.subnets.public_subnet_ids
-  private_subnet_ids  = module.subnets.private_subnet_ids
-  database_subnet_ids = module.subnets.database_subnet_ids
+  # Add required variables here
 }
+```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
@@ -77,11 +95,3 @@ No modules.
 | <a name="output_public_route_table_id"></a> [public\_route\_table\_id](#output\_public\_route\_table\_id) | ID of the public route table. |
 | <a name="output_public_route_table_name"></a> [public\_route\_table\_name](#output\_public\_route\_table\_name) | Name tag of the public route table. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```

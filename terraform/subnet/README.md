@@ -1,23 +1,38 @@
 # Subnet Terraform Module
 
-Creates public, private, and database subnets across multiple AZs with tagging and optional IPv6 assignment for public tiers.
+## Testing
 
-## Usage
+## Quick Start
 
 ```hcl
-module "subnets" {
-  source = "github.com/your-org/infra-modules//terraform/subnet"
+module "subnet" {
+  source = "github.com/llamandcoco/infra-modules//terraform/subnet?ref=v1.0.0"
 
-  vpc_id               = module.vpc.vpc_id
-  azs                  = ["us-east-1a", "us-east-1b"]
-  public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
-  private_subnet_cidrs = ["10.0.11.0/24", "10.0.12.0/24"]
-  database_subnet_cidrs = ["10.0.21.0/24", "10.0.22.0/24"]
-
-  tags = {
-    Environment = "prod"
-  }
+  # Add required variables here
 }
+```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
@@ -75,11 +90,3 @@ No modules.
 | <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | IDs of public subnets. |
 | <a name="output_public_subnet_names"></a> [public\_subnet\_names](#output\_public\_subnet\_names) | Name tags for public subnets. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```

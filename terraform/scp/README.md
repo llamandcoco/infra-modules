@@ -1,6 +1,6 @@
 # AWS Service Control Policy (SCP) - Region Restriction
 
-Terraform module to create an AWS Organizations Service Control Policy (SCP) that restricts resource creation to specific AWS regions.
+## Outputs
 
 ## Features
 
@@ -10,163 +10,38 @@ Terraform module to create an AWS Organizations Service Control Policy (SCP) tha
 - Supports attachment to organizational units or accounts
 - Configurable allowed regions list
 
-## Usage
-
-### Basic Example
+## Quick Start
 
 ```hcl
-module "region_restriction_scp" {
-  source = "github.com/your-org/infra-modules//terraform/scp?ref=v1.0.0"
+module "scp" {
+  source = "github.com/llamandcoco/infra-modules//terraform/scp?ref=v1.0.0"
 
-  policy_name     = "restrict-to-canada-korea"
-  allowed_regions = ["ca-central-1", "ap-northeast-2"]
-
-  tags = {
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
+  # Add required variables here
 }
 ```
-
-### With Policy Attachment
-
-```hcl
-module "region_restriction_scp" {
-  source = "github.com/your-org/infra-modules//terraform/scp?ref=v1.0.0"
-
-  policy_name     = "restrict-to-canada-korea"
-  allowed_regions = ["ca-central-1", "ap-northeast-2"]
-
-  # Attach to specific OUs or accounts
-  target_ids = [
-    "ou-xxxx-yyyyyyyy",  # Organizational Unit ID
-    "123456789012",       # AWS Account ID
-  ]
-
-  tags = {
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
-}
-```
-
-### Custom Configuration
-
-```hcl
-module "region_restriction_scp" {
-  source = "github.com/your-org/infra-modules//terraform/scp?ref=v1.0.0"
-
-  policy_name             = "custom-region-policy"
-  description             = "Custom region restriction for development"
-  allowed_regions         = ["us-east-1", "us-west-2"]
-  allow_global_services   = false  # Strict regional enforcement
-
-  target_ids = ["ou-xxxx-yyyyyyyy"]
-
-  tags = {
-    Environment = "development"
-    ManagedBy   = "terraform"
-    CostCenter  = "engineering"
-  }
-}
-```
-
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 1.0 |
-| aws | ~> 5.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| aws | ~> 5.0 |
-
-## Resources
-
-| Name | Type |
-|------|------|
-| aws_organizations_policy.region_restriction | resource |
-| aws_organizations_policy_attachment.region_restriction | resource |
-| aws_iam_policy_document.region_restriction | data source |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| policy_name | Name of the Service Control Policy | `string` | `"region-restriction-policy"` | no |
-| description | Description of the Service Control Policy | `string` | `"Restricts resource creation to allowed regions only"` | no |
-| allowed_regions | List of AWS regions where resource creation is allowed | `list(string)` | `["ca-central-1", "ap-northeast-2"]` | no |
-| allow_global_services | Whether to allow global AWS services (IAM, CloudFront, etc.) | `bool` | `true` | no |
-| target_ids | List of organizational unit IDs or account IDs to attach the policy to | `list(string)` | `[]` | no |
-| tags | A map of tags to add to the SCP | `map(string)` | `{}` | no |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| policy_id | The ID of the Service Control Policy |
-| policy_arn | The ARN of the Service Control Policy |
-| policy_name | The name of the Service Control Policy |
-| policy_content | The JSON content of the Service Control Policy |
-| allowed_regions | List of allowed AWS regions |
-| attachment_ids | Map of target IDs to their policy attachment IDs |
-
-## Important Notes
-
-### Prerequisites
-
-- AWS Organizations must be enabled in your AWS account
-- You must have permissions to create and manage SCPs
-- The account applying this Terraform configuration should be the organization's management account
-
-### Global Services
-
-When `allow_global_services = true` (default), the following services are exempted from region restrictions:
-- IAM (Identity and Access Management)
-- AWS Organizations
-- Route 53
-- CloudFront
-- Global Accelerator
-- Import/Export
-- Support
-- Trusted Advisor
-
-These services are global by nature and don't operate in specific regions.
-
-### Policy Attachment
-
-- If `target_ids` is empty, the policy will be created but not attached
-- You can attach the policy manually later or through another Terraform configuration
-- Valid target IDs include:
-  - Root organization ID (r-xxxx)
-  - Organizational Unit IDs (ou-xxxx-yyyyyyyy)
-  - AWS Account IDs (123456789012)
-
-### Testing
-
-This module includes test cases that validate:
-- Policy creation with default regions (ca-central-1, ap-northeast-2)
-- Policy creation with custom regions
-- Policy attachment to targets
-- Global services exemption
 
 ## Examples
 
-See the [tests](./tests) directory for complete working examples.
+Complete, tested configurations in [`tests/`](tests/):
 
-## Security Considerations
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
 
-- **Review Before Applying**: SCPs can prevent critical operations. Test in non-production first.
-- **Emergency Access**: Ensure you have a mechanism to detach SCPs if needed
-- **Global Services**: Consider carefully whether to allow global services
-- **Root Account**: SCPs don't affect the root account of member accounts
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
 
-## License
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
 
-See [LICENSE](../../LICENSE) file for details.
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

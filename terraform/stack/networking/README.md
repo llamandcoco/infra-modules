@@ -1,50 +1,40 @@
 # Networking Stack
 
-Reference composition that wires the networking modules into a complete multi-AZ VPC with public, private, and database tiers.
+## Testing
 
-## Architecture
-
-```mermaid
-flowchart LR
-  IGW["Internet Gateway"] --- RTpub["Public RT"]
-  RTpub --- PubA["Public Subnet A"]
-  RTpub --- PubB["Public Subnet B"]
-
-  NATa["NAT GW A"] --- RTA["Private RT A"]
-  NATb["NAT GW B"] --- RTB["Private RT B"]
-
-  RTA --- PrivA["Private Subnet A"]
-  RTB --- PrivB["Private Subnet B"]
-
-  DBRT["Database RT"] --- DBA["DB Subnet A"]
-  DBRT --- DBB["DB Subnet B"]
-```
-
-## Subnet Strategy
-- One public, one private, and one database subnet per AZ.
-- Public subnets optionally assign public IPs for ingress/egress via the Internet Gateway.
-- Private subnets use NAT Gateways (one per AZ by default) for outbound-only access.
-- Database subnets stay isolated; optional NAT routing is controllable via input.
-
-## Route Behavior
-- Public route table forwards `0.0.0.0/0` to the Internet Gateway.
-- Private route tables forward `0.0.0.0/0` to NAT Gateways (HA optional).
-- Database route table is isolated by default; can opt-in to NAT routing.
-
-## Usage
+## Quick Start
 
 ```hcl
 module "networking" {
-  source = "github.com/your-org/infra-modules//terraform/stack/networking"
+  source = "github.com/llamandcoco/infra-modules//terraform/stack/networking?ref=v1.0.0"
 
-  name       = "core"
-  cidr_block = "10.0.0.0/16"
-  azs        = ["us-east-1a", "us-east-1b"]
-
-  public_subnet_cidrs  = ["10.0.0.0/24", "10.0.1.0/24"]
-  private_subnet_cidrs = ["10.0.10.0/24", "10.0.11.0/24"]
-  database_subnet_cidrs = ["10.0.20.0/24", "10.0.21.0/24"]
+  # Add required variables here
 }
+```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
+| No Nat | [`tests/no-nat/`](tests/no-nat/) |
+| Single Nat | [`tests/single-nat/`](tests/single-nat/) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
@@ -112,11 +102,3 @@ No resources.
 | <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | Security groups created by the stack. |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | ID of the created VPC. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```

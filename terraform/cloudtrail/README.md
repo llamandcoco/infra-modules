@@ -1,143 +1,45 @@
 # CloudTrail Module
 
-Focused AWS CloudTrail module for audit logging. Accepts an external S3 bucket for flexible integration.
+## Testing
 
 ## Features
 
-- 🌍 **Multi-region support** - Capture events from all AWS regions
-- 🔒 **Security** - Log file validation, encryption support
-- 🎯 **Flexible** - Optional CloudWatch Logs, Insights, advanced selectors
-- 🔌 **Composable** - Works with existing S3 buckets
+- 🌍 Multi-region support - Capture events from all AWS regions
+- 🔒 Security - Log file validation, encryption support
+- 🎯 Flexible - Optional CloudWatch Logs, Insights, advanced selectors
+- 🔌 Composable - Works with existing S3 buckets
 
-## Usage
-
-### With Existing S3 Bucket
+## Quick Start
 
 ```hcl
-# Create or reference existing S3 bucket
-module "cloudtrail_s3" {
-  source = "github.com/your-org/infra-modules//terraform/s3"
-
-  bucket_name   = "my-org-cloudtrail-logs"
-  force_destroy = false
-
-  # Security best practices
-  enable_versioning           = true
-  block_public_access_enabled = true
-
-  # Cost optimization
-  lifecycle_rules = [
-    {
-      id     = "archive-old-logs"
-      status = "Enabled"
-
-      transitions = [
-        {
-          days          = 90
-          storage_class = "GLACIER"
-        }
-      ]
-
-      expiration = {
-        days = 365
-      }
-    }
-  ]
-
-  tags = {
-    Purpose = "CloudTrail logs"
-  }
-}
-
-# CloudTrail module
 module "cloudtrail" {
-  source = "github.com/your-org/infra-modules//terraform/cloudtrail"
+  source = "github.com/llamandcoco/infra-modules//terraform/cloudtrail?ref=v1.0.0"
 
-  trail_name    = "organization-audit-trail"
-  s3_bucket_id  = module.cloudtrail_s3.bucket_id
-  s3_bucket_arn = module.cloudtrail_s3.bucket_arn
-
-  # Multi-region for complete visibility (free!)
-  is_multi_region_trail         = true
-  include_global_service_events = true
-
-  # Security best practices (free!)
-  enable_log_file_validation = true
-
-  tags = {
-    Environment = "production"
-    Compliance  = "required"
-  }
+  # Add required variables here
 }
 ```
 
-### With CloudWatch Logs
+## Examples
 
-```hcl
-resource "aws_cloudwatch_log_group" "cloudtrail" {
-  name              = "/aws/cloudtrail/audit"
-  retention_in_days = 7
-}
+Complete, tested configurations in [`tests/`](tests/):
 
-module "cloudtrail" {
-  source = "github.com/your-org/infra-modules//terraform/cloudtrail"
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
 
-  trail_name                = "audit-trail-with-cloudwatch"
-  s3_bucket_id              = module.cloudtrail_s3.bucket_id
-  s3_bucket_arn             = module.cloudtrail_s3.bucket_arn
-  cloudwatch_logs_group_arn = aws_cloudwatch_log_group.cloudtrail.arn
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
 
-  # ... other settings
-}
+# Copy and adapt
+cp -r tests/basic/ my-project/
 ```
 
-**Estimated cost:** ~$50-100/month (CloudWatch Logs ingestion)
+## Testing
 
-### Organization Trail
-
-```hcl
-module "cloudtrail" {
-  source = "github.com/your-org/infra-modules//terraform/cloudtrail"
-
-  trail_name        = "organization-trail"
-  s3_bucket_id      = module.cloudtrail_s3.bucket_id
-  s3_bucket_arn     = module.cloudtrail_s3.bucket_arn
-  is_organization_trail = true  # Requires AWS Organizations
-
-  # Captures events from ALL accounts in the organization
-  is_multi_region_trail = true
-}
-```
-
-### With KMS Encryption
-
-```hcl
-resource "aws_kms_key" "cloudtrail" {
-  description = "CloudTrail log encryption key"
-  policy      = data.aws_iam_policy_document.cloudtrail_kms.json
-}
-
-module "cloudtrail" {
-  source = "github.com/your-org/infra-modules//terraform/cloudtrail"
-
-  trail_name    = "encrypted-trail"
-  s3_bucket_id  = module.cloudtrail_s3.bucket_id
-  s3_bucket_arn = module.cloudtrail_s3.bucket_arn
-  kms_key_id    = aws_kms_key.cloudtrail.arn
-}
-```
-
-### With CloudTrail Insights
-
-```hcl
-module "cloudtrail" {
-  source = "github.com/your-org/infra-modules//terraform/cloudtrail"
-
-  trail_name     = "trail-with-insights"
-  s3_bucket_id   = module.cloudtrail_s3.bucket_id
-  s3_bucket_arn  = module.cloudtrail_s3.bucket_arn
-  enable_insights = true  # Anomaly detection: +$0.35/100k write events
-}
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
@@ -197,90 +99,3 @@ No modules.
 | <a name="output_trail_home_region"></a> [trail\_home\_region](#output\_trail\_home\_region) | Region in which the CloudTrail trail was created. |
 | <a name="output_trail_id"></a> [trail\_id](#output\_trail\_id) | ID of the CloudTrail trail. |
 <!-- END_TF_DOCS -->
-
-## Cost Optimization Tips
-
-1. **Disable CloudWatch Logs** - Use S3-only for most use cases
-2. **Use S3 Lifecycle Policy** - Archive to Glacier after 90 days
-3. **Avoid Data Events** - Unless you specifically need S3/Lambda event logging
-4. **Single Trail** - First multi-region trail is free
-5. **Use EventBridge** - For alerting instead of CloudWatch Logs
-
-## Multi-Region Behavior
-
-When `is_multi_region_trail = true`:
-- ✅ Captures events from **all AWS regions**
-- ✅ Single trail, single S3 bucket
-- ✅ Includes global services (IAM, CloudFront, etc.)
-- ✅ **No additional cost** - First trail is free!
-
-Example: Trail created in `us-east-1` will capture:
-- EC2 events from `ap-northeast-2`
-- RDS events from `eu-west-1`
-- IAM events (global)
-- All other regions
-
-## Security Best Practices
-
-```hcl
-module "cloudtrail" {
-  source = "github.com/your-org/infra-modules//terraform/cloudtrail"
-
-  trail_name    = "secure-trail"
-  s3_bucket_id  = module.cloudtrail_s3.bucket_id
-  s3_bucket_arn = module.cloudtrail_s3.bucket_arn
-
-  # Enable all security features
-  enable_log_file_validation    = true  # Detect log tampering
-  include_global_service_events = true  # Include IAM, STS, etc.
-  is_multi_region_trail         = true  # Complete visibility
-  kms_key_id                    = aws_kms_key.cloudtrail.arn  # Encryption
-
-  # Restrict to write events only (optional)
-  read_write_type = "WriteOnly"  # Only log changes, not reads
-}
-```
-
-## Integration with EventBridge
-
-CloudTrail automatically sends events to EventBridge. Use for cost-effective alerting:
-
-```hcl
-# Create EventBridge rule for specific events
-resource "aws_cloudwatch_event_rule" "console_login" {
-  name = "detect-console-login"
-
-  event_pattern = jsonencode({
-    source      = ["aws.signin"]
-    detail-type = ["AWS Console Sign In via CloudTrail"]
-  })
-}
-
-# Lambda to send Slack notification
-resource "aws_cloudwatch_event_target" "slack_notifier" {
-  rule = aws_cloudwatch_event_rule.console_login.name
-  arn  = aws_lambda_function.slack_notifier.arn
-}
-```
-
-**Cost:** ~$0 (EventBridge + Lambda are within free tier for typical usage)
-
-## When to Use This Module vs Stack
-
-- **Use this module** when:
-  - You have an existing S3 bucket
-  - You need custom S3 bucket configuration
-  - You're building a custom composite module
-
-- **Use `stack/audit-logging`** when:
-  - You want an all-in-one solution
-  - You're starting fresh
-  - You want standard security best practices
-
-## Testing
-
-```bash
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```

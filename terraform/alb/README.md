@@ -1,6 +1,6 @@
 # Application Load Balancer (ALB) Module
 
-## Outputs
+A production-ready Terraform module for creating and managing AWS Application Load Balancers with support for multiple target groups, HTTPS/HTTP listeners, path-based routing, host-based routing, and advanced configurations.
 
 ## Features
 
@@ -28,7 +28,7 @@ module "alb" {
 Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
-|---------|--------|
+|---------|----------|
 | Basic | [`tests/basic/`](tests/basic/) |
 | Host Based | [`tests/host_based/`](tests/host_based/) |
 | Https | [`tests/https/`](tests/https/) |
@@ -148,4 +148,3 @@ No modules.
 | <a name="output_target_group_names"></a> [target\_group\_names](#output\_target\_group\_names) | Map of target group keys to their names. Lists all target groups created. |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The VPC ID where the ALB and target groups are created. |
 <!-- END_TF_DOCS -->
-

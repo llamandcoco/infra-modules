@@ -1,22 +1,38 @@
 # VPC Terraform Module
 
-Creates a production-ready Amazon VPC with optional IPv6 support, DNS configuration, and tagging.
+## Testing
 
-## Usage
+## Quick Start
 
 ```hcl
 module "vpc" {
-  source = "github.com/your-org/infra-modules//terraform/vpc"
+  source = "github.com/llamandcoco/infra-modules//terraform/vpc?ref=v1.0.0"
 
-  name       = "core-vpc"
-  cidr_block = "10.0.0.0/16"
-  enable_ipv6 = false
-
-  tags = {
-    Environment = "prod"
-    ManagedBy   = "terraform"
-  }
+  # Add required variables here
 }
+```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
@@ -80,11 +96,3 @@ No modules.
 | <a name="output_vpc_arn"></a> [vpc\_arn](#output\_vpc\_arn) | ARN of the VPC. |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | ID of the VPC. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```

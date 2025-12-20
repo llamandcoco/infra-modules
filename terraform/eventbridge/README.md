@@ -1,6 +1,6 @@
 # EventBridge Module
 
-## Testing
+``` cd tests/basic terraform init -backend=false terraform plan ```
 
 ## Features
 
@@ -28,7 +28,7 @@ module "eventbridge" {
 Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
-|---------|--------|
+|---------|----------|
 | Basic | [`tests/basic/`](tests/basic/) |
 | Cross Account | [`tests/cross_account/`](tests/cross_account/) |
 | Pattern | [`tests/pattern/`](tests/pattern/) |
@@ -128,55 +128,3 @@ No modules.
 | <a name="output_target_arns"></a> [target\_arns](#output\_target\_arns) | List of target ARNs configured for the EventBridge rule. |
 | <a name="output_target_ids"></a> [target\_ids](#output\_target\_ids) | List of target IDs configured for the EventBridge rule. |
 <!-- END_TF_DOCS -->
-
-## Security Considerations
-
-1. **IAM Roles**: The module creates least-privilege IAM roles automatically
-2. **DLQ**: Configure dead letter queues for critical events
-3. **Retry Policy**: Set appropriate retry attempts and event age limits
-4. **Cross-Account**: Use explicit account ID allowlists
-5. **Event Patterns**: Validate JSON syntax at plan time
-6. **Encryption**: Custom event buses use AWS-managed encryption by default
-
-## Target Types and IAM Permissions
-
-The module automatically creates IAM roles with appropriate permissions based on target types:
-
-| Target Type | Service | Auto-Generated IAM Permissions |
-|-------------|---------|--------------------------------|
-| Lambda | `lambda` | `lambda:InvokeFunction` |
-| SQS | `sqs` | `sqs:SendMessage` |
-| SNS | `sns` | `sns:Publish` |
-| Step Functions | `states` | `states:StartExecution` |
-| Kinesis | `kinesis` | `kinesis:PutRecord`, `kinesis:PutRecords` |
-| ECS | `ecs` | `ecs:RunTask`, `iam:PassRole` |
-| CloudWatch Logs | `logs` | `logs:CreateLogStream`, `logs:PutLogEvents` |
-| Batch | `batch` | `batch:SubmitJob` |
-
-## Important Limits
-
-- **Maximum targets per rule**: 5 (AWS limit)
-- **Maximum retry attempts**: 185
-- **Event age range**: 60 seconds to 86400 seconds (1 minute to 24 hours)
-- **Event bus name**: 1-256 characters
-- **Rule name**: 1-64 characters
-
-## Future Enhancements
-
-The following features are planned for future releases:
-
-- Event archive and replay
-- Schema registry integration
-- API destinations (HTTP endpoints)
-- Customer-managed KMS encryption for event buses
-- Advanced CloudWatch metrics and alarms
-
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
-

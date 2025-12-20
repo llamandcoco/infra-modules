@@ -1,6 +1,6 @@
 # CloudFront Terraform Module
 
-## References
+- [AWS CloudFront Documentation](https://docs.aws.amazon.com/cloudfront/) - [CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/) - [Lambda@Edge Guide](https://docs.aws.amazon.com/lambda/latest/dg/lambda-edge.html) - [CloudFront Functions Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-functions.html)
 
 ## Features
 
@@ -28,7 +28,7 @@ module "cloudfront" {
 Complete, tested configurations in [`tests/`](tests/):
 
 | Example | Directory |
-|---------|--------|
+|---------|----------|
 | Alb Origin | [`tests/alb_origin/`](tests/alb_origin/) |
 | Basic | [`tests/basic/`](tests/basic/) |
 | Lambda Edge | [`tests/lambda_edge/`](tests/lambda_edge/) |
@@ -134,81 +134,3 @@ No modules.
 | <a name="output_viewer_certificate"></a> [viewer\_certificate](#output\_viewer\_certificate) | The SSL/TLS certificate configuration for the distribution. |
 | <a name="output_web_acl_id"></a> [web\_acl\_id](#output\_web\_acl\_id) | The AWS WAF Web ACL ID associated with the distribution, if configured. |
 <!-- END_TF_DOCS -->
-
-## Security Best Practices
-
-1. **Always use HTTPS**: Set `viewer_protocol_policy = "https-only"` or `"redirect-to-https"`
-2. **TLS 1.2 or higher**: Set `minimum_protocol_version = "TLSv1.2_2021"`
-3. **Use OAC for S3**: Prefer Origin Access Control over legacy OAI
-4. **Enable WAF**: Protect against DDoS and common attacks
-5. **Custom origin headers**: Prevent direct origin access
-6. **Signed URLs/Cookies**: Protect premium content
-7. **Geographic restrictions**: Comply with licensing/legal requirements
-8. **Field-level encryption**: Encrypt sensitive POST data at edge
-
-## Performance Optimization
-
-1. **Enable compression**: `compress = true` for text content
-2. **HTTP/3**: Use `http_version = "http2and3"` for modern clients
-3. **Origin Shield**: Reduce origin load for high-traffic sites
-4. **Appropriate TTL**: Balance freshness vs. cache hit rate
-5. **Price class**: Choose based on user distribution
-6. **IPv6**: Keep `is_ipv6_enabled = true` for modern devices
-
-## Monitoring and Logging
-
-### Access Logs
-
-```hcl
-logging_config = {
-  bucket          = "logs.s3.amazonaws.com"
-  prefix          = "cloudfront/"
-  include_cookies = false
-}
-```
-
-### CloudWatch Metrics
-
-CloudFront automatically provides metrics:
-- Requests
-- Bytes downloaded/uploaded
-- Error rates (4xx, 5xx)
-- Cache hit rate
-
-### Real-time Logs
-
-For advanced monitoring, configure real-time logs to Kinesis Data Streams.
-
-## Module Inputs
-
-See [variables.tf](variables.tf) for all available input variables.
-
-## Module Outputs
-
-See [outputs.tf](outputs.tf) for all available outputs.
-
-## Testing
-
-The module includes comprehensive tests:
-
-- `tests/basic/`: Basic S3 origin with default settings
-- `tests/alb_origin/`: ALB custom origin with custom headers
-- `tests/multi_origin/`: Multiple origins with path-based routing
-- `tests/s3_oac/`: S3 with Origin Access Control (OAC)
-- `tests/lambda_edge/`: Lambda@Edge and CloudFront Functions
-
-Run tests:
-
-```bash
-cd tests/basic
-terraform init
-terraform plan
-```
-
-## References
-
-- [AWS CloudFront Documentation](https://docs.aws.amazon.com/cloudfront/)
-- [CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/)
-- [Lambda@Edge Guide](https://docs.aws.amazon.com/lambda/latest/dg/lambda-edge.html)
-- [CloudFront Functions Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-functions.html)
-

@@ -1,36 +1,38 @@
 # Security Group Terraform Module
 
-Creates a security group with structured ingress and egress rules. Defaults to denying all traffic unless rules are provided.
+## Testing
 
-## Usage
+## Quick Start
 
 ```hcl
-module "web_sg" {
-  source = "github.com/your-org/infra-modules//terraform/security_group"
+module "security_group" {
+  source = "github.com/llamandcoco/infra-modules//terraform/security_group?ref=v1.0.0"
 
-  name   = "web-sg"
-  vpc_id = module.vpc.vpc_id
-
-  ingress_rules = [
-    {
-      description = "Allow HTTPS"
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["10.0.0.0/8"]
-    }
-  ]
-
-  egress_rules = [
-    {
-      description = "Allow outbound to internet"
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
+  # Add required variables here
 }
+```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
@@ -82,11 +84,3 @@ No modules.
 | <a name="output_security_group_arn"></a> [security\_group\_arn](#output\_security\_group\_arn) | ARN of the security group. |
 | <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | ID of the security group. |
 <!-- END_TF_DOCS -->
-
-## Testing
-
-```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```

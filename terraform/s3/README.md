@@ -1,131 +1,47 @@
 # AWS S3 Bucket Terraform Module
 
-Production-ready Terraform module for creating secure, well-configured AWS S3 buckets with versioning, encryption, and lifecycle management.
+Run the basic test:
 
 ## Features
 
-- **Security First**: Encryption enabled by default (SSE-S3 or SSE-KMS)
-- **Public Access Protection**: All public access blocked by default
-- **Versioning**: Enabled by default to protect against accidental deletion
-- **Lifecycle Management**: Flexible lifecycle rules for cost optimization
-- **Compliance Ready**: Follows AWS security best practices
-- **Fully Tested**: Includes test configurations and passes trivy security scans
+- Security First Encryption enabled by default (SSE-S3 or SSE-KMS)
+- Public Access Protection All public access blocked by default
+- Versioning Enabled by default to protect against accidental deletion
+- Lifecycle Management Flexible lifecycle rules for cost optimization
+- Compliance Ready Follows AWS security best practices
+- Fully Tested Includes test configurations and passes trivy security scans
 
-## Usage
-
-### Basic Example
+## Quick Start
 
 ```hcl
-module "my_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/s3?ref=v1.0.0"
+module "s3" {
+  source = "github.com/llamandcoco/infra-modules//terraform/s3?ref=v1.0.0"
 
-  bucket_name = "my-application-data-bucket"
-
-  tags = {
-    Environment = "production"
-    Application = "my-app"
-    ManagedBy   = "terraform"
-  }
+  # Add required variables here
 }
 ```
 
-### Advanced Example with KMS Encryption
+## Examples
 
-```hcl
-module "secure_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/s3?ref=v1.0.0"
+Complete, tested configurations in [`tests/`](tests/):
 
-  bucket_name = "my-secure-bucket"
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/`](tests/basic/) |
 
-  # Use KMS encryption instead of SSE-S3
-  kms_key_id         = aws_kms_key.my_key.arn
-  bucket_key_enabled = true
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
 
-  # Enable versioning for compliance
-  versioning_enabled = true
-
-  tags = {
-    Environment = "production"
-    Compliance  = "required"
-    DataClass   = "sensitive"
-  }
-}
+# Copy and adapt
+cp -r tests/basic/ my-project/
 ```
 
-### Example with Lifecycle Rules
+## Testing
 
-```hcl
-module "archive_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/s3?ref=v1.0.0"
-
-  bucket_name = "my-archive-bucket"
-
-  # Define lifecycle rules for cost optimization
-  lifecycle_rules = [
-    {
-      id      = "archive-old-data"
-      enabled = true
-      prefix  = "logs/"
-
-      # Transition to cheaper storage classes over time
-      transitions = [
-        {
-          days          = 30
-          storage_class = "STANDARD_IA"
-        },
-        {
-          days          = 90
-          storage_class = "GLACIER_IR"
-        },
-        {
-          days          = 180
-          storage_class = "GLACIER"
-        }
-      ]
-
-      # Delete objects after 7 years
-      expiration_days = 2555
-
-      # Clean up incomplete multipart uploads
-      abort_incomplete_multipart_upload_days = 7
-
-      # Manage old versions
-      noncurrent_version_transitions = [
-        {
-          days          = 30
-          storage_class = "GLACIER"
-        }
-      ]
-      noncurrent_version_expiration_days = 90
-    }
-  ]
-
-  tags = {
-    Environment = "production"
-    Purpose     = "archival"
-  }
-}
-```
-
-### Example with Public Access (Use with Caution)
-
-```hcl
-module "public_bucket" {
-  source = "github.com/your-org/infra-modules//terraform/s3?ref=v1.0.0"
-
-  bucket_name = "my-public-assets"
-
-  # Allow public access (for static website hosting, CDN, etc.)
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-
-  tags = {
-    Environment = "production"
-    Purpose     = "public-assets"
-  }
-}
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
@@ -190,51 +106,3 @@ No modules.
 | <a name="output_tags"></a> [tags](#output\_tags) | All tags applied to the bucket, including default and custom tags. |
 | <a name="output_versioning_enabled"></a> [versioning\_enabled](#output\_versioning\_enabled) | Whether versioning is enabled on the bucket. Important for compliance and data protection verification. |
 <!-- END_TF_DOCS -->
-
-## Security Considerations
-
-### Default Security Posture
-
-This module implements security best practices by default:
-
-1. **Encryption**: All objects are encrypted at rest using SSE-S3 (AES256) by default
-2. **Public Access**: All public access is blocked by default
-3. **Versioning**: Enabled by default to protect against accidental deletion
-4. **Force Destroy**: Disabled by default to prevent accidental data loss
-
-### Using KMS Encryption
-
-For sensitive data, use KMS encryption:
-
-```hcl
-kms_key_id = aws_kms_key.my_key.arn
-```
-
-Benefits:
-- Audit trail of encryption key usage in CloudTrail
-- Fine-grained access control via KMS key policies
-- Automatic key rotation (if enabled on KMS key)
-
-Consider enabling S3 Bucket Keys to reduce KMS API costs:
-
-```hcl
-bucket_key_enabled = true  # Default
-```
-
-### Lifecycle Best Practices
-
-Use lifecycle rules to:
-1. Reduce storage costs by transitioning to cheaper storage classes
-2. Meet compliance requirements for data retention
-3. Clean up incomplete multipart uploads
-4. Manage versioned objects efficiently
-
-## Testing
-
-Run the basic test:
-
-```bash
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
