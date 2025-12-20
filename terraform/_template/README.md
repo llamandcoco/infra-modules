@@ -6,7 +6,7 @@ Brief description of what this module does.
 
 ```hcl
 module "example" {
-  source = "github.com/your-org/infra-modules//terraform/module-name?ref=v1.0.0"
+  source = "github.com/your-org/infra-modules//terraform/module-name?ref=<commit-sha>"
 
   resource_name = "my-resource"
 

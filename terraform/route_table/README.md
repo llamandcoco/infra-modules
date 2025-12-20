@@ -4,7 +4,7 @@
 
 ```hcl
 module "route_table" {
-  source = "github.com/llamandcoco/infra-modules//terraform/route_table?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/route_table?ref=<commit-sha>"
 
   # Add required variables here
 }

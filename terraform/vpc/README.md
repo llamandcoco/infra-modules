@@ -4,7 +4,7 @@
 
 ```hcl
 module "vpc" {
-  source = "github.com/llamandcoco/infra-modules//terraform/vpc?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/vpc?ref=<commit-sha>"
 
   # Add required variables here
 }

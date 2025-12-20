@@ -4,7 +4,7 @@
 
 ```hcl
 module "nat_gateway" {
-  source = "github.com/llamandcoco/infra-modules//terraform/nat_gateway?ref=v1.0.0"
+  source = "github.com/llamandcoco/infra-modules//terraform/nat_gateway?ref=<commit-sha>"
 
   # Add required variables here
 }
