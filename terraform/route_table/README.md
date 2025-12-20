@@ -4,7 +4,7 @@
 
 ```hcl
 module "route_table" {
-  source = "github.com/llamandcoco/infra-modules//terraform/route_table?ref=<commit-sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/route_table?ref=v1.0.0"
 
   # Add required variables here
 }
@@ -29,14 +29,8 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-## Quick Start
-
-```hcl
-module "route_table" {
-  source = "github.com/llamandcoco/infra-modules//terraform/route_table?ref=<commit-sha>"
-
-  # Add required variables here
-}
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->

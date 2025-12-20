@@ -4,7 +4,7 @@
 
 ```hcl
 module "security_group" {
-  source = "github.com/llamandcoco/infra-modules//terraform/security_group?ref=<commit-sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/security_group?ref=v1.0.0"
 
   # Add required variables here
 }
@@ -29,14 +29,8 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-## Quick Start
-
-```hcl
-module "security_group" {
-  source = "github.com/llamandcoco/infra-modules//terraform/security_group?ref=<commit-sha>"
-
-  # Add required variables here
-}
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
 <!-- BEGIN_TF_DOCS -->
