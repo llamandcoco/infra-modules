@@ -121,16 +121,6 @@ output "idle_session_ttl" {
 # Region and Account Outputs
 # -----------------------------------------------------------------------------
 
-output "region" {
-  description = "The AWS region where the agent is deployed."
-  value       = data.aws_region.current.name
-}
-
-output "account_id" {
-  description = "The AWS account ID where the agent is deployed."
-  value       = data.aws_caller_identity.current.account_id
-}
-
 # -----------------------------------------------------------------------------
 # Invocation Outputs
 # -----------------------------------------------------------------------------

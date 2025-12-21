@@ -30,12 +30,6 @@ locals {
   has_knowledge_bases = length(var.knowledge_base_ids) > 0
 }
 
-# -----------------------------------------------------------------------------
-# Data Sources
-# -----------------------------------------------------------------------------
-
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
 
 # -----------------------------------------------------------------------------
 # IAM Role for Bedrock Agent
@@ -54,14 +48,6 @@ resource "aws_iam_role" "agent" {
           Service = "bedrock.amazonaws.com"
         }
         Action = "sts:AssumeRole"
-        Condition = {
-          StringEquals = {
-            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-          }
-          ArnLike = {
-            "aws:SourceArn" = "arn:aws:bedrock:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:agent/*"
-          }
-        }
       }
     ]
   })
@@ -114,7 +100,7 @@ resource "aws_iam_role_policy" "knowledge_base" {
         ]
         Resource = [
           for kb_id in var.knowledge_base_ids :
-          "arn:aws:bedrock:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:knowledge-base/${kb_id}"
+          "arn:aws:bedrock:*:*:knowledge-base/${kb_id}"
         ]
       }
     ]
@@ -231,7 +217,7 @@ resource "aws_lambda_permission" "agent_action_group" {
   action        = "lambda:InvokeFunction"
   function_name = each.value.lambda_arn
   principal     = "bedrock.amazonaws.com"
-  source_arn    = "arn:aws:bedrock:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:agent/${aws_bedrockagent_agent.this.agent_id}"
+  source_arn    = "arn:aws:bedrock:*:*:agent/${aws_bedrockagent_agent.this.agent_id}"
 }
 
 # -----------------------------------------------------------------------------
