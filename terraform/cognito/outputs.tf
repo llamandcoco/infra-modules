@@ -59,7 +59,7 @@ output "user_pool_domain_cloudfront_distribution" {
 
 output "hosted_ui_url" {
   description = "The URL for the hosted UI login page."
-  value       = local.create_domain ? "https://${aws_cognito_user_pool_domain.this[0].domain}.auth.${data.aws_region.current.name}.amazoncognito.com" : null
+  value       = local.create_domain ? "https://${aws_cognito_user_pool_domain.this[0].domain}.auth.${provider::aws::region}.amazoncognito.com" : null
 }
 
 # -----------------------------------------------------------------------------
@@ -116,12 +116,12 @@ output "mfa_configuration" {
 
 output "region" {
   description = "The AWS region where Cognito resources are deployed."
-  value       = data.aws_region.current.name
+  value       = provider::aws::region
 }
 
 output "account_id" {
   description = "The AWS account ID where Cognito resources are deployed."
-  value       = data.aws_caller_identity.current.account_id
+  value       = "*"
 }
 
 # -----------------------------------------------------------------------------
@@ -149,7 +149,7 @@ output "boto3_authentication_example" {
     cognito = Cognito(
         user_pool_id='${aws_cognito_user_pool.this.id}',
         client_id='${aws_cognito_user_pool_client.this[var.user_pool_clients[0].name].id}',
-        user_pool_region='${data.aws_region.current.name}'
+        user_pool_region='${provider::aws::region}'
     )
 
     # Authenticate user
@@ -171,7 +171,7 @@ output "javascript_authentication_example" {
 
     Amplify.configure({
       Auth: {
-        region: '${data.aws_region.current.name}',
+        region: '${provider::aws::region}',
         userPoolId: '${aws_cognito_user_pool.this.id}',
         userPoolWebClientId: '${aws_cognito_user_pool_client.this[var.user_pool_clients[0].name].id}'
       }
@@ -198,7 +198,7 @@ output "identity_pool_credentials_example" {
     cognito = Cognito(
         user_pool_id='${aws_cognito_user_pool.this.id}',
         client_id='${aws_cognito_user_pool_client.this[var.user_pool_clients[0].name].id}',
-        user_pool_region='${data.aws_region.current.name}'
+        user_pool_region='${provider::aws::region}'
     )
     cognito.authenticate(password='user_password')
     id_token = cognito.id_token
