@@ -24,10 +24,10 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    bedrock        = "http://localhost:4566"
-    bedrockagent   = "http://localhost:4566"
-    iam            = "http://localhost:4566"
-    sts            = "http://localhost:4566"
+    bedrock      = "http://localhost:4566"
+    bedrockagent = "http://localhost:4566"
+    iam          = "http://localhost:4566"
+    sts          = "http://localhost:4566"
   }
 }
 

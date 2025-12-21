@@ -145,16 +145,16 @@ resource "aws_bedrockagent_agent" "this" {
       prompt_configurations {
         base_prompt_template = prompt_override_configuration.value.orchestration_prompt_template
         inference_configuration {
-          temperature     = prompt_override_configuration.value.temperature
-          top_p           = prompt_override_configuration.value.top_p
-          top_k           = prompt_override_configuration.value.top_k
-          max_length      = prompt_override_configuration.value.max_length
-          stop_sequences  = prompt_override_configuration.value.stop_sequences
+          temperature    = prompt_override_configuration.value.temperature
+          top_p          = prompt_override_configuration.value.top_p
+          top_k          = prompt_override_configuration.value.top_k
+          max_length     = prompt_override_configuration.value.max_length
+          stop_sequences = prompt_override_configuration.value.stop_sequences
         }
-        parser_mode      = "DEFAULT"
+        parser_mode          = "DEFAULT"
         prompt_creation_mode = "OVERRIDDEN"
-        prompt_state     = "ENABLED"
-        prompt_type      = "ORCHESTRATION"
+        prompt_state         = "ENABLED"
+        prompt_type          = "ORCHESTRATION"
       }
     }
   }
@@ -179,8 +179,8 @@ resource "aws_bedrockagent_agent" "this" {
 resource "aws_bedrockagent_agent_action_group" "this" {
   for_each = { for ag in var.action_groups : ag.name => ag }
 
-  agent_id      = aws_bedrockagent_agent.this.agent_id
-  agent_version = "DRAFT"
+  agent_id          = aws_bedrockagent_agent.this.agent_id
+  agent_version     = "DRAFT"
   action_group_name = each.value.name
   description       = each.value.description
 
@@ -279,9 +279,9 @@ resource "aws_bedrockagent_agent_alias" "this" {
 # -----------------------------------------------------------------------------
 resource "terraform_data" "prepare_agent" {
   triggers_replace = {
-    agent_id     = aws_bedrockagent_agent.this.agent_id
-    instruction  = var.instruction
-    action_groups = jsonencode(var.action_groups)
+    agent_id        = aws_bedrockagent_agent.this.agent_id
+    instruction     = var.instruction
+    action_groups   = jsonencode(var.action_groups)
     knowledge_bases = jsonencode(var.knowledge_base_ids)
   }
 

@@ -393,11 +393,11 @@ module "bedrock_agent" {
 
       $knowledge_base$
     EOT
-    temperature    = 0.7
-    top_p          = 0.9
-    top_k          = 250
-    max_length     = 2048
-    stop_sequences = []
+    temperature                   = 0.7
+    top_p                         = 0.9
+    top_k                         = 250
+    max_length                    = 2048
+    stop_sequences                = []
   }
 
   # Session configuration
