@@ -48,6 +48,10 @@ module "bedrock" {
     "ec2.amazonaws.com"
   ]
 
+  # Provide dummy AWS context to avoid data source calls during CI/testing
+  aws_account_id = "123456789012"
+  aws_region     = "us-west-2"
+
   # Restrict access to specific Claude models only
   allowed_model_arns = [
     "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0",

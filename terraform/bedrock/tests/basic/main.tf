@@ -40,6 +40,10 @@ module "bedrock" {
   service_role_name   = "basic-bedrock-lambda-role"
   service_principals  = ["lambda.amazonaws.com"]
 
+  # Provide dummy AWS context to avoid data source calls during CI/testing
+  aws_account_id = "123456789012"
+  aws_region     = "us-east-1"
+
   # Allow access to all foundation models
   allowed_model_arns = [
     "arn:aws:bedrock:*::foundation-model/*"
