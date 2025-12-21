@@ -192,10 +192,10 @@ resource "aws_bedrockagent_knowledge_base" "this" {
         table_name             = rds_configuration.value.table_name
 
         field_mapping {
-          metadata_field     = rds_configuration.value.metadata_field
-          primary_key_field  = rds_configuration.value.primary_key_field
-          text_field         = rds_configuration.value.text_field
-          vector_field       = rds_configuration.value.vector_field
+          metadata_field    = rds_configuration.value.metadata_field
+          primary_key_field = rds_configuration.value.primary_key_field
+          text_field        = rds_configuration.value.text_field
+          vector_field      = rds_configuration.value.vector_field
         }
       }
     }

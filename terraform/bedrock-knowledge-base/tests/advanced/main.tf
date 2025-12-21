@@ -27,13 +27,13 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    bedrock        = "http://localhost:4566"
-    bedrockagent   = "http://localhost:4566"
-    iam            = "http://localhost:4566"
-    sts            = "http://localhost:4566"
-    aoss           = "http://localhost:4566"
-    s3             = "http://localhost:4566"
-    kms            = "http://localhost:4566"
+    bedrock      = "http://localhost:4566"
+    bedrockagent = "http://localhost:4566"
+    iam          = "http://localhost:4566"
+    sts          = "http://localhost:4566"
+    aoss         = "http://localhost:4566"
+    s3           = "http://localhost:4566"
+    kms          = "http://localhost:4566"
   }
 }
 
@@ -165,8 +165,8 @@ module "bedrock_knowledge_base" {
   source = "../.."
 
   # Knowledge base configuration
-  name        = "advanced-enterprise-kb"
-  description = "Advanced enterprise knowledge base with comprehensive documentation and policies"
+  name         = "advanced-enterprise-kb"
+  description  = "Advanced enterprise knowledge base with comprehensive documentation and policies"
   kb_role_name = "advanced-enterprise-kb-role"
 
   # Embedding model - Cohere Multilingual for better global support
@@ -194,20 +194,20 @@ module "bedrock_knowledge_base" {
   ]
 
   # Custom chunking configuration for larger context
-  chunking_strategy              = "FIXED_SIZE"
-  fixed_size_max_tokens          = 512
-  fixed_size_overlap_percentage  = 25
+  chunking_strategy             = "FIXED_SIZE"
+  fixed_size_max_tokens         = 512
+  fixed_size_overlap_percentage = 25
 
   # Data deletion policy
   data_deletion_policy = "DELETE"
 
   tags = {
-    Environment  = "production"
-    Purpose      = "advanced-kb-test"
-    Team         = "knowledge-management"
-    CostCenter   = "engineering"
-    Compliance   = "required"
-    DataClass    = "internal"
+    Environment = "production"
+    Purpose     = "advanced-kb-test"
+    Team        = "knowledge-management"
+    CostCenter  = "engineering"
+    Compliance  = "required"
+    DataClass   = "internal"
   }
 
   depends_on = [
