@@ -31,12 +31,6 @@ locals {
   )
 }
 
-# -----------------------------------------------------------------------------
-# Data Sources
-# -----------------------------------------------------------------------------
-
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
 
 # -----------------------------------------------------------------------------
 # IAM Role for Knowledge Base
@@ -55,14 +49,6 @@ resource "aws_iam_role" "knowledge_base" {
           Service = "bedrock.amazonaws.com"
         }
         Action = "sts:AssumeRole"
-        Condition = {
-          StringEquals = {
-            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-          }
-          ArnLike = {
-            "aws:SourceArn" = "arn:aws:bedrock:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:knowledge-base/*"
-          }
-        }
       }
     ]
   })

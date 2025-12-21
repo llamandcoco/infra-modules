@@ -75,7 +75,7 @@ output "chunking_strategy" {
 
 output "region" {
   description = "The AWS region where the knowledge base is deployed."
-  value       = data.aws_region.current.name
+  value       = "*"
 }
 
 output "account_id" {
@@ -89,22 +89,22 @@ output "account_id" {
 
 output "titan_embed_text_v1_arn" {
   description = "ARN for Amazon Titan Text Embeddings v1 model."
-  value       = "arn:aws:bedrock:${data.aws_region.current.name}::foundation-model/amazon.titan-embed-text-v1"
+  value       = "arn:aws:bedrock:${"*"}::foundation-model/amazon.titan-embed-text-v1"
 }
 
 output "titan_embed_text_v2_arn" {
   description = "ARN for Amazon Titan Text Embeddings v2 model."
-  value       = "arn:aws:bedrock:${data.aws_region.current.name}::foundation-model/amazon.titan-embed-text-v2:0"
+  value       = "arn:aws:bedrock:${"*"}::foundation-model/amazon.titan-embed-text-v2:0"
 }
 
 output "cohere_embed_english_v3_arn" {
   description = "ARN for Cohere Embed English v3 model."
-  value       = "arn:aws:bedrock:${data.aws_region.current.name}::foundation-model/cohere.embed-english-v3"
+  value       = "arn:aws:bedrock:${"*"}::foundation-model/cohere.embed-english-v3"
 }
 
 output "cohere_embed_multilingual_v3_arn" {
   description = "ARN for Cohere Embed Multilingual v3 model."
-  value       = "arn:aws:bedrock:${data.aws_region.current.name}::foundation-model/cohere.embed-multilingual-v3"
+  value       = "arn:aws:bedrock:${"*"}::foundation-model/cohere.embed-multilingual-v3"
 }
 
 # -----------------------------------------------------------------------------
