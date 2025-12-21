@@ -135,6 +135,9 @@ cd tests/advanced && terraform init && terraform plan
 - **Logging Costs**: Model invocation logging to CloudWatch and S3 incurs additional costs. Configure retention periods appropriately.
 - **IAM Permissions**: The service role only grants `bedrock:InvokeModel` permissions. Add additional policies for other AWS services as needed.
 
+<details>
+<summary>Terraform Documentation</summary>
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -210,3 +213,5 @@ No modules.
 | <a name="output_service_role_id"></a> [service\_role\_id](#output\_service\_role\_id) | The unique ID of the Bedrock service IAM role. |
 | <a name="output_service_role_name"></a> [service\_role\_name](#output\_service\_role\_name) | The name of the Bedrock service IAM role. Use this for attaching additional policies. |
 <!-- END_TF_DOCS -->
+
+</summary>
