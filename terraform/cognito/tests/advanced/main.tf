@@ -49,11 +49,11 @@ module "cognito" {
   username_case_sensitive  = false
 
   # Strong password policy
-  password_minimum_length      = 12
-  password_require_lowercase   = true
-  password_require_uppercase   = true
-  password_require_numbers     = true
-  password_require_symbols     = true
+  password_minimum_length          = 12
+  password_require_lowercase       = true
+  password_require_uppercase       = true
+  password_require_numbers         = true
+  password_require_symbols         = true
   temporary_password_validity_days = 3
 
   # Required MFA

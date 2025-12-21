@@ -27,10 +27,10 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    cognitoidentity         = "http://localhost:4566"
-    cognitoidp              = "http://localhost:4566"
-    iam                     = "http://localhost:4566"
-    sts                     = "http://localhost:4566"
+    cognitoidentity = "http://localhost:4566"
+    cognitoidp      = "http://localhost:4566"
+    iam             = "http://localhost:4566"
+    sts             = "http://localhost:4566"
   }
 }
 
