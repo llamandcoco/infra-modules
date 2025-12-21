@@ -109,3 +109,19 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# -----------------------------------------------------------------------------
+# AWS Environment Variables (for CI/CD and testing)
+# -----------------------------------------------------------------------------
+
+variable "aws_account_id" {
+  description = "AWS Account ID. If not provided, will be detected automatically using AWS API. Set this to a dummy value (e.g., '123456789012') for CI/CD testing without credentials."
+  type        = string
+  default     = null
+}
+
+variable "aws_region" {
+  description = "AWS Region. If not provided, will be detected automatically using AWS API. Set this to a dummy value (e.g., 'us-east-1') for CI/CD testing without credentials."
+  type        = string
+  default     = null
+}

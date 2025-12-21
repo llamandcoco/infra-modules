@@ -45,6 +45,16 @@ output "logging_role_name" {
 # Configuration Outputs
 # -----------------------------------------------------------------------------
 
+output "region" {
+  description = "The AWS region where Bedrock resources are created."
+  value       = local.region
+}
+
+output "account_id" {
+  description = "The AWS account ID where Bedrock resources are created."
+  value       = local.account_id
+}
+
 output "model_invocation_logging_enabled" {
   description = "Whether model invocation logging is enabled."
   value       = var.enable_model_invocation_logging
@@ -56,30 +66,30 @@ output "model_invocation_logging_enabled" {
 
 output "claude_3_5_sonnet_arn" {
   description = "ARN for Claude 3.5 Sonnet v2 model. Use this for invoking the model."
-  value       = "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0"
+  value       = "arn:aws:bedrock:${local.region}::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0"
 }
 
 output "claude_3_opus_arn" {
   description = "ARN for Claude 3 Opus model. Use this for invoking the model."
-  value       = "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-opus-20240229-v1:0"
+  value       = "arn:aws:bedrock:${local.region}::foundation-model/anthropic.claude-3-opus-20240229-v1:0"
 }
 
 output "claude_3_sonnet_arn" {
   description = "ARN for Claude 3 Sonnet model. Use this for invoking the model."
-  value       = "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0"
+  value       = "arn:aws:bedrock:${local.region}::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0"
 }
 
 output "claude_3_haiku_arn" {
   description = "ARN for Claude 3 Haiku model. Use this for invoking the model."
-  value       = "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-haiku-20240307-v1:0"
+  value       = "arn:aws:bedrock:${local.region}::foundation-model/anthropic.claude-3-haiku-20240307-v1:0"
 }
 
 output "llama_3_1_70b_arn" {
   description = "ARN for Llama 3.1 70B Instruct model. Use this for invoking the model."
-  value       = "arn:aws:bedrock:*::foundation-model/meta.llama3-1-70b-instruct-v1:0"
+  value       = "arn:aws:bedrock:${local.region}::foundation-model/meta.llama3-1-70b-instruct-v1:0"
 }
 
 output "llama_3_1_8b_arn" {
   description = "ARN for Llama 3.1 8B Instruct model. Use this for invoking the model."
-  value       = "arn:aws:bedrock:*::foundation-model/meta.llama3-1-8b-instruct-v1:0"
+  value       = "arn:aws:bedrock:${local.region}::foundation-model/meta.llama3-1-8b-instruct-v1:0"
 }

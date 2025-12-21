@@ -10,10 +10,28 @@ terraform {
 }
 
 # -----------------------------------------------------------------------------
+# Data Sources
+# -----------------------------------------------------------------------------
+
+# Only fetch account ID and region from AWS if not provided via variables
+# This allows CI/CD testing without AWS credentials
+data "aws_caller_identity" "current" {
+  count = var.aws_account_id == null ? 1 : 0
+}
+
+data "aws_region" "current" {
+  count = var.aws_region == null ? 1 : 0
+}
+
+# -----------------------------------------------------------------------------
 # Local Variables
 # -----------------------------------------------------------------------------
 
 locals {
+  # Use provided values if available, otherwise use data sources
+  account_id = var.aws_account_id != null ? var.aws_account_id : data.aws_caller_identity.current[0].account_id
+  region     = var.aws_region != null ? var.aws_region : data.aws_region.current[0].name
+
   # Determine if we're creating a service role for external services to use Bedrock
   create_service_role = var.create_service_role
 
@@ -63,6 +81,14 @@ resource "aws_iam_role" "bedrock_logging" {
           Service = "bedrock.amazonaws.com"
         }
         Action = "sts:AssumeRole"
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = local.account_id
+          }
+          ArnLike = {
+            "aws:SourceArn" = "arn:aws:bedrock:${local.region}:${local.account_id}:*"
+          }
+        }
       }
     ]
   })
@@ -194,4 +220,3 @@ resource "aws_iam_role_policy_attachment" "service_additional" {
   role       = aws_iam_role.service[0].name
   policy_arn = each.value
 }
-
