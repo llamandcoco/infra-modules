@@ -156,4 +156,19 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
       }
     }
   }
+
+  # Validate that each rule has at least one action
+  lifecycle {
+    precondition {
+      condition = alltrue([
+        for rule in var.lifecycle_rules :
+        length(rule.transitions) > 0 ||
+        rule.expiration_days != null ||
+        rule.abort_incomplete_multipart_upload_days != null ||
+        length(rule.noncurrent_version_transitions) > 0 ||
+        rule.noncurrent_version_expiration_days != null
+      ])
+      error_message = "Each lifecycle rule must have at least one action: transitions, expiration_days, abort_incomplete_multipart_upload_days, noncurrent_version_transitions, or noncurrent_version_expiration_days."
+    }
+  }
 }
