@@ -82,32 +82,28 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
       id     = rule.value.id
       status = rule.value.enabled ? "Enabled" : "Disabled"
 
-      # Filter by prefix and/or tags
-      dynamic "filter" {
-        for_each = rule.value.prefix != null || length(rule.value.tags) > 0 ? [1] : []
+      # Filter is required (either with prefix/tags or empty)
+      filter {
+        # Use 'and' block when both prefix and tags are present
+        dynamic "and" {
+          for_each = rule.value.prefix != null && length(rule.value.tags) > 0 ? [1] : []
 
-        content {
-          # Use 'and' block only when both prefix and tags are present
-          dynamic "and" {
-            for_each = rule.value.prefix != null && length(rule.value.tags) > 0 ? [1] : []
-
-            content {
-              prefix = rule.value.prefix
-              tags   = rule.value.tags
-            }
+          content {
+            prefix = rule.value.prefix
+            tags   = rule.value.tags
           }
+        }
 
-          # Use simple prefix when only prefix is set
-          prefix = rule.value.prefix != null && length(rule.value.tags) == 0 ? rule.value.prefix : null
+        # Use simple prefix when only prefix is set
+        prefix = rule.value.prefix != null && length(rule.value.tags) == 0 ? rule.value.prefix : null
 
-          # Use simple tag when only tags are set
-          dynamic "tag" {
-            for_each = rule.value.prefix == null && length(rule.value.tags) > 0 ? rule.value.tags : {}
+        # Use tag blocks when only tags are set
+        dynamic "tag" {
+          for_each = rule.value.prefix == null && length(rule.value.tags) > 0 ? rule.value.tags : {}
 
-            content {
-              key   = tag.key
-              value = tag.value
-            }
+          content {
+            key   = tag.key
+            value = tag.value
           }
         }
       }
