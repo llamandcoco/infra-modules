@@ -112,7 +112,10 @@ variable "is_enabled" {
 
 variable "targets" {
   description = <<-EOT
-    List of targets for the EventBridge rule. Each target represents a service to invoke when the rule matches.
+    List of targets for the EventBridge rule (single rule mode only).
+    If using 'rules' variable for multiple rules, this should be null.
+
+    Each target represents a service to invoke when the rule matches.
     AWS allows up to 5 targets per rule.
 
     Required fields:
@@ -245,14 +248,15 @@ variable "targets" {
       query_string_parameters = optional(map(string))
     }))
   }))
+  default = null
 
   validation {
-    condition     = length(var.targets) >= 1 && length(var.targets) <= 5
+    condition     = var.targets == null ? true : (length(var.targets) >= 1 && length(var.targets) <= 5)
     error_message = "At least 1 target is required, and AWS EventBridge supports a maximum of 5 targets per rule."
   }
 
   validation {
-    condition = alltrue([
+    condition = var.targets == null ? true : alltrue([
       for target in var.targets :
       (target.input != null ? 1 : 0) +
       (target.input_path != null ? 1 : 0) +
@@ -262,7 +266,7 @@ variable "targets" {
   }
 
   validation {
-    condition = alltrue([
+    condition = var.targets == null ? true : alltrue([
       for target in var.targets :
       target.retry_policy == null ? true : (
         target.retry_policy.maximum_retry_attempts == null ? true : (
@@ -274,7 +278,7 @@ variable "targets" {
   }
 
   validation {
-    condition = alltrue([
+    condition = var.targets == null ? true : alltrue([
       for target in var.targets :
       target.retry_policy == null ? true : (
         target.retry_policy.maximum_event_age_in_seconds == null ? true : (
@@ -389,6 +393,162 @@ variable "event_bus_policy_statement" {
   validation {
     condition     = var.event_bus_policy_statement == null || can(jsondecode(var.event_bus_policy_statement))
     error_message = "Event bus policy statement must be a valid JSON string."
+  }
+}
+
+# -----------------------------------------------------------------------------
+# Multiple Rules Configuration (Alternative to single rule)
+# -----------------------------------------------------------------------------
+
+variable "rules" {
+  description = <<-EOT
+    List of EventBridge rules to create. Use this for creating multiple rules on the same event bus.
+    If specified, this takes precedence over the single rule variables (rule_name, event_pattern, etc.).
+
+    Each rule object contains:
+    - name: Name of the rule
+    - description: Description of the rule (optional)
+    - event_pattern: Event pattern JSON string (required if no schedule_expression)
+    - schedule_expression: Schedule expression (required if no event_pattern)
+    - enabled: Whether the rule is enabled (default: true)
+    - targets: List of targets for this rule (same structure as targets variable)
+  EOT
+  type = list(object({
+    name                = string
+    description         = optional(string)
+    event_pattern       = optional(string)
+    schedule_expression = optional(string)
+    enabled             = optional(bool, true)
+    targets = list(object({
+      target_id = string
+      arn       = string
+      role_arn  = optional(string)
+
+      # Input transformation
+      input      = optional(string)
+      input_path = optional(string)
+      input_transformer = optional(object({
+        input_paths_map = map(string)
+        input_template  = string
+      }))
+
+      # Reliability
+      dead_letter_config = optional(object({
+        arn = string
+      }))
+      retry_policy = optional(object({
+        maximum_retry_attempts       = optional(number)
+        maximum_event_age_in_seconds = optional(number)
+      }))
+
+      # Target-specific configurations
+      sqs_parameters = optional(object({
+        message_group_id = optional(string)
+      }))
+      ecs_parameters = optional(object({
+        task_definition_arn = string
+        task_count          = optional(number, 1)
+        launch_type         = optional(string)
+        network_configuration = optional(object({
+          subnets          = list(string)
+          security_groups  = optional(list(string))
+          assign_public_ip = optional(bool)
+        }))
+        platform_version = optional(string)
+        group            = optional(string)
+        capacity_provider_strategy = optional(list(object({
+          capacity_provider = string
+          weight            = optional(number)
+          base              = optional(number)
+        })))
+        enable_ecs_managed_tags = optional(bool)
+        enable_execute_command  = optional(bool)
+        placement_constraints = optional(list(object({
+          type       = string
+          expression = optional(string)
+        })))
+        placement_strategy = optional(list(object({
+          type  = string
+          field = optional(string)
+        })))
+        propagate_tags = optional(string)
+        tags           = optional(map(string))
+      }))
+      batch_parameters = optional(object({
+        job_definition = string
+        job_name       = string
+        array_properties = optional(object({
+          size = number
+        }))
+        retry_strategy = optional(object({
+          attempts = number
+        }))
+      }))
+      kinesis_parameters = optional(object({
+        partition_key_path = string
+      }))
+      run_command_parameters = optional(object({
+        run_command_targets = list(object({
+          key    = string
+          values = list(string)
+        }))
+      }))
+      http_parameters = optional(object({
+        path_parameter_values   = optional(map(string))
+        header_parameters       = optional(map(string))
+        query_string_parameters = optional(map(string))
+      }))
+    }))
+  }))
+  default = null
+
+  validation {
+    condition = var.rules == null ? true : alltrue([
+      for rule in var.rules :
+      (rule.event_pattern != null ? 1 : 0) + (rule.schedule_expression != null ? 1 : 0) == 1
+    ])
+    error_message = "Each rule must have exactly one of: event_pattern or schedule_expression."
+  }
+
+  validation {
+    condition = var.rules == null ? true : alltrue([
+      for rule in var.rules :
+      length(rule.targets) >= 1 && length(rule.targets) <= 5
+    ])
+    error_message = "Each rule must have between 1 and 5 targets."
+  }
+}
+
+# -----------------------------------------------------------------------------
+# Archive Configuration
+# -----------------------------------------------------------------------------
+
+variable "archive_config" {
+  description = <<-EOT
+    Configuration for EventBridge archive. Archives store events for replay.
+
+    Fields:
+    - name: Name of the archive
+    - description: Description of the archive (optional)
+    - retention_days: Number of days to retain events (0 = indefinite, max = 365)
+    - event_pattern: Event pattern to filter which events to archive (optional)
+  EOT
+  type = object({
+    name           = string
+    description    = optional(string)
+    retention_days = optional(number, 0)
+    event_pattern  = optional(string)
+  })
+  default = null
+
+  validation {
+    condition     = var.archive_config == null ? true : (var.archive_config.retention_days >= 0 && var.archive_config.retention_days <= 365)
+    error_message = "Archive retention_days must be between 0 (indefinite) and 365 days."
+  }
+
+  validation {
+    condition     = var.archive_config == null ? true : (var.archive_config.event_pattern == null || can(jsondecode(var.archive_config.event_pattern)))
+    error_message = "Archive event_pattern must be valid JSON."
   }
 }
 
