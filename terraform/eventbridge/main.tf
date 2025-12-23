@@ -31,57 +31,61 @@ data "aws_region" "current" {}
 # -----------------------------------------------------------------------------
 
 locals {
-  # Validate that exactly one of schedule_expression or event_pattern is specified
+  # Determine if using multiple rules or single rule
+  use_multiple_rules = var.rules != null
+
+  # For backwards compatibility: convert single rule to rules format
+  single_rule_as_list = var.rules == null && var.rule_name != null ? [{
+    name                = var.rule_name
+    description         = var.rule_description
+    event_pattern       = var.event_pattern
+    schedule_expression = var.schedule_expression
+    enabled             = var.is_enabled
+    targets             = var.targets
+  }] : []
+
+  # Final rules list
+  all_rules = local.use_multiple_rules ? var.rules : local.single_rule_as_list
+
+  # Validate single rule type
   has_schedule      = var.schedule_expression != null
   has_event_pattern = var.event_pattern != null
-  rule_type_valid   = (local.has_schedule && !local.has_event_pattern) || (!local.has_schedule && local.has_event_pattern)
+  single_rule_type_valid = var.rules != null ? true : (
+    var.rule_name == null ? true : (
+      (local.has_schedule && !local.has_event_pattern) ||
+      (!local.has_schedule && local.has_event_pattern)
+    )
+  )
 
   caller_identity = var.caller_identity_override != null ? var.caller_identity_override : data.aws_caller_identity.current[0]
 
   # Event bus name to use
   event_bus_name = var.create_event_bus ? aws_cloudwatch_event_bus.this[0].name : var.event_bus_name
 
-  # IAM role name
-  role_name = var.role_name != null ? var.role_name : "${var.rule_name}-eventbridge-role"
+  # Flatten targets for IAM role permissions
+  all_targets = flatten([
+    for rule in local.all_rules : [
+      for target in rule.targets : {
+        arn     = target.arn
+        service = split(":", target.arn)[2]
+        is_ecs  = split(":", target.arn)[2] == "ecs"
+      }
+    ]
+  ])
 
   # Determine target types for IAM policy generation
-  target_arns = [for target in var.targets : target.arn]
-
-  # Extract service from ARN to determine permissions needed
-  # ARN format: arn:partition:service:region:account-id:resource
-  target_services = distinct([
-    for arn in local.target_arns :
-    split(":", arn)[2] # Extract service from ARN
-  ])
+  target_services = distinct([for t in local.all_targets : t.service])
 
   # Map services to IAM permissions
   service_permissions = {
-    "lambda" = [
-      "lambda:InvokeFunction"
-    ]
-    "sqs" = [
-      "sqs:SendMessage"
-    ]
-    "sns" = [
-      "sns:Publish"
-    ]
-    "states" = [
-      "states:StartExecution"
-    ]
-    "kinesis" = [
-      "kinesis:PutRecord",
-      "kinesis:PutRecords"
-    ]
-    "ecs" = [
-      "ecs:RunTask"
-    ]
-    "logs" = [
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-    "batch" = [
-      "batch:SubmitJob"
-    ]
+    "lambda"  = ["lambda:InvokeFunction"]
+    "sqs"     = ["sqs:SendMessage"]
+    "sns"     = ["sns:Publish"]
+    "states"  = ["states:StartExecution"]
+    "kinesis" = ["kinesis:PutRecord", "kinesis:PutRecords"]
+    "ecs"     = ["ecs:RunTask"]
+    "logs"    = ["logs:CreateLogStream", "logs:PutLogEvents"]
+    "batch"   = ["batch:SubmitJob"]
   }
 
   # Build IAM policy statements for each target service
@@ -90,8 +94,8 @@ locals {
       Effect = "Allow"
       Action = lookup(local.service_permissions, service, [])
       Resource = [
-        for arn in local.target_arns :
-        arn if split(":", arn)[2] == service
+        for t in local.all_targets :
+        t.arn if t.service == service
       ]
     } if lookup(local.service_permissions, service, null) != null
   ]
@@ -118,17 +122,31 @@ locals {
 
   # Use custom policy if provided, otherwise use auto-generated
   event_bus_policy = var.event_bus_policy_statement != null ? var.event_bus_policy_statement : local.auto_generated_policy
+
+  # IAM role name
+  role_name = var.role_name != null ? var.role_name : "${var.event_bus_name}-eventbridge-role"
 }
 
 # -----------------------------------------------------------------------------
 # Validation
 # -----------------------------------------------------------------------------
 
-resource "null_resource" "validate_rule_type" {
+resource "null_resource" "validate_single_rule_type" {
+  count = var.rules == null ? 1 : 0
+
   lifecycle {
     precondition {
-      condition     = local.rule_type_valid
-      error_message = "Exactly one of schedule_expression or event_pattern must be specified."
+      condition     = local.single_rule_type_valid
+      error_message = "When using single rule mode, exactly one of schedule_expression or event_pattern must be specified."
+    }
+  }
+}
+
+resource "null_resource" "validate_rules_or_single" {
+  lifecycle {
+    precondition {
+      condition     = var.rules != null || var.rule_name != null
+      error_message = "Either 'rules' or 'rule_name' must be specified."
     }
   }
 }
@@ -156,23 +174,40 @@ resource "aws_cloudwatch_event_bus_policy" "this" {
 }
 
 # -----------------------------------------------------------------------------
-# EventBridge Rule
+# EventBridge Archive
+# -----------------------------------------------------------------------------
+
+resource "aws_cloudwatch_event_archive" "this" {
+  count = var.archive_config != null ? 1 : 0
+
+  name             = var.archive_config.name
+  description      = var.archive_config.description
+  event_source_arn = var.create_event_bus ? aws_cloudwatch_event_bus.this[0].arn : "arn:aws:events:${data.aws_region.current.name}:${local.caller_identity.account_id}:event-bus/${var.event_bus_name}"
+  retention_days   = var.archive_config.retention_days
+  event_pattern    = var.archive_config.event_pattern
+}
+
+# -----------------------------------------------------------------------------
+# EventBridge Rules
 # -----------------------------------------------------------------------------
 
 resource "aws_cloudwatch_event_rule" "this" {
-  name           = var.rule_name
-  description    = var.rule_description
+  for_each = { for idx, rule in local.all_rules : rule.name => rule }
+
+  name           = each.value.name
+  description    = each.value.description
   event_bus_name = local.event_bus_name
 
   # Use schedule_expression if provided, otherwise use event_pattern
-  schedule_expression = var.schedule_expression
-  event_pattern       = var.event_pattern
+  schedule_expression = each.value.schedule_expression
+  event_pattern       = each.value.event_pattern
 
-  state = var.is_enabled ? "ENABLED" : "DISABLED"
+  state = each.value.enabled ? "ENABLED" : "DISABLED"
   tags  = var.tags
 
   depends_on = [
-    null_resource.validate_rule_type,
+    null_resource.validate_single_rule_type,
+    null_resource.validate_rules_or_single,
     aws_cloudwatch_event_bus.this
   ]
 }
@@ -182,10 +217,10 @@ resource "aws_cloudwatch_event_rule" "this" {
 # -----------------------------------------------------------------------------
 
 resource "aws_iam_role" "eventbridge" {
-  count = var.create_role ? 1 : 0
+  count = var.create_role && length(local.all_rules) > 0 ? 1 : 0
 
   name                 = local.role_name
-  description          = var.role_description != null ? var.role_description : "IAM role for EventBridge rule ${var.rule_name} to invoke targets"
+  description          = var.role_description != null ? var.role_description : "IAM role for EventBridge to invoke targets"
   path                 = var.role_path
   permissions_boundary = var.role_permissions_boundary
 
@@ -208,7 +243,7 @@ resource "aws_iam_role" "eventbridge" {
 # -----------------------------------------------------------------------------
 
 resource "aws_iam_role_policy" "eventbridge" {
-  count = var.create_role ? 1 : 0
+  count = var.create_role && length(local.all_rules) > 0 ? 1 : 0
 
   name = "${local.role_name}-policy"
   role = aws_iam_role.eventbridge[0].id
@@ -238,7 +273,7 @@ resource "aws_iam_role_policy" "eventbridge" {
 # -----------------------------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "additional" {
-  count = var.create_role ? length(var.additional_policy_arns) : 0
+  count = var.create_role && length(local.all_rules) > 0 ? length(var.additional_policy_arns) : 0
 
   role       = aws_iam_role.eventbridge[0].name
   policy_arn = var.additional_policy_arns[count.index]
@@ -248,25 +283,53 @@ resource "aws_iam_role_policy_attachment" "additional" {
 # EventBridge Targets
 # -----------------------------------------------------------------------------
 
-resource "aws_cloudwatch_event_target" "this" {
-  count = length(var.targets)
+locals {
+  # Flatten all targets with their rule name for for_each
+  all_targets_flat = flatten([
+    for rule in local.all_rules : [
+      for target_idx, target in rule.targets : {
+        key                    = "${rule.name}-${target.target_id}"
+        rule_name              = rule.name
+        target_id              = target.target_id
+        arn                    = target.arn
+        role_arn               = target.role_arn
+        input                  = target.input
+        input_path             = target.input_path
+        input_transformer      = target.input_transformer
+        dead_letter_config     = target.dead_letter_config
+        retry_policy           = target.retry_policy
+        sqs_parameters         = target.sqs_parameters
+        ecs_parameters         = target.ecs_parameters
+        batch_parameters       = target.batch_parameters
+        kinesis_parameters     = target.kinesis_parameters
+        run_command_parameters = target.run_command_parameters
+        http_parameters        = target.http_parameters
+      }
+    ]
+  ])
 
-  rule           = aws_cloudwatch_event_rule.this.name
+  targets_map = { for t in local.all_targets_flat : t.key => t }
+}
+
+resource "aws_cloudwatch_event_target" "this" {
+  for_each = local.targets_map
+
+  rule           = aws_cloudwatch_event_rule.this[each.value.rule_name].name
   event_bus_name = local.event_bus_name
-  target_id      = var.targets[count.index].target_id
-  arn            = var.targets[count.index].arn
+  target_id      = each.value.target_id
+  arn            = each.value.arn
 
   # Use custom role if provided, otherwise use auto-created role
-  role_arn = var.targets[count.index].role_arn != null ? var.targets[count.index].role_arn : (
+  role_arn = each.value.role_arn != null ? each.value.role_arn : (
     var.create_role ? aws_iam_role.eventbridge[0].arn : null
   )
 
   # Input transformation
-  input      = var.targets[count.index].input
-  input_path = var.targets[count.index].input_path
+  input      = each.value.input
+  input_path = each.value.input_path
 
   dynamic "input_transformer" {
-    for_each = var.targets[count.index].input_transformer != null ? [var.targets[count.index].input_transformer] : []
+    for_each = each.value.input_transformer != null ? [each.value.input_transformer] : []
     content {
       input_paths    = input_transformer.value.input_paths_map
       input_template = input_transformer.value.input_template
@@ -275,7 +338,7 @@ resource "aws_cloudwatch_event_target" "this" {
 
   # Dead letter queue configuration
   dynamic "dead_letter_config" {
-    for_each = var.targets[count.index].dead_letter_config != null ? [var.targets[count.index].dead_letter_config] : []
+    for_each = each.value.dead_letter_config != null ? [each.value.dead_letter_config] : []
     content {
       arn = dead_letter_config.value.arn
     }
@@ -283,7 +346,7 @@ resource "aws_cloudwatch_event_target" "this" {
 
   # Retry policy
   dynamic "retry_policy" {
-    for_each = var.targets[count.index].retry_policy != null ? [var.targets[count.index].retry_policy] : []
+    for_each = each.value.retry_policy != null ? [each.value.retry_policy] : []
     content {
       maximum_retry_attempts       = retry_policy.value.maximum_retry_attempts
       maximum_event_age_in_seconds = retry_policy.value.maximum_event_age_in_seconds
@@ -292,7 +355,7 @@ resource "aws_cloudwatch_event_target" "this" {
 
   # SQS-specific parameters
   dynamic "sqs_target" {
-    for_each = var.targets[count.index].sqs_parameters != null ? [var.targets[count.index].sqs_parameters] : []
+    for_each = each.value.sqs_parameters != null ? [each.value.sqs_parameters] : []
     content {
       message_group_id = sqs_target.value.message_group_id
     }
@@ -300,7 +363,7 @@ resource "aws_cloudwatch_event_target" "this" {
 
   # ECS-specific parameters
   dynamic "ecs_target" {
-    for_each = var.targets[count.index].ecs_parameters != null ? [var.targets[count.index].ecs_parameters] : []
+    for_each = each.value.ecs_parameters != null ? [each.value.ecs_parameters] : []
     content {
       task_definition_arn     = ecs_target.value.task_definition_arn
       task_count              = ecs_target.value.task_count
@@ -343,7 +406,7 @@ resource "aws_cloudwatch_event_target" "this" {
 
   # Batch-specific parameters
   dynamic "batch_target" {
-    for_each = var.targets[count.index].batch_parameters != null ? [var.targets[count.index].batch_parameters] : []
+    for_each = each.value.batch_parameters != null ? [each.value.batch_parameters] : []
     content {
       job_definition = batch_target.value.job_definition
       job_name       = batch_target.value.job_name
@@ -354,7 +417,7 @@ resource "aws_cloudwatch_event_target" "this" {
 
   # Kinesis-specific parameters
   dynamic "kinesis_target" {
-    for_each = var.targets[count.index].kinesis_parameters != null ? [var.targets[count.index].kinesis_parameters] : []
+    for_each = each.value.kinesis_parameters != null ? [each.value.kinesis_parameters] : []
     content {
       partition_key_path = kinesis_target.value.partition_key_path
     }
@@ -362,7 +425,7 @@ resource "aws_cloudwatch_event_target" "this" {
 
   # Run Command-specific parameters
   dynamic "run_command_targets" {
-    for_each = var.targets[count.index].run_command_parameters != null ? var.targets[count.index].run_command_parameters.run_command_targets : []
+    for_each = each.value.run_command_parameters != null ? each.value.run_command_parameters.run_command_targets : []
     content {
       key    = run_command_targets.value.key
       values = run_command_targets.value.values
@@ -371,7 +434,7 @@ resource "aws_cloudwatch_event_target" "this" {
 
   # HTTP-specific parameters (API Destinations)
   dynamic "http_target" {
-    for_each = var.targets[count.index].http_parameters != null ? [var.targets[count.index].http_parameters] : []
+    for_each = each.value.http_parameters != null ? [each.value.http_parameters] : []
     content {
       path_parameter_values   = http_target.value.path_parameter_values
       header_parameters       = http_target.value.header_parameters
