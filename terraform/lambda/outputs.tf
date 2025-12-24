@@ -88,3 +88,27 @@ output "timeout" {
   description = "The maximum execution time of the Lambda function in seconds."
   value       = aws_lambda_function.this.timeout
 }
+
+# -----------------------------------------------------------------------------
+# Event Source Mapping Outputs
+# -----------------------------------------------------------------------------
+
+output "event_source_mapping_arns" {
+  description = "Map of event source mapping ARNs indexed by mapping index."
+  value       = { for idx, mapping in aws_lambda_event_source_mapping.this : idx => mapping.id }
+}
+
+output "event_source_mapping_uuids" {
+  description = "Map of event source mapping UUIDs indexed by mapping index."
+  value       = { for idx, mapping in aws_lambda_event_source_mapping.this : idx => mapping.uuid }
+}
+
+output "event_source_mapping_states" {
+  description = "Map of event source mapping states indexed by mapping index."
+  value       = { for idx, mapping in aws_lambda_event_source_mapping.this : idx => mapping.state }
+}
+
+output "event_source_mapping_function_arns" {
+  description = "Map of Lambda function ARNs used by event source mappings indexed by mapping index."
+  value       = { for idx, mapping in aws_lambda_event_source_mapping.this : idx => mapping.function_arn }
+}

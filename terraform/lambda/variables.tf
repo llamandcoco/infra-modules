@@ -137,6 +137,29 @@ variable "additional_policy_arns" {
   default     = []
 }
 
+variable "policy_statements" {
+  description = "List of IAM policy statements to attach as inline policies to the Lambda execution role. Each statement defines permissions for specific actions on resources."
+  type = list(object({
+    effect    = string
+    actions   = list(string)
+    resources = list(string)
+    conditions = optional(list(object({
+      test     = string
+      variable = string
+      values   = list(string)
+    })), [])
+  }))
+  default = []
+
+  validation {
+    condition = alltrue([
+      for statement in var.policy_statements :
+      contains(["Allow", "Deny"], statement.effect)
+    ])
+    error_message = "Effect must be either 'Allow' or 'Deny'."
+  }
+}
+
 variable "create_cloudwatch_log_policy" {
   description = "Whether to create and attach an IAM policy for CloudWatch Logs. Recommended for production to enable logging."
   type        = bool
@@ -155,6 +178,64 @@ variable "log_retention_days" {
   validation {
     condition     = contains([1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653], var.log_retention_days)
     error_message = "Log retention days must be one of: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653."
+  }
+}
+
+# -----------------------------------------------------------------------------
+# Event Source Mapping Variables
+# -----------------------------------------------------------------------------
+
+variable "event_source_mappings" {
+  description = "List of event source mappings to configure for the Lambda function. Supports SQS, Kinesis, DynamoDB Streams, MSK, and other event sources."
+  type = list(object({
+    event_source_arn                   = string
+    enabled                            = optional(bool, true)
+    batch_size                         = optional(number, 10)
+    starting_position                  = optional(string, null) # Required for Kinesis and DynamoDB Streams: LATEST, TRIM_HORIZON, or AT_TIMESTAMP
+    starting_position_timestamp        = optional(string, null)
+    maximum_batching_window_in_seconds = optional(number, 0)
+    maximum_record_age_in_seconds      = optional(number, null)       # For Kinesis and DynamoDB Streams
+    maximum_retry_attempts             = optional(number, null)       # For Kinesis and DynamoDB Streams
+    parallelization_factor             = optional(number, null)       # For Kinesis and DynamoDB Streams
+    bisect_batch_on_function_error     = optional(bool, null)         # For Kinesis and DynamoDB Streams
+    tumbling_window_in_seconds         = optional(number, null)       # For Kinesis and DynamoDB Streams
+    function_response_types            = optional(list(string), null) # For Kinesis and DynamoDB Streams: ["ReportBatchItemFailures"]
+
+    # SQS-specific configurations
+    scaling_config = optional(object({
+      maximum_concurrency = number
+    }), null)
+
+    # Filtering
+    filter_criteria = optional(object({
+      filters = list(object({
+        pattern = string
+      }))
+    }), null)
+
+    # Destination configuration for failure handling
+    destination_config = optional(object({
+      on_failure = optional(object({
+        destination_arn = string
+      }), null)
+    }), null)
+  }))
+  default = []
+
+  validation {
+    condition = alltrue([
+      for mapping in var.event_source_mappings :
+      mapping.batch_size >= 1 && mapping.batch_size <= 10000
+    ])
+    error_message = "Batch size must be between 1 and 10000."
+  }
+
+  validation {
+    condition = alltrue([
+      for mapping in var.event_source_mappings :
+      mapping.starting_position == null ? true : contains(["LATEST", "TRIM_HORIZON", "AT_TIMESTAMP"], mapping.starting_position)
+    ])
+    error_message = "Starting position must be one of: LATEST, TRIM_HORIZON, AT_TIMESTAMP."
   }
 }
 
