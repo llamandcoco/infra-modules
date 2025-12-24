@@ -233,7 +233,7 @@ variable "event_source_mappings" {
   validation {
     condition = alltrue([
       for mapping in var.event_source_mappings :
-      mapping.starting_position == null || contains(["LATEST", "TRIM_HORIZON", "AT_TIMESTAMP"], mapping.starting_position)
+      mapping.starting_position == null ? true : contains(["LATEST", "TRIM_HORIZON", "AT_TIMESTAMP"], mapping.starting_position)
     ])
     error_message = "Starting position must be one of: LATEST, TRIM_HORIZON, AT_TIMESTAMP."
   }

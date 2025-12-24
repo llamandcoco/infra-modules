@@ -103,18 +103,22 @@ resource "aws_iam_role_policy" "inline_policies" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      for idx, statement in var.policy_statements : {
-        Sid      = "Statement${idx + 1}"
-        Effect   = statement.effect
-        Action   = statement.actions
-        Resource = statement.resources
-        Condition = length(statement.conditions) > 0 ? {
-          for condition in statement.conditions :
-          condition.test => {
-            (condition.variable) = condition.values
+      for idx, statement in var.policy_statements : merge(
+        {
+          Sid      = "Statement${idx + 1}"
+          Effect   = statement.effect
+          Action   = statement.actions
+          Resource = statement.resources
+        },
+        length(statement.conditions) > 0 ? {
+          Condition = {
+            for condition in statement.conditions :
+            condition.test => {
+              (condition.variable) = condition.values
+            }
           }
-        } : null
-      }
+        } : {}
+      )
     ]
   })
 }
