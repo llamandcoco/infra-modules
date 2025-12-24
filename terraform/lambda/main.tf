@@ -91,6 +91,35 @@ resource "aws_iam_role_policy_attachment" "additional" {
 }
 
 # -----------------------------------------------------------------------------
+# Inline IAM Policy Statements
+# Creates inline policies from policy statements for Lambda permissions
+# -----------------------------------------------------------------------------
+resource "aws_iam_role_policy" "inline_policies" {
+  count = length(var.policy_statements) > 0 ? 1 : 0
+
+  name = "${var.function_name}-inline-policy"
+  role = aws_iam_role.this.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      for idx, statement in var.policy_statements : {
+        Sid      = "Statement${idx + 1}"
+        Effect   = statement.effect
+        Action   = statement.actions
+        Resource = statement.resources
+        Condition = length(statement.conditions) > 0 ? {
+          for condition in statement.conditions :
+          condition.test => {
+            (condition.variable) = condition.values
+          }
+        } : null
+      }
+    ]
+  })
+}
+
+# -----------------------------------------------------------------------------
 # CloudWatch Log Group
 # Creates a log group for Lambda function logs with retention policy
 # tfsec:ignore:aws-cloudwatch-log-group-customer-key - KMS encryption is optional and can be added in Phase 2
@@ -162,6 +191,67 @@ resource "aws_lambda_function" "this" {
   # Ensure log group is created before function
   depends_on = [
     aws_cloudwatch_log_group.this,
+    aws_iam_role_policy.cloudwatch_logs
+  ]
+}
+
+# -----------------------------------------------------------------------------
+# Event Source Mapping
+# Creates event source mappings for SQS, Kinesis, DynamoDB Streams, etc.
+# -----------------------------------------------------------------------------
+resource "aws_lambda_event_source_mapping" "this" {
+  for_each = { for idx, mapping in var.event_source_mappings : idx => mapping }
+
+  event_source_arn                   = each.value.event_source_arn
+  function_name                      = aws_lambda_function.this.arn
+  enabled                            = each.value.enabled
+  batch_size                         = each.value.batch_size
+  starting_position                  = each.value.starting_position
+  starting_position_timestamp        = each.value.starting_position_timestamp
+  maximum_batching_window_in_seconds = each.value.maximum_batching_window_in_seconds
+  maximum_record_age_in_seconds      = each.value.maximum_record_age_in_seconds
+  maximum_retry_attempts             = each.value.maximum_retry_attempts
+  parallelization_factor             = each.value.parallelization_factor
+  bisect_batch_on_function_error     = each.value.bisect_batch_on_function_error
+  tumbling_window_in_seconds         = each.value.tumbling_window_in_seconds
+  function_response_types            = each.value.function_response_types
+
+  # SQS-specific scaling configuration
+  dynamic "scaling_config" {
+    for_each = each.value.scaling_config != null ? [each.value.scaling_config] : []
+    content {
+      maximum_concurrency = scaling_config.value.maximum_concurrency
+    }
+  }
+
+  # Event filtering
+  dynamic "filter_criteria" {
+    for_each = each.value.filter_criteria != null ? [each.value.filter_criteria] : []
+    content {
+      dynamic "filter" {
+        for_each = filter_criteria.value.filters
+        content {
+          pattern = filter.value.pattern
+        }
+      }
+    }
+  }
+
+  # Destination for failed records
+  dynamic "destination_config" {
+    for_each = each.value.destination_config != null ? [each.value.destination_config] : []
+    content {
+      dynamic "on_failure" {
+        for_each = destination_config.value.on_failure != null ? [destination_config.value.on_failure] : []
+        content {
+          destination_arn = on_failure.value.destination_arn
+        }
+      }
+    }
+  }
+
+  depends_on = [
+    aws_lambda_function.this,
     aws_iam_role_policy.cloudwatch_logs
   ]
 }
