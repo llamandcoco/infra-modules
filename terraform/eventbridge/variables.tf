@@ -33,16 +33,17 @@ variable "create_event_bus" {
 # -----------------------------------------------------------------------------
 
 variable "rule_name" {
-  description = "Name of the EventBridge rule. Must be unique within the event bus."
+  description = "Name of the EventBridge rule. Must be unique within the event bus. Only required when not using 'rules' variable."
   type        = string
+  default     = null
 
   validation {
-    condition     = can(regex("^[a-zA-Z0-9_.-]+$", var.rule_name))
+    condition     = var.rule_name == null || can(regex("^[a-zA-Z0-9_.-]+$", var.rule_name))
     error_message = "Rule name must only contain alphanumeric characters, hyphens, underscores, and periods."
   }
 
   validation {
-    condition     = length(var.rule_name) >= 1 && length(var.rule_name) <= 64
+    condition     = var.rule_name == null || (length(var.rule_name) >= 1 && length(var.rule_name) <= 64)
     error_message = "Rule name must be between 1 and 64 characters long."
   }
 }
