@@ -151,7 +151,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
         for_each = rule.value.noncurrent_version_expiration_days != null ? [1] : []
 
         content {
-          noncurrent_days = rule.value.noncurrent_version_expiration_days
+          noncurrent_days           = rule.value.noncurrent_version_expiration_days
+          newer_noncurrent_versions = rule.value.newer_noncurrent_versions
         }
       }
     }

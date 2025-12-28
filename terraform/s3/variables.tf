@@ -107,6 +107,7 @@ variable "lifecycle_rules" {
     - abort_incomplete_multipart_upload_days: Days to abort incomplete uploads (optional)
     - noncurrent_version_transitions: List of transitions for old versions (optional)
     - noncurrent_version_expiration_days: Days until old versions expire (optional)
+    - newer_noncurrent_versions: Number of newer noncurrent versions to retain (optional)
   EOT
   type = list(object({
     id      = string
@@ -124,6 +125,7 @@ variable "lifecycle_rules" {
       storage_class = string
     })), [])
     noncurrent_version_expiration_days = optional(number)
+    newer_noncurrent_versions          = optional(number)
   }))
   default = []
 
