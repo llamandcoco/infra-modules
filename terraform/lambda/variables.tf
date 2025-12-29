@@ -251,7 +251,7 @@ variable "tracing_config" {
   default = null
 
   validation {
-    condition     = var.tracing_config == null || contains(["Active", "PassThrough"], var.tracing_config.mode)
+    condition     = var.tracing_config == null || (var.tracing_config != null && try(contains(["Active", "PassThrough"], var.tracing_config.mode), false))
     error_message = "Tracing mode must be either 'Active' or 'PassThrough'."
   }
 }
