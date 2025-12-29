@@ -102,63 +102,19 @@ module "github_main_branch" {
 }
 
 # -----------------------------------------------------------------------------
-# Test 4: GitLab CI OIDC
-# -----------------------------------------------------------------------------
-
-module "gitlab_oidc" {
-  source = "../../"
-
-  provider_url = "gitlab.com"
-  role_name    = "test-gitlab-ci-role"
-
-  oidc_subjects = [
-    "project_path:my-group/my-project:ref_type:branch:ref:main",
-    "project_path:my-group/my-project:ref_type:branch:ref:develop"
-  ]
-
-  policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
-  ]
-
-  tags = {
-    Environment = "test"
-    Purpose     = "gitlab-oidc-testing"
-  }
-}
-
-# -----------------------------------------------------------------------------
-# Test 5: Google Cloud Workload Identity
-# -----------------------------------------------------------------------------
-
-module "gcp_workload_identity" {
-  source = "../../"
-
-  provider_url   = "accounts.google.com"
-  client_id_list = ["sts.amazonaws.com"]
-  role_name      = "test-gcp-workload-identity-role"
-
-  oidc_subjects = [
-    "https://accounts.google.com/123456789012345678901"
-  ]
-
-  policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-  ]
-
-  tags = {
-    Environment = "test"
-    Purpose     = "gcp-workload-identity-testing"
-  }
-}
-
-# -----------------------------------------------------------------------------
-# Test 6: Multiple branches with custom OIDC subjects
+# Test 4: Multiple branches with explicit OIDC subjects (recommended approach)
 # -----------------------------------------------------------------------------
 
 module "github_multiple_branches" {
   source = "../../"
 
   role_name = "test-github-multi-branch-role"
+
+  # Best practice: Use explicit oidc_subjects instead of wildcards
+  # Set github_org/repo/branch to null to avoid wildcard subjects
+  github_org    = null
+  github_repo   = null
+  github_branch = null
 
   oidc_subjects = [
     "repo:my-organization/my-repository:ref:refs/heads/main",
@@ -202,35 +158,7 @@ module "github_multiple_branches" {
 }
 
 # -----------------------------------------------------------------------------
-# Test 7: Custom OIDC provider with extended session duration
-# -----------------------------------------------------------------------------
-
-module "custom_oidc_extended_session" {
-  source = "../../"
-
-  provider_url         = "oidc.example.com"
-  role_name            = "test-custom-oidc-extended-role"
-  max_session_duration = 7200 # 2 hours
-
-  # For testing: provide thumbprint to avoid certificate fetch from fake domain
-  thumbprint_list = ["0000000000000000000000000000000000000000"]
-
-  oidc_subjects = [
-    "system:serviceaccount:production:app-service-account"
-  ]
-
-  policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
-  ]
-
-  tags = {
-    Environment = "test"
-    Purpose     = "extended-session-testing"
-  }
-}
-
-# -----------------------------------------------------------------------------
-# Test 8: Comprehensive - GitHub with managed and inline policies
+# Test 5: Comprehensive - GitHub with managed and inline policies
 # -----------------------------------------------------------------------------
 
 module "github_comprehensive" {
@@ -286,6 +214,34 @@ module "github_comprehensive" {
 }
 
 # -----------------------------------------------------------------------------
+# Test 6: Pull request access
+# -----------------------------------------------------------------------------
+
+module "github_pull_requests" {
+  source = "../../"
+
+  role_name = "test-github-pr-role"
+
+  # Explicit control - allow pull requests
+  github_org    = null
+  github_repo   = null
+  github_branch = null
+
+  oidc_subjects = [
+    "repo:my-organization/my-repository:pull_request"
+  ]
+
+  policy_arns = [
+    "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  ]
+
+  tags = {
+    Environment = "test"
+    Purpose     = "pull-request-testing"
+  }
+}
+
+# -----------------------------------------------------------------------------
 # Test Outputs
 # -----------------------------------------------------------------------------
 
@@ -299,27 +255,17 @@ output "github_all_repos_role_name" {
   value       = module.github_all_repos.role_name
 }
 
-output "gitlab_oidc_provider_arn" {
-  description = "ARN of the GitLab OIDC provider"
-  value       = module.gitlab_oidc.oidc_provider_arn
-}
-
-output "gcp_workload_identity_role_arn" {
-  description = "ARN of the GCP Workload Identity role"
-  value       = module.gcp_workload_identity.role_arn
-}
-
 output "github_multiple_branches_role_arn" {
   description = "ARN of the multi-branch role"
   value       = module.github_multiple_branches.role_arn
 }
 
-output "custom_oidc_provider_url" {
-  description = "URL of the custom OIDC provider"
-  value       = module.custom_oidc_extended_session.oidc_provider_url
-}
-
 output "github_comprehensive_role_id" {
   description = "Unique ID of the comprehensive role"
   value       = module.github_comprehensive.role_id
+}
+
+output "github_pull_requests_role_arn" {
+  description = "ARN of the pull request role"
+  value       = module.github_pull_requests.role_arn
 }
