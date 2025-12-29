@@ -212,6 +212,9 @@ module "custom_oidc_extended_session" {
   role_name            = "test-custom-oidc-extended-role"
   max_session_duration = 7200 # 2 hours
 
+  # For testing: provide thumbprint to avoid certificate fetch from fake domain
+  thumbprint_list = ["0000000000000000000000000000000000000000"]
+
   oidc_subjects = [
     "system:serviceaccount:production:app-service-account"
   ]
