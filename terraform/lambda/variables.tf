@@ -240,6 +240,23 @@ variable "event_source_mappings" {
 }
 
 # -----------------------------------------------------------------------------
+# Observability Variables
+# -----------------------------------------------------------------------------
+
+variable "tracing_config" {
+  description = "X-Ray tracing configuration. Set mode to 'Active' to enable X-Ray tracing, 'PassThrough' to only trace if upstream request is traced, or null to disable."
+  type = object({
+    mode = string # Active or PassThrough
+  })
+  default = null
+
+  validation {
+    condition     = var.tracing_config == null || (var.tracing_config != null && try(contains(["Active", "PassThrough"], var.tracing_config.mode), false))
+    error_message = "Tracing mode must be either 'Active' or 'PassThrough'."
+  }
+}
+
+# -----------------------------------------------------------------------------
 # General Variables
 # -----------------------------------------------------------------------------
 

@@ -103,6 +103,7 @@ No modules.
 | <a name="input_source_code_hash"></a> [source\_code\_hash](#input\_source\_code\_hash) | Base64-encoded SHA256 hash of the deployment package. Used to trigger redeployment when code changes. Optional but recommended for local deployment. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. Use this for cost allocation, resource organization, and governance. | `map(string)` | `{}` | no |
 | <a name="input_timeout"></a> [timeout](#input\_timeout) | Maximum execution time in seconds. Lambda functions are terminated if they run longer than this value. | `number` | `30` | no |
+| <a name="input_tracing_config"></a> [tracing\_config](#input\_tracing\_config) | X-Ray tracing configuration. Set mode to 'Active' to enable X-Ray tracing, 'PassThrough' to only trace if upstream request is traced, or null to disable. | <pre>object({<br/>    mode = string # Active or PassThrough<br/>  })</pre> | `null` | no |
 
 ## Outputs
 

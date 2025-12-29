@@ -143,7 +143,6 @@ resource "aws_cloudwatch_log_group" "this" {
 # -----------------------------------------------------------------------------
 # Lambda Function
 # Creates the Lambda function with specified configuration
-# tfsec:ignore:aws-lambda-enable-tracing - X-Ray tracing is optional and will be added in Phase 2
 # -----------------------------------------------------------------------------
 resource "aws_lambda_function" "this" {
   function_name = var.function_name
@@ -174,6 +173,15 @@ resource "aws_lambda_function" "this" {
 
     content {
       variables = var.environment_variables
+    }
+  }
+
+  # X-Ray tracing configuration
+  dynamic "tracing_config" {
+    for_each = var.tracing_config != null ? [1] : []
+
+    content {
+      mode = var.tracing_config.mode
     }
   }
 
