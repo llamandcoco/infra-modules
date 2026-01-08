@@ -1,88 +1,56 @@
-# security_groups
+# Security Groups Terraform Module
 
-Create any number of security groups with cross-references in a single stack. Pass a map of groups; rules can point at other groups by `source_sg_key` or set `self = true`.
+## Features
 
-## Usage
+- Multi-Group Creation Define multiple security groups in a single configuration
+- Cross-Group References Rules can reference other security groups by key name
+- Self-Referencing Groups Support for `self = true` rules
+- Flexible Rule Definition Support for CIDR blocks, IPv6, prefix lists, and source security groups
+- Zero Egress by Default Explicit egress rules required for better security control
+- DRY Configuration Eliminates duplicate security group definitions
+
+## Quick Start
 
 ```hcl
 module "security_groups" {
-  source = "github.com/llamandcoco/infra-modules//terraform/security_groups?ref=<sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/security_groups?ref=<commit-sha>"
 
   vpc_id = "vpc-12345678"
 
   security_groups = {
-    control = {
-      name        = "laco-k8s-control-plane-sg"
-      description = "K8s control plane"
-      ingress_rules = [
-        {
-          description = "API"
-          from_port   = 6443
-          to_port     = 6443
-          protocol    = "tcp"
-          cidr_blocks = ["0.0.0.0/0"]
-        },
-        {
-          description  = "kubelet from workers"
-          from_port    = 10250
-          to_port      = 10250
-          protocol     = "tcp"
-          source_sg_key = "worker"
-        }
-      ]
-    }
-
-    worker = {
-      name        = "laco-k8s-worker-sg"
-      description = "K8s workers"
-      ingress_rules = [
-        {
-          description   = "kubelet from control"
-          from_port     = 10250
-          to_port       = 10250
-          protocol      = "tcp"
-          source_sg_key = "control"
-        },
-        {
-          description = "nodeport"
-          from_port   = 30000
-          to_port     = 32767
-          protocol    = "tcp"
-          cidr_blocks = ["0.0.0.0/0"]
-        }
-      ]
-    }
+    # Define your security groups here
   }
 }
 ```
 
-## Inputs
+## Examples
 
-- `vpc_id` (string, required): VPC ID.
-- `security_groups` (map(object), required): Map of groups keyed by any string.
-  - `name` (string): Security group name.
-  - `description` (string, default `"Managed security group"`).
-  - `tags` (map(string), default `{}`): Extra tags; `Name` is auto-added.
-  - `ingress_rules` (list(object), default `[]`): Ingress rules.
-    - `description` (string, optional)
-    - `from_port`/`to_port` (number)
-    - `protocol` (string)
-    - `cidr_blocks`/`ipv6_cidr_blocks`/`prefix_list_ids` (list(string), optional)
-    - `source_sg_key` (string, optional): Key of another SG in the map.
-    - `self` (bool, optional): Whether the group can talk to itself.
-  - `egress_rules` (list(object), default `[]`): Same shape as ingress. No egress is created unless you define rules explicitly.
+Complete, tested configurations in [`tests/`](tests/):
 
-## Outputs
+| Example | Description |
+|---------|-------------|
+| [Basic](tests/basic/main.tf) | Cross-group references and self-referencing rules |
 
-- `security_group_ids`: Map of SG IDs keyed by `security_groups` keys.
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Test example
+cd tests/basic && terraform init && terraform plan
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
 
 ## Testing
 
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
-cd tests/basic
-terraform init -backend=false
-terraform plan
-```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -123,3 +91,4 @@ No modules.
 |------|-------------|
 | <a name="output_security_group_ids"></a> [security\_group\_ids](#output\_security\_group\_ids) | Map of security group IDs keyed by the provided security\_groups map keys |
 <!-- END_TF_DOCS -->
+</details>
