@@ -57,7 +57,7 @@ variable "save_private_key" {
     WARNING: Private keys will be stored in Terraform state!
   EOT
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "save_public_key" {
