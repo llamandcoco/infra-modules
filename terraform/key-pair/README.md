@@ -97,12 +97,13 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_algorithm"></a> [algorithm](#input\_algorithm) | Algorithm to use for generating SSH keys when public\_key is not provided.<br/>Valid values: RSA, ECDSA, ED25519 | `string` | `"RSA"` | no |
+| <a name="input_ecdsa_curve"></a> [ecdsa\_curve](#input\_ecdsa\_curve) | ECDSA curve to use. Only used when algorithm is ECDSA and public\_key is not provided. Valid values: P224, P256, P384, P521 | `string` | `"P256"` | no |
 | <a name="input_key_name"></a> [key\_name](#input\_key\_name) | Name of the SSH key pair to create in AWS. | `string` | n/a | yes |
 | <a name="input_private_key_filename"></a> [private\_key\_filename](#input\_private\_key\_filename) | Path where the private key file should be saved.<br/>If not specified, will use '<key\_name>.pem' in the current directory. | `string` | `null` | no |
 | <a name="input_public_key"></a> [public\_key](#input\_public\_key) | SSH public key material to use for the key pair. If not provided, a new key pair will be generated.<br/>Should be in OpenSSH format (starts with 'ssh-rsa', 'ssh-ed25519', etc.). | `string` | `null` | no |
 | <a name="input_public_key_filename"></a> [public\_key\_filename](#input\_public\_key\_filename) | Path where the public key file should be saved.<br/>If not specified, will use '<key\_name>.pub' in the current directory. | `string` | `null` | no |
 | <a name="input_rsa_bits"></a> [rsa\_bits](#input\_rsa\_bits) | Number of bits for RSA key. Only used when algorithm is RSA and public\_key is not provided. | `number` | `4096` | no |
-| <a name="input_save_private_key"></a> [save\_private\_key](#input\_save\_private\_key) | Whether to save the generated private key to a local file.<br/>Only applies when public\_key is not provided (key is generated).<br/>WARNING: Private keys will be stored in Terraform state! | `bool` | `true` | no |
+| <a name="input_save_private_key"></a> [save\_private\_key](#input\_save\_private\_key) | Whether to save the generated private key to a local file.<br/>Only applies when public\_key is not provided (key is generated).<br/>WARNING: Private keys will be stored in Terraform state! | `bool` | `false` | no |
 | <a name="input_save_public_key"></a> [save\_public\_key](#input\_save\_public\_key) | Whether to save the generated public key to a local file.<br/>Only applies when public\_key is not provided (key is generated). | `bool` | `true` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to the key pair resource. | `map(string)` | `{}` | no |
 

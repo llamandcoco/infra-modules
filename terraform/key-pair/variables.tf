@@ -50,6 +50,17 @@ variable "rsa_bits" {
   }
 }
 
+variable "ecdsa_curve" {
+  description = "ECDSA curve to use. Only used when algorithm is ECDSA and public_key is not provided. Valid values: P224, P256, P384, P521"
+  type        = string
+  default     = "P256"
+
+  validation {
+    condition     = contains(["P224", "P256", "P384", "P521"], var.ecdsa_curve)
+    error_message = "ECDSA curve must be one of: P224, P256, P384, P521."
+  }
+}
+
 variable "save_private_key" {
   description = <<-EOT
     Whether to save the generated private key to a local file.
