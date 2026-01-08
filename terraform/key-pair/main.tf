@@ -24,9 +24,9 @@ terraform {
 resource "tls_private_key" "this" {
   count = var.public_key == null ? 1 : 0
 
-  algorithm    = var.algorithm
-  rsa_bits     = var.algorithm == "RSA" ? var.rsa_bits : null
-  ecdsa_curve  = var.algorithm == "ECDSA" ? var.ecdsa_curve : null
+  algorithm   = var.algorithm
+  rsa_bits    = var.algorithm == "RSA" ? var.rsa_bits : null
+  ecdsa_curve = var.algorithm == "ECDSA" ? var.ecdsa_curve : null
 }
 
 # -----------------------------------------------------------------------------
