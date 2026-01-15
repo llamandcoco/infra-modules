@@ -172,9 +172,12 @@ resource "aws_codebuild_project" "this" {
     git_submodules_config {
       fetch_submodules = false
     }
-    auth {
-      type     = "OAUTH"
-      resource = var.source_type == "GITHUB" && var.github_token != "" ? aws_codebuild_source_credential.github[0].arn : null
+    dynamic "auth" {
+      for_each = var.source_type == "GITHUB" && var.github_token != "" ? [1] : []
+      content {
+        type     = "OAUTH"
+        resource = aws_codebuild_source_credential.github[0].arn
+      }
     }
   }
 
