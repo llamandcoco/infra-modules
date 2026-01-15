@@ -102,6 +102,29 @@ variable "codebuild_project_arn" {
 }
 
 # -----------------------------------------------------------------------------
+# Testing Configuration
+# -----------------------------------------------------------------------------
+
+variable "skip_data_source_lookup" {
+  description = "Skip AWS data source lookups for testing without credentials. Uses mock values instead."
+  type        = bool
+  default     = false
+}
+
+variable "mock_account_id" {
+  description = "Mock AWS account ID to use when skip_data_source_lookup is true."
+  type        = string
+  default     = "123456789012"
+}
+
+variable "mock_github_token" {
+  description = "Mock GitHub token to use when skip_data_source_lookup is true."
+  type        = string
+  default     = "mock-token"
+  sensitive   = true
+}
+
+# -----------------------------------------------------------------------------
 # Security Configuration
 # -----------------------------------------------------------------------------
 

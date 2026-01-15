@@ -92,10 +92,26 @@ The module creates an IAM role with the following permissions:
 
 ## Testing
 
+The module includes test configurations that can run without AWS credentials:
+
 ```bash
 cd tests/basic
 terraform init -backend=false
 terraform plan
+```
+
+For testing without AWS access, use the `skip_data_source_lookup` variable:
+
+```hcl
+module "pipeline" {
+  source = "..."
+
+  skip_data_source_lookup = true
+  mock_account_id         = "123456789012"
+  mock_github_token       = "test-token"
+
+  # ... other required variables
+}
 ```
 
 <details>
@@ -146,7 +162,10 @@ No modules.
 | <a name="input_github_owner"></a> [github\_owner](#input\_github\_owner) | GitHub repository owner (organization or username). | `string` | n/a | yes |
 | <a name="input_github_repo"></a> [github\_repo](#input\_github\_repo) | GitHub repository name. | `string` | n/a | yes |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | KMS key ID for S3 bucket encryption.<br/>If not provided, uses AWS-managed encryption (AES256).<br/>For enhanced security, provide a customer-managed KMS key ARN or alias.<br/>Examples:<br/>- Key ARN: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012<br/>- Alias ARN: arn:aws:kms:us-east-1:123456789012:alias/my-key<br/>- Key ID: 12345678-1234-1234-1234-123456789012 | `string` | `null` | no |
+| <a name="input_mock_account_id"></a> [mock\_account\_id](#input\_mock\_account\_id) | Mock AWS account ID to use when skip\_data\_source\_lookup is true. | `string` | `"123456789012"` | no |
+| <a name="input_mock_github_token"></a> [mock\_github\_token](#input\_mock\_github\_token) | Mock GitHub token to use when skip\_data\_source\_lookup is true. | `string` | `"mock-token"` | no |
 | <a name="input_pipeline_name"></a> [pipeline\_name](#input\_pipeline\_name) | Name of the CodePipeline. Used for resource naming and tagging. | `string` | n/a | yes |
+| <a name="input_skip_data_source_lookup"></a> [skip\_data\_source\_lookup](#input\_skip\_data\_source\_lookup) | Skip AWS data source lookups for testing without credentials. Uses mock values instead. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. | `map(string)` | `{}` | no |
 
 ## Outputs

@@ -12,12 +12,23 @@ terraform {
 # Data Sources
 # -----------------------------------------------------------------------------
 
-data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {
+  count = var.skip_data_source_lookup ? 0 : 1
+}
 
-data "aws_region" "current" {}
+data "aws_region" "current" {
+  count = var.skip_data_source_lookup ? 0 : 1
+}
 
 data "aws_ssm_parameter" "github_token" {
-  name = "/${var.env}/${var.app}/github-token"
+  count = var.skip_data_source_lookup ? 0 : 1
+  name  = "/${var.env}/${var.app}/github-token"
+}
+
+locals {
+  account_id   = var.skip_data_source_lookup ? var.mock_account_id : data.aws_caller_identity.current[0].account_id
+  region       = var.skip_data_source_lookup ? "us-east-1" : data.aws_region.current[0].name
+  github_token = var.skip_data_source_lookup ? var.mock_github_token : data.aws_ssm_parameter.github_token[0].value
 }
 
 # -----------------------------------------------------------------------------
@@ -25,7 +36,7 @@ data "aws_ssm_parameter" "github_token" {
 # -----------------------------------------------------------------------------
 
 resource "aws_s3_bucket" "pipeline_artifacts" {
-  bucket = "${var.env}-${var.app}-artifacts-${data.aws_caller_identity.current.account_id}"
+  bucket = "${var.env}-${var.app}-artifacts-${local.account_id}"
 
   tags = var.tags
 }
@@ -117,7 +128,7 @@ resource "aws_iam_role_policy" "pipeline" {
             "ssm:GetParameter",
             "ssm:GetParameters"
           ]
-          Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.env}/*"
+          Resource = "arn:aws:ssm:${local.region}:${local.account_id}:parameter/${var.env}/*"
         }
       ],
       var.kms_key_id != null ? [
@@ -164,7 +175,7 @@ resource "aws_codepipeline" "this" {
         Owner      = var.github_owner
         Repo       = var.github_repo
         Branch     = var.github_branch
-        OAuthToken = data.aws_ssm_parameter.github_token.value
+        OAuthToken = local.github_token
       }
     }
   }

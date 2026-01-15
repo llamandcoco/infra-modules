@@ -40,6 +40,11 @@ module "test_basic_pipeline" {
   codebuild_project_name = "test-build-project"
   codebuild_project_arn  = "arn:aws:codebuild:us-east-1:123456789012:project/test-build-project"
 
+  # Skip real AWS calls for testing
+  skip_data_source_lookup = true
+  mock_account_id         = "123456789012"
+  mock_github_token       = "test-token"
+
   tags = {
     Environment = "test"
     ManagedBy   = "terraform"
