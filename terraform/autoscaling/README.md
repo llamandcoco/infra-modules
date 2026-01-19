@@ -1,27 +1,56 @@
-# Auto Scaling Group (ASG)
-
-Minimal Terraform module to provision an EC2 Auto Scaling Group with a Launch Template, optional Target Tracking policies (CPU, ALB request count), and optional Step Scaling policy outputs for CloudWatch alarm wiring.
+# Auto Scaling Group Terraform Module
 
 ## Features
-- Launch Template with Amazon Linux 2023 support
-- IMDSv2 enabled by default
-- User data injection (plain or base64)
-- ASG with ALB Target Group attachment
-- Optional Target Tracking (CPU, ALBRequestCountPerTarget)
-- Optional Step Scaling policy (outputs ARN for alarm actions)
+
+- Launch Template with Amazon Linux 2023 support and IMDSv2 enforced
+- Auto Scaling Group with ALB/NLB target group attachment and rich tagging
+- Optional target tracking (CPU, ALBRequestCountPerTarget) and step/predictive scaling hooks
+- Warm pool, capacity rebalance, and health-check controls for fast recovery
+- Exposes policy/metric alarm ARNs so CloudWatch alarms can trigger scaling policies
 
 ## Quick Start
-See tests/basic for a runnable example without AWS credentials (plan only).
+
+```hcl
+module "autoscaling" {
+  source = "github.com/llamandcoco/infra-modules//terraform/autoscaling?ref=<commit-sha>"
+
+  name           = "example-asg"
+  vpc_subnet_ids = ["subnet-123", "subnet-456"]
+  min_size       = 1
+  max_size       = 3
+  desired_capacity = 2
+  instance_type  = "t3.micro"
+}
+```
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory | Description |
+|---------|-----------|-------------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) | Minimal ASG with target tracking CPU scaling |
+| Step Scaling | [`tests/with-step-scaling/main.tf`](tests/with-step-scaling/main.tf) | Aggressive step scaling for CPU/RPS spikes |
+| Warm Pool | [`tests/with-warm-pool/main.tf`](tests/with-warm-pool/main.tf) | Pre-warmed instances for faster scale-out |
+| With Instance Profile | [`tests/with-instance-profile/main.tf`](tests/with-instance-profile/main.tf) | Integration with instance-profile module |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
 
 ## Testing
-Run in tests/basic:
-```
-terraform init -backend=false
-terraform plan
+
+```bash
+cd tests/basic && terraform init && terraform plan
 ```
 
-## Terraform Docs
-Run `terraform-docs markdown table . >> README.md` to append inputs/outputs.
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -131,3 +160,4 @@ No modules.
 | <a name="output_tt_alb_policy_arn"></a> [tt\_alb\_policy\_arn](#output\_tt\_alb\_policy\_arn) | Target tracking RPS (ALB request count) policy ARN (if created) |
 | <a name="output_tt_cpu_policy_arn"></a> [tt\_cpu\_policy\_arn](#output\_tt\_cpu\_policy\_arn) | Target tracking CPU policy ARN (if created) |
 <!-- END_TF_DOCS -->
+</details>

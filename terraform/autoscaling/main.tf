@@ -13,18 +13,27 @@ locals {
   asg_name = "${var.name}-asg"
 }
 
+# -----------------------------------------------------------------------------
+# Image Selection
+# -----------------------------------------------------------------------------
 # CI-safe conditional SSM lookup for AL2023 AMI
 data "aws_ssm_parameter" "al2023" {
   count = var.ami_id == null && var.use_ssm_ami_lookup ? 1 : 0
   name  = var.ami_ssm_parameter_name
 }
 
+# -----------------------------------------------------------------------------
+# Derived Locals
+# -----------------------------------------------------------------------------
 locals {
   image_id = var.ami_id != null ? var.ami_id : (
     var.use_ssm_ami_lookup && length(data.aws_ssm_parameter.al2023) > 0 ? data.aws_ssm_parameter.al2023[0].value : null
   )
 }
 
+# -----------------------------------------------------------------------------
+# Launch Template
+# -----------------------------------------------------------------------------
 resource "aws_launch_template" "this" {
   name        = local.lt_name
   description = "Launch template for ${var.name}"
@@ -59,6 +68,9 @@ resource "aws_launch_template" "this" {
   }
 }
 
+# -----------------------------------------------------------------------------
+# Auto Scaling Group
+# -----------------------------------------------------------------------------
 resource "aws_autoscaling_group" "this" {
   name                = local.asg_name
   min_size            = var.min_size
@@ -86,6 +98,9 @@ resource "aws_autoscaling_group" "this" {
 
   target_group_arns = var.target_group_arns
 
+  # -----------------------------------------------------------------------------
+  # Warm Pool (Optional)
+  # -----------------------------------------------------------------------------
   dynamic "warm_pool" {
     for_each = var.enable_warm_pool ? [1] : []
     content {
@@ -110,6 +125,9 @@ resource "aws_autoscaling_group" "this" {
   }
 }
 
+# -----------------------------------------------------------------------------
+# Target Tracking Policies
+# -----------------------------------------------------------------------------
 # Target Tracking: CPU
 resource "aws_autoscaling_policy" "tt_cpu" {
   count                  = var.enable_target_tracking_cpu ? 1 : 0
@@ -141,6 +159,9 @@ resource "aws_autoscaling_policy" "tt_alb" {
   }
 }
 
+# -----------------------------------------------------------------------------
+# Memory Alarm (Optional)
+# -----------------------------------------------------------------------------
 # Optional memory-based alarm (requires CloudWatch Agent to publish mem_used_percent)
 resource "aws_cloudwatch_metric_alarm" "memory" {
   count       = var.enable_memory_alarm ? 1 : 0
@@ -163,6 +184,9 @@ resource "aws_cloudwatch_metric_alarm" "memory" {
 }
 
 
+# -----------------------------------------------------------------------------
+# Step Scaling Policy
+# -----------------------------------------------------------------------------
 # Optional Step Scaling policy (to be wired with CloudWatch Alarm actions)
 resource "aws_autoscaling_policy" "step" {
   count                  = var.step_policy_name != null && length(var.step_adjustments) > 0 ? 1 : 0
@@ -181,6 +205,9 @@ resource "aws_autoscaling_policy" "step" {
   }
 }
 
+# -----------------------------------------------------------------------------
+# Predictive Scaling Policy
+# -----------------------------------------------------------------------------
 # Predictive Scaling Policy (requires 14 days of historical data)
 resource "aws_autoscaling_policy" "predictive" {
   count                  = var.enable_predictive_scaling ? 1 : 0
@@ -216,9 +243,9 @@ resource "aws_autoscaling_policy" "predictive" {
   }
 }
 
-# ========================================
-# Step Scaling - CPU (Aggressive scaling for sudden spikes)
-# ========================================
+# -----------------------------------------------------------------------------
+# Step Scaling - CPU
+# -----------------------------------------------------------------------------
 
 # Step Scaling Policy - CPU
 resource "aws_autoscaling_policy" "step_cpu" {
@@ -242,6 +269,9 @@ resource "aws_autoscaling_policy" "step_cpu" {
   }
 }
 
+# -----------------------------------------------------------------------------
+# CPU High Step Alarm
+# -----------------------------------------------------------------------------
 # CloudWatch Alarm - CPU High (triggers step scaling)
 resource "aws_cloudwatch_metric_alarm" "cpu_high_step" {
   count               = var.enable_step_scaling_cpu ? 1 : 0
@@ -263,9 +293,9 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high_step" {
   alarm_actions = [aws_autoscaling_policy.step_cpu[0].arn]
 }
 
-# ========================================
-# Step Scaling - RPS (ALB Request Count Per Target)
-# ========================================
+# -----------------------------------------------------------------------------
+# Step Scaling - RPS
+# -----------------------------------------------------------------------------
 
 # Step Scaling Policy - RPS
 resource "aws_autoscaling_policy" "step_rps" {
@@ -289,6 +319,9 @@ resource "aws_autoscaling_policy" "step_rps" {
   }
 }
 
+# -----------------------------------------------------------------------------
+# RPS High Step Alarm
+# -----------------------------------------------------------------------------
 # CloudWatch Alarm - RPS High (triggers step scaling)
 resource "aws_cloudwatch_metric_alarm" "rps_high_step" {
   count               = var.enable_step_scaling_rps && var.alb_target_group_resource_label != null ? 1 : 0
