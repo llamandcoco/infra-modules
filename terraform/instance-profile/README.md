@@ -18,74 +18,40 @@
 
 ## Quick Start
 
-### Basic Usage
-
 ```hcl
 module "instance_profile" {
   source = "github.com/llamandcoco/infra-modules//terraform/instance-profile?ref=<commit-sha>"
 
   name = "my-app"
-}
-```
-
-### Advanced Usage with Custom Policies
-
-```hcl
-module "instance_profile" {
-  source = "github.com/llamandcoco/infra-modules//terraform/instance-profile?ref=<commit-sha>"
-
-  name = "my-app"
-
-  # Enable built-in policies
-  enable_ecr                  = true
-  enable_ssm                  = true
-  enable_ssm_session_manager  = true
-  enable_cw_logs              = true
-  enable_cw_agent             = true
-
-  # S3 and KMS support
-  s3_log_buckets = [
-    "arn:aws:s3:::my-log-bucket"
-  ]
-  kms_key_arns = [
-    "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
-  ]
-
-  # Attach additional managed policies
-  additional_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  ]
-
-  # Add custom inline policies
-  custom_policy_statements = [
-    {
-      sid = "DynamoDBAccess"
-      actions = [
-        "dynamodb:GetItem",
-        "dynamodb:Query"
-      ]
-      resources = ["arn:aws:dynamodb:us-east-1:123456789012:table/my-table"]
-    }
-  ]
-
-  tags = {
-    Environment = "production"
-    Application = "my-app"
-  }
 }
 ```
 
 ## Examples
 
+Complete, tested configurations in [`tests/`](tests/):
+
 | Example | Directory |
 |---------|-----------|
-| Basic   | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| Advanced (Custom Policies) | [`tests/advanced/main.tf`](tests/advanced/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/main.tf
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
 
 ## Testing
 
 ```bash
-cd tests/basic && terraform init -backend=false && terraform plan
+cd tests/basic && terraform init && terraform plan
 ```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -143,3 +109,4 @@ No modules.
 | <a name="output_role_arn"></a> [role\_arn](#output\_role\_arn) | IAM role ARN |
 | <a name="output_role_name"></a> [role\_name](#output\_role\_name) | IAM role name |
 <!-- END_TF_DOCS -->
+</details>
