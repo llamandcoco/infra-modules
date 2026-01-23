@@ -1,5 +1,6 @@
 terraform {
   required_version = ">= 1.3.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -7,6 +8,10 @@ terraform {
     }
   }
 }
+
+# -----------------------------------------------------------------------------
+# CloudWatch Metric Alarm
+# -----------------------------------------------------------------------------
 
 resource "aws_cloudwatch_metric_alarm" "this" {
   alarm_name          = var.alarm_name
