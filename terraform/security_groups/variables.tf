@@ -1,10 +1,26 @@
+# -----------------------------------------------------------------------------
+# Required Variables
+# -----------------------------------------------------------------------------
+
 variable "vpc_id" {
-  description = "VPC ID where security groups will be created"
+  description = "VPC ID where security groups will be created. Must start with 'vpc-'."
   type        = string
+
+  validation {
+    condition     = can(regex("^vpc-[a-z0-9]{8,}$", var.vpc_id))
+    error_message = "VPC ID must start with 'vpc-' followed by alphanumeric characters."
+  }
 }
 
 variable "security_groups" {
-  description = "Map of security groups to create keyed by an arbitrary name"
+  description = <<-EOT
+    Map of security groups to create, keyed by an arbitrary name.
+    Each security group can define ingress and egress rules with support for:
+    - CIDR blocks (IPv4 and IPv6)
+    - Prefix lists
+    - Cross-group references using source_sg_key
+    - Self-referencing rules
+  EOT
   type = map(object({
     name        = string
     description = optional(string, "Managed security group")

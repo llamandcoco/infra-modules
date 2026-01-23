@@ -4,10 +4,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = ">= 5.0"
     }
   }
 }
+
+# -----------------------------------------------------------------------------
+# Security Groups
+# -----------------------------------------------------------------------------
 
 resource "aws_security_group" "sg" {
   for_each = var.security_groups
@@ -23,6 +27,10 @@ resource "aws_security_group" "sg" {
     }
   )
 }
+
+# -----------------------------------------------------------------------------
+# Local Variables
+# -----------------------------------------------------------------------------
 
 locals {
   sg_ids = { for key, sg in aws_security_group.sg : key => sg.id }
@@ -48,6 +56,10 @@ locals {
   ])
 }
 
+# -----------------------------------------------------------------------------
+# Security Group Rules - Ingress
+# -----------------------------------------------------------------------------
+
 resource "aws_security_group_rule" "ingress" {
   for_each = {
     for item in local.ingress_rules :
@@ -69,6 +81,10 @@ resource "aws_security_group_rule" "ingress" {
   self        = try(each.value.rule.self, false)
   description = try(each.value.rule.description, null)
 }
+
+# -----------------------------------------------------------------------------
+# Security Group Rules - Egress
+# -----------------------------------------------------------------------------
 
 resource "aws_security_group_rule" "egress" {
   for_each = {
