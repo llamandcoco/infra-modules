@@ -80,6 +80,11 @@ resource "aws_security_group" "this" {
   vpc_id                 = var.vpc_id
   revoke_rules_on_delete = true
 
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [egress] # Ignore default egress rule AWS creates
+  }
+
   tags = merge(
     var.tags,
     {
@@ -95,8 +100,8 @@ resource "aws_security_group_rule" "ingress" {
   from_port                = each.value.from_port
   to_port                  = each.value.to_port
   protocol                 = each.value.protocol
-  cidr_blocks              = try(each.value.cidr_blocks, [])
-  ipv6_cidr_blocks         = try(each.value.ipv6_cidr_blocks, [])
+  cidr_blocks              = try(each.value.source_security_group_id, null) == null ? try(each.value.cidr_blocks, []) : null
+  ipv6_cidr_blocks         = try(each.value.source_security_group_id, null) == null ? try(each.value.ipv6_cidr_blocks, []) : null
   prefix_list_ids          = try(each.value.prefix_list_ids, [])
   security_group_id        = aws_security_group.this.id
   source_security_group_id = try(each.value.source_security_group_id, null)
@@ -111,8 +116,8 @@ resource "aws_security_group_rule" "egress" {
   from_port                = each.value.from_port
   to_port                  = each.value.to_port
   protocol                 = each.value.protocol
-  cidr_blocks              = try(each.value.cidr_blocks, [])
-  ipv6_cidr_blocks         = try(each.value.ipv6_cidr_blocks, [])
+  cidr_blocks              = try(each.value.source_security_group_id, null) == null ? try(each.value.cidr_blocks, []) : null
+  ipv6_cidr_blocks         = try(each.value.source_security_group_id, null) == null ? try(each.value.ipv6_cidr_blocks, []) : null
   prefix_list_ids          = try(each.value.prefix_list_ids, [])
   security_group_id        = aws_security_group.this.id
   source_security_group_id = try(each.value.source_security_group_id, null)
