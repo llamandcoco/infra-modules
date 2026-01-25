@@ -60,7 +60,7 @@ module "vpc" {
 
 module "internet_gateway" {
   count  = local.create_igw ? 1 : 0
-  source = "../../internet_gateway"
+  source = "../../internet-gateway"
 
   name   = "${var.name}-igw"
   vpc_id = module.vpc.vpc_id
@@ -83,7 +83,7 @@ module "subnets" {
 
 module "nat_gateway" {
   count  = local.create_nat ? 1 : 0
-  source = "../../nat_gateway"
+  source = "../../nat-gateway"
 
   public_subnet_ids  = module.subnets.public_subnet_ids
   create_per_az      = local.nat_per_az
@@ -93,7 +93,7 @@ module "nat_gateway" {
 }
 
 module "route_tables" {
-  source = "../../route_table"
+  source = "../../route-table"
 
   vpc_id                 = module.vpc.vpc_id
   internet_gateway_id    = local.create_igw ? module.internet_gateway[0].internet_gateway_id : null
@@ -108,7 +108,7 @@ module "route_tables" {
 }
 
 module "security_group" {
-  source = "../../security_group"
+  source = "../../security-group"
 
   name          = "${var.name}-default-sg"
   description   = "Default workload security group"

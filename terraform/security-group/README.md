@@ -13,7 +13,7 @@ A flexible Terraform module for creating and managing AWS Security Groups with s
 
 ```hcl
 module "security_group" {
-  source = "github.com/llamandcoco/infra-modules//terraform/security_group?ref=<commit-sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/security-group?ref=<commit-sha>"
 
   # Add required variables here
 }
