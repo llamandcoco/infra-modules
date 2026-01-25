@@ -13,7 +13,7 @@ A simple Terraform module for creating and managing AWS Internet Gateway resourc
 
 ```hcl
 module "internet_gateway" {
-  source = "github.com/llamandcoco/infra-modules//terraform/internet_gateway?ref=<commit-sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/internet-gateway?ref=<commit-sha>"
 
   # Add required variables here
 }

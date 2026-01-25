@@ -40,19 +40,6 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-## Quick Start
-
-```hcl
-module "networking" {
-  source = "github.com/llamandcoco/infra-modules//terraform/stack/networking?ref=<commit-sha>"
-
-  # Add required variables here
-}
-```
-
-<details>
-<summary>Terraform Documentation</summary>
-
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -68,10 +55,10 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_internet_gateway"></a> [internet\_gateway](#module\_internet\_gateway) | ../../internet_gateway | n/a |
-| <a name="module_nat_gateway"></a> [nat\_gateway](#module\_nat\_gateway) | ../../nat_gateway | n/a |
-| <a name="module_route_tables"></a> [route\_tables](#module\_route\_tables) | ../../route_table | n/a |
-| <a name="module_security_group"></a> [security\_group](#module\_security\_group) | ../../security_group | n/a |
+| <a name="module_internet_gateway"></a> [internet\_gateway](#module\_internet\_gateway) | ../../internet-gateway | n/a |
+| <a name="module_nat_gateway"></a> [nat\_gateway](#module\_nat\_gateway) | ../../nat-gateway | n/a |
+| <a name="module_route_tables"></a> [route\_tables](#module\_route\_tables) | ../../route-table | n/a |
+| <a name="module_security_group"></a> [security\_group](#module\_security\_group) | ../../security-group | n/a |
 | <a name="module_subnets"></a> [subnets](#module\_subnets) | ../../subnet | n/a |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../vpc | n/a |
 
@@ -118,4 +105,3 @@ No resources.
 | <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | Security groups created by the stack. |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | ID of the created VPC. |
 <!-- END_TF_DOCS -->
-</details>

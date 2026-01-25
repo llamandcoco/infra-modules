@@ -13,7 +13,7 @@ A straightforward Terraform module for creating and managing AWS NAT Gateway res
 
 ```hcl
 module "nat_gateway" {
-  source = "github.com/llamandcoco/infra-modules//terraform/nat_gateway?ref=<commit-sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/nat-gateway?ref=<commit-sha>"
 
   # Add required variables here
 }

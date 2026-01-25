@@ -13,7 +13,7 @@ A Terraform module for creating and managing AWS Route Table resources with flex
 
 ```hcl
 module "route_table" {
-  source = "github.com/llamandcoco/infra-modules//terraform/route_table?ref=<commit-sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/route-table?ref=<commit-sha>"
 
   # Add required variables here
 }

@@ -15,7 +15,7 @@
 
 ```hcl
 module "security_groups" {
-  source = "github.com/llamandcoco/infra-modules//terraform/security_groups?ref=<commit-sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/security-groups?ref=<commit-sha>"
 
   vpc_id = "vpc-12345678"
 
