@@ -246,7 +246,7 @@ variable "web_acl_arn" {
 
 variable "target_groups" {
   description = <<-EOT
-    List of target groups to create. At least one target group is required.
+    List of target groups to create. Can be empty when target groups are managed externally.
 
     Example:
     [
@@ -320,11 +320,6 @@ variable "target_groups" {
       availability_zone = optional(string)
     })), [])
   }))
-
-  validation {
-    condition     = length(var.target_groups) >= 1
-    error_message = "At least one target group must be defined."
-  }
 
   validation {
     condition     = alltrue([for tg in var.target_groups : contains(["HTTP", "HTTPS"], tg.protocol)])
