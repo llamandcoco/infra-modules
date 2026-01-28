@@ -107,3 +107,9 @@ variable "manage_default_nacl" {
   type        = bool
   default     = true
 }
+
+variable "ignore_default_nacl_subnet_ids" {
+  description = "Ignore default NACL subnet associations to prevent drift."
+  type        = bool
+  default     = true
+}

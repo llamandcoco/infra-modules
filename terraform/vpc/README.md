@@ -26,6 +26,7 @@ Complete, tested configurations in [`tests/`](tests/):
 | Example | Directory |
 |---------|----------|
 | Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| No Default NACL | [`tests/no_default_nacl/main.tf`](tests/no_default_nacl/main.tf) |
 
 **Usage:**
 ```bash
@@ -40,6 +41,7 @@ cp -r tests/basic/ my-project/
 
 ```bash
 cd tests/basic && terraform init && terraform plan
+cd tests/no_default_nacl && terraform init && terraform plan
 ```
 
 <details>
@@ -68,6 +70,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_default_network_acl.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_network_acl) | resource |
+| [aws_default_network_acl.this_ignore](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_network_acl) | resource |
 | [aws_default_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_security_group) | resource |
 | [aws_flow_log.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/flow_log) | resource |
 | [aws_vpc.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
@@ -85,6 +88,7 @@ No modules.
 | <a name="input_flow_logs_destination_arn"></a> [flow\_logs\_destination\_arn](#input\_flow\_logs\_destination\_arn) | ARN of the destination for VPC Flow Logs (CloudWatch Log Group or S3 bucket). Required if enable\_flow\_logs is true. | `string` | `null` | no |
 | <a name="input_flow_logs_iam_role_arn"></a> [flow\_logs\_iam\_role\_arn](#input\_flow\_logs\_iam\_role\_arn) | IAM role ARN for VPC Flow Logs. Required if enable\_flow\_logs is true. | `string` | `null` | no |
 | <a name="input_flow_logs_traffic_type"></a> [flow\_logs\_traffic\_type](#input\_flow\_logs\_traffic\_type) | Type of traffic to log (ACCEPT, REJECT, ALL). | `string` | `"ALL"` | no |
+| <a name="input_ignore_default_nacl_subnet_ids"></a> [ignore\_default\_nacl\_subnet\_ids](#input\_ignore\_default\_nacl\_subnet\_ids) | Ignore default NACL subnet associations to prevent drift. | `bool` | `true` | no |
 | <a name="input_instance_tenancy"></a> [instance\_tenancy](#input\_instance\_tenancy) | The allowed tenancy of instances launched into the VPC. | `string` | `"default"` | no |
 | <a name="input_manage_default_nacl"></a> [manage\_default\_nacl](#input\_manage\_default\_nacl) | Manage the default network ACL. | `bool` | `true` | no |
 | <a name="input_manage_default_security_group"></a> [manage\_default\_security\_group](#input\_manage\_default\_security\_group) | Manage the default security group and lock it down (recommended for security). | `bool` | `true` | no |
