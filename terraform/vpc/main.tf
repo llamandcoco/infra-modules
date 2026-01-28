@@ -59,7 +59,7 @@ resource "aws_default_security_group" "this" {
 
 # Manage default network ACL
 resource "aws_default_network_acl" "this" {
-  count = var.manage_default_nacl ? 1 : 0
+  count = var.manage_default_nacl && !var.ignore_default_nacl_subnet_ids ? 1 : 0
 
   default_network_acl_id = aws_vpc.this.default_network_acl_id
 
@@ -88,4 +88,40 @@ resource "aws_default_network_acl" "this" {
       Name = "${var.name}-default-nacl"
     }
   )
+}
+
+resource "aws_default_network_acl" "this_ignore" {
+  count = var.manage_default_nacl && var.ignore_default_nacl_subnet_ids ? 1 : 0
+
+  default_network_acl_id = aws_vpc.this.default_network_acl_id
+
+  # Allow all traffic by default (common practice)
+  ingress {
+    protocol   = -1
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  egress {
+    protocol   = -1
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-default-nacl"
+    }
+  )
+
+  lifecycle {
+    ignore_changes = [subnet_ids]
+  }
 }

@@ -78,8 +78,10 @@ No resources.
 | <a name="input_enable_dns_support"></a> [enable\_dns\_support](#input\_enable\_dns\_support) | Enable DNS resolution in the VPC. | `bool` | `true` | no |
 | <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | Enable IPv6 for the VPC and public subnets. | `bool` | `false` | no |
 | <a name="input_enable_network_address_usage_metrics"></a> [enable\_network\_address\_usage\_metrics](#input\_enable\_network\_address\_usage\_metrics) | Enable VPC IP address usage metrics. | `bool` | `false` | no |
+| <a name="input_ignore_default_nacl_subnet_ids"></a> [ignore\_default\_nacl\_subnet\_ids](#input\_ignore\_default\_nacl\_subnet\_ids) | Ignore default NACL subnet associations to prevent drift. | `bool` | `true` | no |
 | <a name="input_instance_tenancy"></a> [instance\_tenancy](#input\_instance\_tenancy) | Instance tenancy for the VPC. | `string` | `"default"` | no |
 | <a name="input_internet_gateway_enabled"></a> [internet\_gateway\_enabled](#input\_internet\_gateway\_enabled) | Create an Internet Gateway. Automatically enabled if public subnets are configured. | `bool` | `true` | no |
+| <a name="input_manage_default_nacl"></a> [manage\_default\_nacl](#input\_manage\_default\_nacl) | Manage the default network ACL. Disable to avoid default NACL drift. | `bool` | `true` | no |
 | <a name="input_map_public_ip_on_launch"></a> [map\_public\_ip\_on\_launch](#input\_map\_public\_ip\_on\_launch) | Auto-assign public IPs to instances in public subnets. | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name prefix for networking resources. | `string` | n/a | yes |
 | <a name="input_nat_gateway_mode"></a> [nat\_gateway\_mode](#input\_nat\_gateway\_mode) | NAT Gateway deployment strategy: 'per\_az' (HA, one per AZ), 'single' (cost-optimized, one NAT), or 'none' (no NAT). | `string` | `"per_az"` | no |

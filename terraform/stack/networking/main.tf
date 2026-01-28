@@ -55,6 +55,8 @@ module "vpc" {
   enable_dns_hostnames                 = var.enable_dns_hostnames
   enable_network_address_usage_metrics = var.enable_network_address_usage_metrics
   instance_tenancy                     = var.instance_tenancy
+  manage_default_nacl                  = var.manage_default_nacl
+  ignore_default_nacl_subnet_ids       = var.ignore_default_nacl_subnet_ids
   tags                                 = local.common_tags
 }
 

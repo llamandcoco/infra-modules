@@ -86,6 +86,22 @@ variable "enable_ipv6" {
   default     = false
 }
 
+# -----------------------------------------------------------------------------
+# Default Resource Management
+# -----------------------------------------------------------------------------
+
+variable "manage_default_nacl" {
+  description = "Manage the default network ACL. Disable to avoid default NACL drift."
+  type        = bool
+  default     = true
+}
+
+variable "ignore_default_nacl_subnet_ids" {
+  description = "Ignore default NACL subnet associations to prevent drift."
+  type        = bool
+  default     = true
+}
+
 variable "internet_gateway_enabled" {
   description = "Create an Internet Gateway. Automatically enabled if public subnets are configured."
   type        = bool
