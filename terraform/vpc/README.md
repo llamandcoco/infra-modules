@@ -26,6 +26,7 @@ Complete, tested configurations in [`tests/`](tests/):
 | Example | Directory |
 |---------|----------|
 | Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| No Default NACL | [`tests/no_default_nacl/main.tf`](tests/no_default_nacl/main.tf) |
 
 **Usage:**
 ```bash
@@ -40,6 +41,7 @@ cp -r tests/basic/ my-project/
 
 ```bash
 cd tests/basic && terraform init && terraform plan
+cd tests/no_default_nacl && terraform init && terraform plan
 ```
 
 <details>
