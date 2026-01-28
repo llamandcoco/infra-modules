@@ -129,7 +129,7 @@ variable "listener_arn" {
   default     = null
 
   validation {
-    condition     = var.listener_arn == null || var.listener_priority != null
+    condition     = var.listener_arn == null ? true : var.listener_priority != null
     error_message = "listener_priority must be set when listener_arn is provided."
   }
 }
@@ -177,7 +177,7 @@ variable "listener_conditions" {
   default = []
 
   validation {
-    condition     = var.listener_arn == null || length(var.listener_conditions) > 0
+    condition     = var.listener_arn == null ? true : length(var.listener_conditions) > 0
     error_message = "listener_conditions must be set when listener_arn is provided."
   }
 }
