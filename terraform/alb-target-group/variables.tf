@@ -135,7 +135,7 @@ variable "listener_priority" {
   default     = null
 
   validation {
-    condition     = var.listener_priority == null || (var.listener_priority >= 1 && var.listener_priority <= 50000)
+    condition     = var.listener_priority == null ? true : (var.listener_priority >= 1 && var.listener_priority <= 50000)
     error_message = "listener_priority must be between 1 and 50000."
   }
 }
