@@ -18,76 +18,6 @@ Use this module for **every ECS service** - it's required for basic ECS function
 
 You need this role even if your container doesn't make any AWS API calls.
 
-## Usage
-
-### Basic Example
-
-```hcl
-module "execution_role" {
-  source = "../../terraform/ecs-execution-role"
-
-  name = "my-app-execution-role"
-
-  tags = {
-    Environment = "production"
-    Application = "my-app"
-  }
-}
-```
-
-### Example with All Features Enabled
-
-```hcl
-module "execution_role" {
-  source = "../../terraform/ecs-execution-role"
-
-  name = "my-app-execution-role"
-
-  enable_ecr      = true  # Pull images from ECR
-  enable_cw_logs  = true  # Send logs to CloudWatch
-  enable_ssm      = true  # Access SSM Parameter Store
-  enable_cw_agent = true  # CloudWatch Agent metrics
-
-  tags = {
-    Environment = "production"
-    Application = "my-app"
-  }
-}
-```
-
-### Example with Custom Policies
-
-```hcl
-module "execution_role" {
-  source = "../../terraform/ecs-execution-role"
-
-  name = "my-app-execution-role"
-
-  enable_ecr     = true
-  enable_cw_logs = true
-
-  # Add custom policies
-  additional_policies = {
-    custom_secrets = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Effect = "Allow"
-          Action = [
-            "secretsmanager:GetSecretValue"
-          ]
-          Resource = "arn:aws:secretsmanager:us-east-1:123456789012:secret:my-secret-*"
-        }
-      ]
-    })
-  }
-
-  tags = {
-    Environment = "production"
-  }
-}
-```
-
 ## Examples
 
 Complete, tested configurations in [`tests/`](tests/):
@@ -110,48 +40,6 @@ cp -r tests/basic/ my-project/
 
 ```bash
 cd tests/basic && terraform init && terraform plan
-```
-
-## Complete ECS Stack Example
-
-```hcl
-# Create the execution role (for ECS agent)
-module "execution_role" {
-  source = "../../terraform/ecs-execution-role"
-
-  name = "my-app-execution-role"
-
-  enable_ecr     = true
-  enable_cw_logs = true
-  enable_ssm     = true
-}
-
-# Create the task role (for container code) - OPTIONAL
-module "task_role" {
-  source = "../../terraform/ecs-task-role"
-
-  name = "my-app-task-role"
-
-  enable_s3_access    = true
-  s3_bucket_arns      = ["arn:aws:s3:::my-bucket"]
-}
-
-# Create the ECS service
-module "ecs" {
-  source = "../../terraform/ecs"
-
-  cluster_name   = "my-cluster"
-  container_name = "my-app"
-  container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/my-app:latest"
-  container_port = 8080
-
-  execution_role_arn = module.execution_role.role_arn  # Required: For ECS agent
-  task_role_arn      = module.task_role.role_arn       # Optional: For container code
-
-  subnet_ids         = var.private_subnet_ids
-  security_group_ids = [var.app_security_group_id]
-  target_group_arn   = module.alb.target_group_arn
-}
 ```
 
 ## Key Differences: Execution Role vs Task Role
