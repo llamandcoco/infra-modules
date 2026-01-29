@@ -1,0 +1,49 @@
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region                      = "us-east-1"
+  access_key                  = "mock_access_key"
+  secret_key                  = "mock_secret_key"
+  token                       = "mock_token"
+  skip_credentials_validation = true
+  skip_region_validation      = true
+  skip_requesting_account_id  = true
+  skip_metadata_api_check     = true
+}
+
+module "execution_role" {
+  source = "../.."
+
+  name = "test-execution-role"
+
+  enable_ssm      = true
+  enable_cw_agent = true
+
+  additional_policies = {
+    custom_logs = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Effect = "Allow"
+          Action = [
+            "logs:DescribeLogGroups"
+          ]
+          Resource = "*"
+        }
+      ]
+    })
+  }
+
+  tags = {
+    Environment = "test"
+  }
+}
