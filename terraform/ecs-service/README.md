@@ -1,4 +1,33 @@
-# ecs
+# ECS Service Module
+
+This module creates an ECS Fargate service with task definition, logging, and optional auto-scaling.
+
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| With Autoscaling | [`tests/with_autoscaling/main.tf`](tests/with_autoscaling/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -92,3 +121,4 @@ No modules.
 | <a name="output_task_definition_family"></a> [task\_definition\_family](#output\_task\_definition\_family) | Family name of the task definition |
 | <a name="output_task_definition_revision"></a> [task\_definition\_revision](#output\_task\_definition\_revision) | Revision number of the task definition |
 <!-- END_TF_DOCS -->
+</details>
