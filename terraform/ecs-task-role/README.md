@@ -141,6 +141,30 @@ module "task_role" {
 }
 ```
 
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| With Policies | [`tests/with_policies/main.tf`](tests/with_policies/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
+
 ## Complete ECS Stack Example
 
 ```hcl
@@ -224,6 +248,9 @@ module "ecs" {
 | role_name | Name of the ECS task role |
 | role_id | ID of the ECS task role |
 
+<details>
+<summary>Terraform Documentation</summary>
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -287,3 +314,4 @@ No modules.
 | <a name="output_role_id"></a> [role\_id](#output\_role\_id) | ID of the ECS task role |
 | <a name="output_role_name"></a> [role\_name](#output\_role\_name) | Name of the ECS task role |
 <!-- END_TF_DOCS -->
+</details>
