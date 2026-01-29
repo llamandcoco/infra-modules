@@ -88,6 +88,30 @@ module "execution_role" {
 }
 ```
 
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| With Additional Policies | [`tests/with_additional_policies/main.tf`](tests/with_additional_policies/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
+
 ## Complete ECS Stack Example
 
 ```hcl
@@ -187,6 +211,9 @@ Custom inline policy with:
 - `ec2:DescribeTags`
 - Plus CloudWatch Logs permissions
 
+<details>
+<summary>Terraform Documentation</summary>
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -240,3 +267,4 @@ No modules.
 | <a name="output_role_id"></a> [role\_id](#output\_role\_id) | ID of the ECS execution role |
 | <a name="output_role_name"></a> [role\_name](#output\_role\_name) | Name of the ECS execution role |
 <!-- END_TF_DOCS -->
+</details>
