@@ -119,6 +119,30 @@ module "worker_service" {
 }
 ```
 
+## Examples
+
+Complete, tested configurations in [`tests/`](tests/):
+
+| Example | Directory |
+|---------|----------|
+| Basic | [`tests/basic/main.tf`](tests/basic/main.tf) |
+| With Capacity Providers | [`tests/with_capacity_providers/main.tf`](tests/with_capacity_providers/main.tf) |
+
+**Usage:**
+```bash
+# View example
+cat tests/basic/
+
+# Copy and adapt
+cp -r tests/basic/ my-project/
+```
+
+## Testing
+
+```bash
+cd tests/basic && terraform init && terraform plan
+```
+
 ## Cluster vs Service
 
 | Resource | Created | Shared | Purpose |
@@ -154,6 +178,9 @@ Think of it like:
 2. **Enable Container Insights in production** - Provides detailed metrics
 3. **Use Fargate Spot for cost savings** - Can reduce costs by up to 70%
 4. **Tag your clusters** - Essential for cost tracking and automation
+
+<details>
+<summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -198,3 +225,4 @@ No modules.
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | ID of the ECS cluster |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the ECS cluster |
 <!-- END_TF_DOCS -->
+</details>
