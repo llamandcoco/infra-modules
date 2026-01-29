@@ -1,6 +1,7 @@
 # ECS Service Module
 
 This module creates an ECS Fargate service with task definition, logging, and optional auto-scaling.
+Inline examples live in `tests/` to avoid duplication.
 
 ## Examples
 
