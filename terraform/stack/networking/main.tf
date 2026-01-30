@@ -81,6 +81,9 @@ module "subnets" {
   enable_ipv6             = var.enable_ipv6
   name_prefix             = var.name
   tags                    = local.common_tags
+  public_subnet_tags      = var.public_subnet_tags
+  private_subnet_tags     = var.private_subnet_tags
+  database_subnet_tags    = var.database_subnet_tags
 }
 
 module "nat_gateway" {

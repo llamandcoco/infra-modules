@@ -56,6 +56,24 @@ variable "database_subnet_cidrs" {
   }
 }
 
+variable "public_subnet_tags" {
+  description = "Additional tags for public subnets."
+  type        = map(string)
+  default     = {}
+}
+
+variable "private_subnet_tags" {
+  description = "Additional tags for private subnets."
+  type        = map(string)
+  default     = {}
+}
+
+variable "database_subnet_tags" {
+  description = "Additional tags for database subnets."
+  type        = map(string)
+  default     = {}
+}
+
 variable "enable_dns_support" {
   description = "Enable DNS resolution in the VPC."
   type        = bool
