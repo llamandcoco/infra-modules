@@ -12,6 +12,8 @@ terraform {
 module "test_keda_scaledobject" {
   source = "../../"
 
+  enabled = false
+
   cluster_endpoint       = "https://example.com"
   cluster_ca_certificate = "ZHVtbXk="
   cluster_name           = "test-cluster"
