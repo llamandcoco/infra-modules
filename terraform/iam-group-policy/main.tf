@@ -10,8 +10,6 @@ terraform {
 }
 
 locals {
-  group_name = var.name
-
   # Built-in policy configurations
   inline_policy_config = {
     s3_read = {
@@ -176,7 +174,7 @@ data "aws_iam_policy_document" "inline" {
 # -----------------------------------------------------------------------------
 
 resource "aws_iam_group" "this" {
-  name = local.group_name
+  name = var.name
   path = var.path
 }
 
