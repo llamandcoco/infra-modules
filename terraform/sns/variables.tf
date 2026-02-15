@@ -113,7 +113,7 @@ variable "signature_version" {
   default     = null
 
   validation {
-    condition     = var.signature_version == null || contains([1, 2], var.signature_version)
+    condition     = try(contains([1, 2], var.signature_version), true)
     error_message = "signature_version must be 1, 2, or null."
   }
 }
@@ -132,7 +132,7 @@ variable "tracing_config" {
   default     = null
 
   validation {
-    condition     = var.tracing_config == null || contains(["PassThrough", "Active"], var.tracing_config)
+    condition     = try(contains(["PassThrough", "Active"], var.tracing_config), true)
     error_message = "tracing_config must be one of: PassThrough, Active, or null."
   }
 }
@@ -188,7 +188,7 @@ variable "http_success_feedback_sample_rate" {
   default     = null
 
   validation {
-    condition     = var.http_success_feedback_sample_rate == null || (var.http_success_feedback_sample_rate >= 0 && var.http_success_feedback_sample_rate <= 100)
+    condition     = try(var.http_success_feedback_sample_rate >= 0 && var.http_success_feedback_sample_rate <= 100, true)
     error_message = "http_success_feedback_sample_rate must be between 0 and 100."
   }
 }
@@ -211,7 +211,7 @@ variable "lambda_success_feedback_sample_rate" {
   default     = null
 
   validation {
-    condition     = var.lambda_success_feedback_sample_rate == null || (var.lambda_success_feedback_sample_rate >= 0 && var.lambda_success_feedback_sample_rate <= 100)
+    condition     = try(var.lambda_success_feedback_sample_rate >= 0 && var.lambda_success_feedback_sample_rate <= 100, true)
     error_message = "lambda_success_feedback_sample_rate must be between 0 and 100."
   }
 }
@@ -234,7 +234,7 @@ variable "sqs_success_feedback_sample_rate" {
   default     = null
 
   validation {
-    condition     = var.sqs_success_feedback_sample_rate == null || (var.sqs_success_feedback_sample_rate >= 0 && var.sqs_success_feedback_sample_rate <= 100)
+    condition     = try(var.sqs_success_feedback_sample_rate >= 0 && var.sqs_success_feedback_sample_rate <= 100, true)
     error_message = "sqs_success_feedback_sample_rate must be between 0 and 100."
   }
 }
@@ -257,7 +257,7 @@ variable "firehose_success_feedback_sample_rate" {
   default     = null
 
   validation {
-    condition     = var.firehose_success_feedback_sample_rate == null || (var.firehose_success_feedback_sample_rate >= 0 && var.firehose_success_feedback_sample_rate <= 100)
+    condition     = try(var.firehose_success_feedback_sample_rate >= 0 && var.firehose_success_feedback_sample_rate <= 100, true)
     error_message = "firehose_success_feedback_sample_rate must be between 0 and 100."
   }
 }
@@ -280,7 +280,7 @@ variable "application_success_feedback_sample_rate" {
   default     = null
 
   validation {
-    condition     = var.application_success_feedback_sample_rate == null || (var.application_success_feedback_sample_rate >= 0 && var.application_success_feedback_sample_rate <= 100)
+    condition     = try(var.application_success_feedback_sample_rate >= 0 && var.application_success_feedback_sample_rate <= 100, true)
     error_message = "application_success_feedback_sample_rate must be between 0 and 100."
   }
 }
