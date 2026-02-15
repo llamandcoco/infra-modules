@@ -30,7 +30,7 @@ resource "aws_db_option_group" "this" {
 
       # Dynamic block for option settings
       dynamic "option_settings" {
-        for_each = try(option.value.option_settings, [])
+        for_each = coalesce(option.value.option_settings, [])
         content {
           name  = option_settings.value.name
           value = option_settings.value.value
@@ -46,7 +46,4 @@ resource "aws_db_option_group" "this" {
     }
   )
 
-  lifecycle {
-    create_before_destroy = true
-  }
 }

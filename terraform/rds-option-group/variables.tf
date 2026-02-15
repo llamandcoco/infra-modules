@@ -18,12 +18,12 @@ variable "name" {
 }
 
 variable "engine_name" {
-  description = "Database engine name (e.g., mysql, oracle-ee, oracle-se2, postgres, sqlserver-ee, sqlserver-se, sqlserver-ex, sqlserver-web)."
+  description = "Database engine name (e.g., mysql, mariadb, oracle-ee, oracle-se2, sqlserver-ee, sqlserver-se, sqlserver-ex, sqlserver-web)."
   type        = string
 
   validation {
-    condition     = contains(["mysql", "mariadb", "oracle-ee", "oracle-ee-cdb", "oracle-se2", "oracle-se2-cdb", "postgres", "sqlserver-ee", "sqlserver-se", "sqlserver-ex", "sqlserver-web"], var.engine_name)
-    error_message = "Engine name must be a valid RDS engine: mysql, mariadb, oracle-ee, oracle-ee-cdb, oracle-se2, oracle-se2-cdb, postgres, sqlserver-ee, sqlserver-se, sqlserver-ex, or sqlserver-web."
+    condition     = contains(["mysql", "mariadb", "oracle-ee", "oracle-ee-cdb", "oracle-se2", "oracle-se2-cdb", "sqlserver-ee", "sqlserver-se", "sqlserver-ex", "sqlserver-web"], var.engine_name)
+    error_message = "Engine name must be a valid RDS option group engine: mysql, mariadb, oracle-ee, oracle-ee-cdb, oracle-se2, oracle-se2-cdb, sqlserver-ee, sqlserver-se, sqlserver-ex, or sqlserver-web."
   }
 }
 
