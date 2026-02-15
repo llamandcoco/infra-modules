@@ -71,6 +71,18 @@ resource "aws_sns_topic" "this" {
       Name = local.topic_name
     }
   )
+
+  lifecycle {
+    precondition {
+      condition     = length(local.topic_name) <= 256
+      error_message = "Final topic name must be 256 characters or less (including auto-appended .fifo suffix)."
+    }
+
+    precondition {
+      condition     = var.fifo_topic || !can(regex("\\.fifo$", var.topic_name))
+      error_message = "topic_name must not end with .fifo when fifo_topic is false."
+    }
+  }
 }
 
 # Topic Policy (optional)
