@@ -45,12 +45,10 @@ resource "aws_iam_group_policy" "inline" {
 # Group Membership
 # -----------------------------------------------------------------------------
 
-resource "aws_iam_user_group_membership" "members" {
-  for_each = toset(var.user_names)
+resource "aws_iam_group_membership" "this" {
+  count = length(var.user_names) > 0 ? 1 : 0
 
-  user = each.value
-
-  groups = [
-    aws_iam_group.this.name
-  ]
+  name  = "${var.name}-membership"
+  group = aws_iam_group.this.name
+  users = var.user_names
 }
