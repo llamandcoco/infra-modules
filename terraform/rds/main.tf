@@ -109,8 +109,8 @@ resource "aws_db_instance" "this" {
   engine_version       = var.engine_version
   instance_class       = var.instance_class
   db_name              = var.database_name
-  username             = var.master_username
-  password             = var.master_password
+  username             = var.snapshot_identifier == null && var.restore_to_point_in_time == null ? var.master_username : null
+  password             = var.snapshot_identifier == null && var.restore_to_point_in_time == null ? var.master_password : null
   parameter_group_name = var.parameter_group_name
   option_group_name    = var.option_group_name
 
@@ -190,6 +190,21 @@ resource "aws_db_instance" "this" {
   )
 
   lifecycle {
+    precondition {
+      condition     = var.max_allocated_storage == 0 || var.max_allocated_storage >= var.allocated_storage
+      error_message = "max_allocated_storage must be 0 or greater than or equal to allocated_storage."
+    }
+
+    precondition {
+      condition     = var.monitoring_interval == 0 || var.monitoring_role_arn != null
+      error_message = "monitoring_role_arn is required when monitoring_interval is greater than 0."
+    }
+
+    precondition {
+      condition     = var.snapshot_identifier != null || var.restore_to_point_in_time != null || (var.master_username != null && var.master_password != null)
+      error_message = "master_username and master_password are required when creating a new instance without snapshot or point-in-time restore."
+    }
+
     ignore_changes = [
       final_snapshot_identifier,
       password,
@@ -241,6 +256,14 @@ resource "aws_db_instance" "replica" {
   )
 
   lifecycle {
+    precondition {
+      condition = (
+        try(each.value.monitoring_interval, var.monitoring_interval) == 0 ||
+        try(each.value.monitoring_role_arn, var.monitoring_role_arn) != null
+      )
+      error_message = "Each replica requires monitoring_role_arn when monitoring_interval is greater than 0."
+    }
+
     ignore_changes = [
       password,
     ]

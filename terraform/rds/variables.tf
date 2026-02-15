@@ -73,9 +73,10 @@ variable "allocated_storage" {
 }
 
 variable "master_username" {
-  description = "Username for the master DB user. Cannot be changed after creation."
+  description = "Username for the master DB user. Required for new instance creation; not used when restoring from snapshot or point-in-time restore."
   type        = string
   sensitive   = true
+  default     = null
 }
 
 variable "master_password" {
