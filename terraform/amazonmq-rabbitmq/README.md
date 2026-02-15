@@ -4,14 +4,14 @@ A production-ready Terraform module for creating and managing Amazon MQ RabbitMQ
 
 ## Features
 
-- RabbitMQ Configuration Support for RabbitMQ versions 3.8 through 3.13
-- Memory Management Configurable memory high watermark and disk free limits
-- Queue Settings Custom queue policies, message TTL, and delivery modes
-- Connection Limits Control heartbeat intervals, channel max, and connection settings
-- Logging Configuration Flexible logging levels for file and console outputs
-- Tagging Support Consistent resource tagging for organization and compliance
-- Validation Built-in validation for configuration name format and Base64 encoding
-- Version Flexibility Support for multiple RabbitMQ engine versions
+- **RabbitMQ Configuration:** Support for RabbitMQ versions 3.8 through 3.13
+- **Memory Management:** Configurable memory high watermark and disk free limits
+- **Queue Settings:** Custom queue policies, message TTL, and delivery modes
+- **Connection Limits:** Control heartbeat intervals, channel max, and connection settings
+- **Logging Configuration:** Flexible logging levels for file and console outputs
+- **Tagging Support:** Consistent resource tagging for organization and compliance
+- **Validation:** Built-in validation for configuration name format and Base64 encoding
+- **Version Flexibility:** Support for multiple RabbitMQ engine versions
 
 ## Quick Start
 
@@ -47,7 +47,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/
+cat tests/basic/main.tf
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
