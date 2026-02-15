@@ -227,8 +227,8 @@ resource "aws_db_instance" "replica" {
   allocated_storage     = try(each.value.allocated_storage, null)
   max_allocated_storage = coalesce(each.value.max_allocated_storage, var.max_allocated_storage)
   storage_type          = coalesce(each.value.storage_type, var.storage_type)
-  iops                  = coalesce(each.value.iops, var.iops)
-  storage_throughput    = coalesce(each.value.storage_throughput, var.storage_throughput)
+  iops                  = each.value.iops != null ? each.value.iops : var.iops
+  storage_throughput    = each.value.storage_throughput != null ? each.value.storage_throughput : var.storage_throughput
 
   # Network Configuration
   vpc_security_group_ids = var.vpc_security_group_ids != null ? var.vpc_security_group_ids : (var.create_security_group ? [aws_security_group.this[0].id] : [])
@@ -237,9 +237,9 @@ resource "aws_db_instance" "replica" {
 
   # Monitoring
   monitoring_interval                   = coalesce(each.value.monitoring_interval, var.monitoring_interval)
-  monitoring_role_arn                   = coalesce(each.value.monitoring_role_arn, var.monitoring_role_arn)
+  monitoring_role_arn                   = each.value.monitoring_role_arn != null ? each.value.monitoring_role_arn : var.monitoring_role_arn
   performance_insights_enabled          = coalesce(each.value.performance_insights_enabled, var.performance_insights_enabled)
-  performance_insights_kms_key_id       = coalesce(each.value.performance_insights_kms_key_id, var.performance_insights_kms_key_id)
+  performance_insights_kms_key_id       = each.value.performance_insights_kms_key_id != null ? each.value.performance_insights_kms_key_id : var.performance_insights_kms_key_id
   performance_insights_retention_period = coalesce(each.value.performance_insights_retention_period, var.performance_insights_retention_period)
 
   # Additional Settings
@@ -258,8 +258,8 @@ resource "aws_db_instance" "replica" {
   lifecycle {
     precondition {
       condition = (
-        coalesce(each.value.monitoring_interval, var.monitoring_interval) == 0 ||
-        coalesce(each.value.monitoring_role_arn, var.monitoring_role_arn) != null
+        (each.value.monitoring_interval != null ? each.value.monitoring_interval : var.monitoring_interval) == 0 ||
+        (each.value.monitoring_role_arn != null ? each.value.monitoring_role_arn : var.monitoring_role_arn) != null
       )
       error_message = "Each replica requires monitoring_role_arn when monitoring_interval is greater than 0."
     }
