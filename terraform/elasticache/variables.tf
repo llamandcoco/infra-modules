@@ -36,11 +36,6 @@ variable "subnet_ids" {
   description = "List of VPC subnet IDs for the cache subnet group. Required unless subnet_group_name is specified."
   type        = list(string)
   default     = []
-
-  validation {
-    condition     = length(var.subnet_ids) >= 1 || length(var.subnet_ids) == 0
-    error_message = "At least one subnet ID must be provided."
-  }
 }
 
 variable "security_group_ids" {

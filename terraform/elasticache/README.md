@@ -41,7 +41,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/
+ls tests/basic/
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
