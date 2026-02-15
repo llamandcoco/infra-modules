@@ -1,6 +1,16 @@
 variable "name" {
   description = "Name of the IAM group"
   type        = string
+
+  validation {
+    condition     = length(var.name) > 0 && length(var.name) <= 128
+    error_message = "IAM group name must be between 1 and 128 characters."
+  }
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9+=,.@_-]+$", var.name))
+    error_message = "IAM group name may contain only alphanumeric characters and +=,.@_-."
+  }
 }
 
 variable "path" {

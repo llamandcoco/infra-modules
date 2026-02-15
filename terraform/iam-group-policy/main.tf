@@ -176,6 +176,13 @@ data "aws_iam_policy_document" "inline" {
 resource "aws_iam_group" "this" {
   name = var.name
   path = var.path
+
+  lifecycle {
+    precondition {
+      condition     = length(local.all_inline_policies) <= 10
+      error_message = "IAM groups support at most 10 inline policies. Reduce built-in policy toggles or custom_policy_statements."
+    }
+  }
 }
 
 # -----------------------------------------------------------------------------

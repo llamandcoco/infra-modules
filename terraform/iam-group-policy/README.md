@@ -82,7 +82,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_name"></a> [name](#input\_name) | Name of the IAM group | `string` | n/a | yes |
 | <a name="input_custom_policy_statements"></a> [custom\_policy\_statements](#input\_custom\_policy\_statements) | Custom IAM policy statements to attach as inline policies | <pre>list(object({<br/>    sid       = optional(string)<br/>    actions   = list(string)<br/>    resources = list(string)<br/>    effect    = optional(string, "Allow")<br/>  }))</pre> | `[]` | no |
 | <a name="input_enable_dynamodb_read"></a> [enable\_dynamodb\_read](#input\_enable\_dynamodb\_read) | Attach DynamoDB read permissions | `bool` | `false` | no |
 | <a name="input_enable_dynamodb_write"></a> [enable\_dynamodb\_write](#input\_enable\_dynamodb\_write) | Attach DynamoDB write permissions | `bool` | `false` | no |
@@ -92,6 +91,7 @@ No modules.
 | <a name="input_enable_s3_write"></a> [enable\_s3\_write](#input\_enable\_s3\_write) | Attach S3 write permissions | `bool` | `false` | no |
 | <a name="input_enable_ssm_read"></a> [enable\_ssm\_read](#input\_enable\_ssm\_read) | Attach SSM Parameter Store read permissions | `bool` | `false` | no |
 | <a name="input_managed_policy_arns"></a> [managed\_policy\_arns](#input\_managed\_policy\_arns) | List of managed IAM policy ARNs to attach to the group | `list(string)` | `[]` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the IAM group | `string` | n/a | yes |
 | <a name="input_path"></a> [path](#input\_path) | Path for the IAM group | `string` | `"/"` | no |
 | <a name="input_users"></a> [users](#input\_users) | List of IAM users to add to the group | `list(string)` | `[]` | no |
 
