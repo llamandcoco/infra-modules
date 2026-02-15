@@ -172,7 +172,11 @@ variable "storage_type" {
 }
 
 variable "max_allocated_storage" {
-  description = "The upper limit of storage (GiB) to which RDS can automatically scale. Set to 0 to disable storage autoscaling."
+  description = <<-EOT
+    The upper limit of storage (GiB) to which RDS can automatically scale.
+    Set to 0 to disable storage autoscaling (disabled by default).
+    For production databases with growing data, set this to a value higher than allocated_storage to enable autoscaling.
+  EOT
   type        = number
   default     = 0
 }
@@ -299,6 +303,12 @@ variable "skip_final_snapshot" {
   description = "Whether to skip the final snapshot when the DB instance is deleted. Set to false for production databases."
   type        = bool
   default     = false
+}
+
+variable "final_snapshot_identifier" {
+  description = "The name of the final snapshot when the DB instance is deleted. If not provided and skip_final_snapshot is false, a name will be auto-generated."
+  type        = string
+  default     = null
 }
 
 variable "snapshot_identifier" {

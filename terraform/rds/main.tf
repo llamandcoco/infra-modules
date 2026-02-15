@@ -66,7 +66,7 @@ resource "aws_vpc_security_group_ingress_rule" "this" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "cidr" {
-  for_each = var.create_security_group && length(var.allowed_cidr_blocks) > 0 ? toset(var.allowed_cidr_blocks) : []
+  for_each = var.create_security_group && length(var.allowed_cidr_blocks) > 0 ? toset(var.allowed_cidr_blocks) : toset([])
 
   security_group_id = aws_security_group.this[0].id
 
@@ -139,7 +139,7 @@ resource "aws_db_instance" "this" {
   maintenance_window        = var.maintenance_window
   copy_tags_to_snapshot     = var.copy_tags_to_snapshot
   skip_final_snapshot       = var.skip_final_snapshot
-  final_snapshot_identifier = var.skip_final_snapshot ? null : "${var.identifier}-final-snapshot-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
+  final_snapshot_identifier = var.skip_final_snapshot ? null : coalesce(var.final_snapshot_identifier, "${var.identifier}-final-snapshot")
 
   # Monitoring & Logging
   enabled_cloudwatch_logs_exports       = var.enabled_cloudwatch_logs_exports
