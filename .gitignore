@@ -61,3 +61,7 @@ scratch/
 *.swp
 *.swo
 *~
+
+# Downloaded terraform binaries and installers
+terraform_*.zip
+terraform
