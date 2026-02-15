@@ -14,7 +14,7 @@ terraform {
 # Options vary by engine (e.g., Oracle NATIVE_NETWORK_ENCRYPTION, MySQL MEMCACHED)
 resource "aws_db_option_group" "this" {
   name                     = var.name
-  option_group_description = var.description
+  option_group_description = coalesce(var.description, "Option group for ${var.engine_name} ${var.major_engine_version}")
   engine_name              = var.engine_name
   major_engine_version     = var.major_engine_version
 

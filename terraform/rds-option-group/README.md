@@ -4,14 +4,14 @@ A Terraform module for managing RDS DB option groups with support for engine-spe
 
 ## Features
 
-- Multiple DB Engines - Support for MySQL, Oracle, PostgreSQL, SQL Server, and MariaDB
-- Flexible Options - Configure engine-specific options with custom settings
-- Security Integration - VPC security group and DB security group support
-- Port Configuration - Specify custom ports for options that require them
-- Version Control - Pin specific option versions when needed
-- Lifecycle Management - Create-before-destroy strategy for safe updates
-- Comprehensive Tagging - Full tag support for resource organization
-- Validation - Built-in validation for names and engine types
+- **Multiple DB Engines** - Support for MySQL, Oracle, PostgreSQL, SQL Server, and MariaDB
+- **Flexible Options** - Configure engine-specific options with custom settings
+- **Security Integration** - VPC security group and DB security group support
+- **Port Configuration** - Specify custom ports for options that require them
+- **Version Control** - Pin specific option versions when needed
+- **Lifecycle Management** - Create-before-destroy strategy for safe updates
+- **Comprehensive Tagging** - Full tag support for resource organization
+- **Validation** - Built-in validation for names and engine types
 
 ## Quick Start
 
@@ -38,7 +38,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/
+cat tests/basic/main.tf
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
