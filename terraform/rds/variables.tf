@@ -174,8 +174,9 @@ variable "storage_type" {
 variable "max_allocated_storage" {
   description = <<-EOT
     The upper limit of storage (GiB) to which RDS can automatically scale.
-    Set to 0 to disable storage autoscaling (disabled by default).
-    For production databases with growing data, set this to a value higher than allocated_storage to enable autoscaling.
+    Set to 0 to disable storage autoscaling.
+    When set to a value greater than allocated_storage, automatic storage scaling is enabled.
+    Recommended for production databases with growing data requirements.
   EOT
   type        = number
   default     = 0
