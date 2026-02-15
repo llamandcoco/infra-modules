@@ -38,7 +38,7 @@ variable "subnet_ids" {
   default     = []
 
   validation {
-    condition     = length(var.subnet_ids) >= 1 || var.subnet_ids == []
+    condition     = length(var.subnet_ids) >= 1 || length(var.subnet_ids) == 0
     error_message = "At least one subnet ID must be provided."
   }
 }
