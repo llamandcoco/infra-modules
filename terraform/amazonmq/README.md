@@ -4,14 +4,14 @@ A production-ready Terraform module for creating and managing AWS AmazonMQ messa
 
 ## Features
 
-- Multiple Engines Support for both ActiveMQ and RabbitMQ message brokers
-- High Availability SINGLE_INSTANCE, ACTIVE_STANDBY_MULTI_AZ, and CLUSTER_MULTI_AZ deployment modes
-- Security KMS encryption, VPC isolation, security groups, and LDAP authentication (ActiveMQ)
-- Monitoring CloudWatch Logs integration for general and audit logs
-- Storage Options EBS or EFS storage with configurable capacity
-- Custom Configurations Support for broker-specific XML configurations
-- Maintenance Windows Configurable maintenance windows with auto minor version upgrades
-- Multi-User Support Supports single broker user configuration
+- **Multiple Engines:** Support for both ActiveMQ and RabbitMQ message brokers
+- **High Availability:** SINGLE_INSTANCE, ACTIVE_STANDBY_MULTI_AZ, and CLUSTER_MULTI_AZ deployment modes
+- **Security:** KMS encryption, VPC isolation, security groups, and LDAP authentication (ActiveMQ)
+- **Monitoring:** CloudWatch Logs integration for general and audit logs
+- **Storage Options:** EBS or EFS storage with configurable capacity
+- **Custom Configurations:** Support for broker-specific XML configurations
+- **Maintenance Windows:** Configurable maintenance windows with auto minor version upgrades
+- **User Management:** Supports single broker user configuration
 
 ## Quick Start
 
@@ -50,7 +50,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/
+cat tests/basic/main.tf
 
 # Copy and adapt
 cp -r tests/basic/ my-project/

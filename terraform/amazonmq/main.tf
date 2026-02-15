@@ -11,6 +11,8 @@ terraform {
 
 # AmazonMQ Broker
 # Creates a managed message broker for ActiveMQ or RabbitMQ
+# Note: Due to AWS provider schema limitations, some nested blocks cannot use
+# dynamic iteration and must be included statically with conditional values.
 resource "aws_mq_broker" "this" {
   broker_name = var.broker_name
 
@@ -60,27 +62,6 @@ resource "aws_mq_broker" "this" {
     console_access   = try(var.users[0].console_access, false)
     groups           = try(var.users[0].groups, [])
     replication_user = try(var.users[0].replication_user, false)
-  }
-
-  # Configuration (conditional)
-  configuration {
-    id       = var.configuration_id
-    revision = var.configuration_revision
-  }
-
-  # LDAP Server Metadata (for ActiveMQ, conditional)
-  ldap_server_metadata {
-    hosts                    = var.ldap_server_metadata != null ? var.ldap_server_metadata.hosts : null
-    role_base                = var.ldap_server_metadata != null ? var.ldap_server_metadata.role_base : null
-    role_search_matching     = var.ldap_server_metadata != null ? var.ldap_server_metadata.role_search_matching : null
-    service_account_password = var.ldap_server_metadata != null ? var.ldap_server_metadata.service_account_password : null
-    service_account_username = var.ldap_server_metadata != null ? var.ldap_server_metadata.service_account_username : null
-    user_base                = var.ldap_server_metadata != null ? var.ldap_server_metadata.user_base : null
-    user_search_matching     = var.ldap_server_metadata != null ? var.ldap_server_metadata.user_search_matching : null
-    role_name                = var.ldap_server_metadata != null ? try(var.ldap_server_metadata.role_name, null) : null
-    role_search_subtree      = var.ldap_server_metadata != null ? try(var.ldap_server_metadata.role_search_subtree, false) : null
-    user_role_name           = var.ldap_server_metadata != null ? try(var.ldap_server_metadata.user_role_name, null) : null
-    user_search_subtree      = var.ldap_server_metadata != null ? try(var.ldap_server_metadata.user_search_subtree, false) : null
   }
 
   tags = merge(
