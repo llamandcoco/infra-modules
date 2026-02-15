@@ -84,17 +84,17 @@ resource "aws_vpc_security_group_ingress_rule" "cidr" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "this" {
-  count = var.create_security_group ? 1 : 0
+  for_each = var.create_security_group && length(var.egress_cidr_blocks) > 0 ? toset(var.egress_cidr_blocks) : toset([])
 
   security_group_id = aws_security_group.this[0].id
 
-  cidr_ipv4   = "0.0.0.0/0"
+  cidr_ipv4   = each.value
   ip_protocol = "-1"
 
   tags = merge(
     var.tags,
     {
-      Name = "${var.identifier}-egress-all"
+      Name = "${var.identifier}-egress-${replace(each.value, "/", "-")}"
     }
   )
 }
@@ -227,6 +227,8 @@ resource "aws_db_instance" "replica" {
   allocated_storage     = try(each.value.allocated_storage, null)
   max_allocated_storage = coalesce(each.value.max_allocated_storage, var.max_allocated_storage)
   storage_type          = coalesce(each.value.storage_type, var.storage_type)
+  storage_encrypted     = true
+  kms_key_id            = var.kms_key_id
   iops                  = each.value.iops != null ? each.value.iops : var.iops
   storage_throughput    = each.value.storage_throughput != null ? each.value.storage_throughput : var.storage_throughput
 
@@ -245,6 +247,7 @@ resource "aws_db_instance" "replica" {
   # Additional Settings
   auto_minor_version_upgrade = coalesce(each.value.auto_minor_version_upgrade, var.auto_minor_version_upgrade)
   apply_immediately          = coalesce(each.value.apply_immediately, var.apply_immediately)
+  deletion_protection        = var.deletion_protection
   skip_final_snapshot        = var.skip_final_snapshot
 
   tags = merge(

@@ -138,6 +138,12 @@ variable "allowed_cidr_blocks" {
   default     = []
 }
 
+variable "egress_cidr_blocks" {
+  description = "List of CIDR blocks for egress traffic. Defaults to VPC CIDR only for security. Set to empty list to disable egress."
+  type        = list(string)
+  default     = []
+}
+
 variable "publicly_accessible" {
   description = "Whether the DB instance is publicly accessible. Set to false for production databases."
   type        = bool
@@ -424,7 +430,7 @@ variable "apply_immediately" {
 variable "deletion_protection" {
   description = "Whether to enable deletion protection. Prevents accidental deletion of the database."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "delete_automated_backups" {
@@ -440,7 +446,7 @@ variable "delete_automated_backups" {
 variable "iam_database_authentication_enabled" {
   description = "Whether to enable IAM database authentication. Allows authentication using AWS IAM credentials."
   type        = bool
-  default     = false
+  default     = true
 }
 
 # -----------------------------------------------------------------------------
