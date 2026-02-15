@@ -25,4 +25,9 @@ variable "group_names" {
     condition     = alltrue([for g in var.group_names : can(regex("^[a-zA-Z0-9+=,.@_-]+$", g)) && length(g) >= 1 && length(g) <= 128])
     error_message = "Each group name must be 1-128 characters and contain only alphanumeric characters and +=,.@_- symbols."
   }
+
+  validation {
+    condition     = length(var.group_names) <= 10
+    error_message = "IAM users can be members of at most 10 groups."
+  }
 }
