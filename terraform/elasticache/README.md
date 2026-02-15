@@ -4,14 +4,14 @@ A comprehensive Terraform module for creating and managing AWS ElastiCache clust
 
 ## Features
 
-- Multi-Engine Support for both Redis and Memcached with engine-specific optimizations
-- High Availability Automatic failover and Multi-AZ support for Redis clusters
-- Security At-rest and in-transit encryption with optional auth tokens (Redis)
-- Backups Automated snapshots with configurable retention for Redis
-- Custom Parameters Flexible parameter group configuration for both engines
-- Subnet Groups Automatic subnet group creation or use existing groups
-- Logging Optional CloudWatch Logs and Kinesis Firehose integration for Redis
-- Maintenance Configurable maintenance windows and auto-upgrade settings
+- **Multi-Engine** - Support for both Redis and Memcached with engine-specific optimizations
+- **High Availability** - Automatic failover and Multi-AZ support for Redis clusters
+- **Security** - At-rest and in-transit encryption with optional auth tokens (Redis)
+- **Backups** - Automated snapshots with configurable retention for Redis
+- **Custom Parameters** - Flexible parameter group configuration for both engines
+- **Subnet Groups** - Automatic subnet group creation or use existing groups
+- **Logging** - Optional CloudWatch Logs and Kinesis Firehose integration for Redis
+- **Maintenance** - Configurable maintenance windows and auto-upgrade settings
 
 ## Quick Start
 
