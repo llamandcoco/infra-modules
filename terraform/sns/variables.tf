@@ -6,7 +6,7 @@ variable "topic_name" {
   description = <<-EOT
     Name of the SNS topic.
     - For standard topics: Can be any valid topic name
-    - For FIFO topics: Must end with .fifo suffix (automatically added if missing when fifo_topic = true)
+    - For FIFO topics: Can optionally end with .fifo suffix (automatically added if missing when fifo_topic = true)
     Must be unique within the AWS account and region.
   EOT
   type        = string
@@ -109,8 +109,8 @@ variable "signature_version" {
 
     Default: Uses AWS default (currently 1 for backward compatibility, but 2 is recommended)
   EOT
-  type    = number
-  default = null
+  type        = number
+  default     = null
 }
 
 variable "tracing_config" {
@@ -123,8 +123,8 @@ variable "tracing_config" {
 
     If null, X-Ray tracing is disabled (default).
   EOT
-  type    = string
-  default = null
+  type        = string
+  default     = null
 }
 
 # -----------------------------------------------------------------------------
@@ -148,8 +148,8 @@ variable "delivery_policy" {
 
     If null, uses AWS default delivery policy.
   EOT
-  type    = any
-  default = null
+  type        = any
+  default     = null
 }
 
 variable "archive_policy" {

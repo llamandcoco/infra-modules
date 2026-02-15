@@ -9,10 +9,15 @@ terraform {
   }
 }
 
+locals {
+  # Compute the topic name once to avoid duplication
+  topic_name = var.fifo_topic ? (can(regex("\\.fifo$", var.topic_name)) ? var.topic_name : "${var.topic_name}.fifo") : var.topic_name
+}
+
 # SNS Topic
 # Creates an SNS topic with configurable encryption, access policies, and delivery settings
 resource "aws_sns_topic" "this" {
-  name         = var.fifo_topic ? (can(regex("\\.fifo$", var.topic_name)) ? var.topic_name : "${var.topic_name}.fifo") : var.topic_name
+  name         = local.topic_name
   display_name = var.display_name
 
   # FIFO-specific settings
@@ -63,7 +68,7 @@ resource "aws_sns_topic" "this" {
   tags = merge(
     var.tags,
     {
-      Name = var.fifo_topic ? (can(regex("\\.fifo$", var.topic_name)) ? var.topic_name : "${var.topic_name}.fifo") : var.topic_name
+      Name = local.topic_name
     }
   )
 }

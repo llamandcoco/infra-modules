@@ -4,14 +4,14 @@ A production-ready Terraform module for creating and managing AWS SNS topics wit
 
 ## Features
 
-- Topic Types Support for both Standard and FIFO (First-In-First-Out) topics
-- Security Server-side encryption with customer-managed KMS keys
-- Subscriptions Create and manage topic subscriptions for SQS, Lambda, Email, SMS, HTTP/S, Firehose, and mobile push
-- FIFO Features Content-based deduplication and strict message ordering
-- Delivery Policies Configurable retry policies and delivery controls
-- Status Logging Delivery status logging for Lambda, SQS, HTTP, Firehose, and Application endpoints
-- X-Ray Tracing Optional AWS X-Ray integration for message tracing
-- Data Protection Optional sensitive data detection and redaction policies
+- **Topic Types:** Support for both Standard and FIFO (First-In-First-Out) topics
+- **Security:** Server-side encryption with customer-managed KMS keys
+- **Subscriptions:** Create and manage topic subscriptions for SQS, Lambda, Email, SMS, HTTP/S, Firehose, and mobile push
+- **FIFO Features:** Content-based deduplication and strict message ordering
+- **Delivery Policies:** Configurable retry policies and delivery controls
+- **Status Logging:** Delivery status logging for Lambda, SQS, HTTP, Firehose, and Application endpoints
+- **X-Ray Tracing:** Optional AWS X-Ray integration for message tracing
+- **Data Protection:** Optional sensitive data detection and redaction policies
 
 ## Quick Start
 
