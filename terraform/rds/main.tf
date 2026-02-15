@@ -66,11 +66,11 @@ resource "aws_vpc_security_group_ingress_rule" "this" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "cidr" {
-  for_each = var.create_security_group && length(var.allowed_cidr_blocks) > 0 ? toset(["cidr"]) : []
+  for_each = var.create_security_group && length(var.allowed_cidr_blocks) > 0 ? toset(var.allowed_cidr_blocks) : []
 
   security_group_id = aws_security_group.this[0].id
 
-  cidr_ipv4   = var.allowed_cidr_blocks[0]
+  cidr_ipv4   = each.value
   from_port   = var.port
   to_port     = var.port
   ip_protocol = "tcp"
@@ -78,7 +78,7 @@ resource "aws_vpc_security_group_ingress_rule" "cidr" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.identifier}-ingress-cidr"
+      Name = "${var.identifier}-ingress-cidr-${replace(each.value, "/", "-")}"
     }
   )
 }
