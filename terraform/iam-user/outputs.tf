@@ -30,9 +30,14 @@ output "login_profile_created" {
 }
 
 output "login_profile_password" {
-  description = "Generated password for console login (sensitive - store securely)"
+  description = "PGP-encrypted console password for login profile (sensitive). Requires pgp_key input."
   value       = var.create_login_profile ? aws_iam_user_login_profile.this[0].encrypted_password : null
   sensitive   = true
+}
+
+output "login_profile_key_fingerprint" {
+  description = "PGP key fingerprint used for password encryption (if login profile is created)."
+  value       = var.create_login_profile ? aws_iam_user_login_profile.this[0].key_fingerprint : null
 }
 
 output "attached_policy_arns" {
@@ -44,7 +49,7 @@ output "inline_policy_names" {
   description = "List of inline policy names attached to the user"
   value = [
     for idx, statement in var.custom_policy_statements :
-    statement.sid != null ? statement.sid : "${var.name}-custom-${idx}"
+    statement.sid != null ? "${statement.sid}-${idx}" : "${var.name}-custom-${idx}"
   ]
 }
 

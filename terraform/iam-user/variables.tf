@@ -38,6 +38,12 @@ variable "create_login_profile" {
   default     = false
 }
 
+variable "pgp_key" {
+  description = "PGP key used to encrypt the generated console password. Required when create_login_profile is true."
+  type        = string
+  default     = null
+}
+
 variable "password_reset_required" {
   description = "Require password reset on first login"
   type        = bool

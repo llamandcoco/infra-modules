@@ -54,7 +54,15 @@ resource "aws_iam_user_login_profile" "this" {
   count = var.create_login_profile ? 1 : 0
 
   user                    = aws_iam_user.this.name
+  pgp_key                 = var.pgp_key
   password_reset_required = var.password_reset_required
+
+  lifecycle {
+    precondition {
+      condition     = var.pgp_key != null
+      error_message = "pgp_key is required when create_login_profile is true."
+    }
+  }
 }
 
 # -----------------------------------------------------------------------------
@@ -64,7 +72,7 @@ resource "aws_iam_user_login_profile" "this" {
 resource "aws_iam_user_policy" "inline" {
   for_each = { for idx, statement in var.custom_policy_statements : idx => statement }
 
-  name   = each.value.sid != null ? each.value.sid : "${var.name}-custom-${each.key}"
+  name   = each.value.sid != null ? "${each.value.sid}-${each.key}" : "${var.name}-custom-${each.key}"
   user   = aws_iam_user.this.name
   policy = data.aws_iam_policy_document.inline[each.key].json
 }
