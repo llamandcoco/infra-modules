@@ -24,16 +24,16 @@ provider "aws" {
 module "iam_user_advanced" {
   source = "../.."
 
-  name         = "advanced-user"
-  path         = "/automation/"
+  name          = "advanced-user"
+  path          = "/automation/"
   force_destroy = true
 
   # Create programmatic access
   create_access_key = true
 
   # Create console access
-  create_login_profile      = true
-  password_reset_required   = true
+  create_login_profile    = true
+  password_reset_required = true
 
   # Attach managed policies
   policy_arns = [
