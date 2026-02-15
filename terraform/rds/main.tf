@@ -221,35 +221,35 @@ resource "aws_db_instance" "replica" {
 
   # Replica Configuration
   replicate_source_db = aws_db_instance.this.identifier
-  instance_class      = try(each.value.instance_class, var.instance_class)
+  instance_class      = coalesce(each.value.instance_class, var.instance_class)
 
   # Storage Configuration (inherited from source but can be modified)
   allocated_storage     = try(each.value.allocated_storage, null)
-  max_allocated_storage = try(each.value.max_allocated_storage, var.max_allocated_storage)
-  storage_type          = try(each.value.storage_type, var.storage_type)
-  iops                  = try(each.value.iops, var.iops)
-  storage_throughput    = try(each.value.storage_throughput, var.storage_throughput)
+  max_allocated_storage = coalesce(each.value.max_allocated_storage, var.max_allocated_storage)
+  storage_type          = coalesce(each.value.storage_type, var.storage_type)
+  iops                  = coalesce(each.value.iops, var.iops)
+  storage_throughput    = coalesce(each.value.storage_throughput, var.storage_throughput)
 
   # Network Configuration
   vpc_security_group_ids = var.vpc_security_group_ids != null ? var.vpc_security_group_ids : (var.create_security_group ? [aws_security_group.this[0].id] : [])
-  publicly_accessible    = try(each.value.publicly_accessible, var.publicly_accessible)
-  availability_zone      = try(each.value.availability_zone, null)
+  publicly_accessible    = coalesce(each.value.publicly_accessible, var.publicly_accessible)
+  availability_zone      = each.value.availability_zone
 
   # Monitoring
-  monitoring_interval                   = try(each.value.monitoring_interval, var.monitoring_interval)
-  monitoring_role_arn                   = try(each.value.monitoring_role_arn, var.monitoring_role_arn)
-  performance_insights_enabled          = try(each.value.performance_insights_enabled, var.performance_insights_enabled)
-  performance_insights_kms_key_id       = try(each.value.performance_insights_kms_key_id, var.performance_insights_kms_key_id)
-  performance_insights_retention_period = try(each.value.performance_insights_retention_period, var.performance_insights_retention_period)
+  monitoring_interval                   = coalesce(each.value.monitoring_interval, var.monitoring_interval)
+  monitoring_role_arn                   = coalesce(each.value.monitoring_role_arn, var.monitoring_role_arn)
+  performance_insights_enabled          = coalesce(each.value.performance_insights_enabled, var.performance_insights_enabled)
+  performance_insights_kms_key_id       = coalesce(each.value.performance_insights_kms_key_id, var.performance_insights_kms_key_id)
+  performance_insights_retention_period = coalesce(each.value.performance_insights_retention_period, var.performance_insights_retention_period)
 
   # Additional Settings
-  auto_minor_version_upgrade = try(each.value.auto_minor_version_upgrade, var.auto_minor_version_upgrade)
-  apply_immediately          = try(each.value.apply_immediately, var.apply_immediately)
+  auto_minor_version_upgrade = coalesce(each.value.auto_minor_version_upgrade, var.auto_minor_version_upgrade)
+  apply_immediately          = coalesce(each.value.apply_immediately, var.apply_immediately)
   skip_final_snapshot        = var.skip_final_snapshot
 
   tags = merge(
     var.tags,
-    try(each.value.tags, {}),
+    coalesce(each.value.tags, {}),
     {
       Name = "${var.identifier}-replica-${each.key}"
     }
@@ -258,8 +258,8 @@ resource "aws_db_instance" "replica" {
   lifecycle {
     precondition {
       condition = (
-        try(each.value.monitoring_interval, var.monitoring_interval) == 0 ||
-        try(each.value.monitoring_role_arn, var.monitoring_role_arn) != null
+        coalesce(each.value.monitoring_interval, var.monitoring_interval) == 0 ||
+        coalesce(each.value.monitoring_role_arn, var.monitoring_role_arn) != null
       )
       error_message = "Each replica requires monitoring_role_arn when monitoring_interval is greater than 0."
     }
