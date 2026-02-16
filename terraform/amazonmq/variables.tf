@@ -386,14 +386,6 @@ variable "configuration_id" {
   EOT
   type        = string
   default     = null
-
-  validation {
-    condition = (
-      (var.configuration_id == null && var.configuration_revision == null) ||
-      (var.configuration_id != null && var.configuration_revision != null)
-    )
-    error_message = "configuration_id and configuration_revision must both be set together or both be null."
-  }
 }
 
 variable "configuration_revision" {

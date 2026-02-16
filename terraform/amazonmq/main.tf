@@ -93,6 +93,14 @@ resource "aws_mq_broker" "this" {
     }
 
     precondition {
+      condition = (
+        (var.configuration_id == null && var.configuration_revision == null) ||
+        (var.configuration_id != null && var.configuration_revision != null)
+      )
+      error_message = "configuration_id and configuration_revision must both be set together or both be null."
+    }
+
+    precondition {
       condition     = var.engine_type == "ActiveMQ" || var.enable_audit_log == false
       error_message = "enable_audit_log is only supported for ActiveMQ brokers."
     }
