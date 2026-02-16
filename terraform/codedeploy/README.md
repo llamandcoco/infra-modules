@@ -43,6 +43,7 @@ Complete, tested configurations in [`tests/`](tests/):
 |---------|-----------|
 | Basic EC2 Deployment | [`tests/basic/main.tf`](tests/basic/main.tf) |
 | EC2 Blue/Green with Auto Rollback | [`tests/ec2/main.tf`](tests/ec2/main.tf) |
+| ECS Canary Deployment | [`tests/ecs/main.tf`](tests/ecs/main.tf) |
 | Lambda Canary Deployment | [`tests/lambda/main.tf`](tests/lambda/main.tf) |
 
 **Usage:**
