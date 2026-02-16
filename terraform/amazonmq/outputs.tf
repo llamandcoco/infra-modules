@@ -46,6 +46,16 @@ output "storage_type" {
   value       = aws_mq_broker.this.storage_type
 }
 
+output "configuration_id" {
+  description = "ID of the externally managed configuration attached to this broker. Returns null when no configuration is attached."
+  value       = var.configuration_id
+}
+
+output "configuration_revision" {
+  description = "Revision of the externally managed configuration attached to this broker. Returns null when no configuration is attached."
+  value       = var.configuration_revision
+}
+
 # -----------------------------------------------------------------------------
 # Connectivity Outputs
 # -----------------------------------------------------------------------------

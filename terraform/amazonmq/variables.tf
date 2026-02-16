@@ -374,6 +374,39 @@ variable "maintenance_time_zone" {
 }
 
 # -----------------------------------------------------------------------------
+# Configuration Attachment
+# -----------------------------------------------------------------------------
+
+variable "configuration_id" {
+  description = <<-EOT
+    ID of an existing AmazonMQ configuration to attach to this broker.
+
+    This module does not create configurations. Create them in a separate module
+    and pass the resulting ID and revision here.
+  EOT
+  type        = string
+  default     = null
+
+  validation {
+    condition = (
+      (var.configuration_id == null && var.configuration_revision == null) ||
+      (var.configuration_id != null && var.configuration_revision != null)
+    )
+    error_message = "configuration_id and configuration_revision must both be set together or both be null."
+  }
+}
+
+variable "configuration_revision" {
+  description = <<-EOT
+    Revision number for the attached AmazonMQ configuration.
+
+    Must be provided together with configuration_id.
+  EOT
+  type        = number
+  default     = null
+}
+
+# -----------------------------------------------------------------------------
 # General Variables
 # -----------------------------------------------------------------------------
 

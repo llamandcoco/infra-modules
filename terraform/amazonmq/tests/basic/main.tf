@@ -141,6 +141,39 @@ module "test_activemq_ha" {
 }
 
 # Test 4: Minimal ActiveMQ broker
+module "test_activemq_with_external_config" {
+  source = "../../"
+
+  broker_name        = "test-activemq-external-config"
+  engine_type        = "ActiveMQ"
+  engine_version     = "5.18.3"
+  host_instance_type = "mq.m5.large"
+  deployment_mode    = "SINGLE_INSTANCE"
+
+  # Network configuration
+  subnet_ids      = ["subnet-12345678"]
+  security_groups = ["sg-12345678"]
+
+  users = [
+    {
+      username = "admin"
+      password = "AdminPassword123!"
+    }
+  ]
+
+  # Attach a configuration created in a separate module
+  configuration_id       = "c-12345678-1234-1234-1234-123456789012"
+  configuration_revision = 1
+
+  tags = {
+    Environment = "test"
+    ManagedBy   = "terraform"
+    Purpose     = "module-testing"
+    Feature     = "external-config-attach"
+  }
+}
+
+# Test 5: Minimal ActiveMQ broker
 module "test_activemq_minimal" {
   source = "../../"
 
@@ -208,6 +241,16 @@ output "activemq_ha_storage_type" {
 output "activemq_ha_kms_enabled" {
   description = "Whether the HA broker uses AWS-owned encryption"
   value       = module.test_activemq_ha.encryption_use_aws_owned_key
+}
+
+output "activemq_external_config_id" {
+  description = "Configuration ID attached to the ActiveMQ broker"
+  value       = module.test_activemq_with_external_config.configuration_id
+}
+
+output "activemq_external_config_revision" {
+  description = "Configuration revision attached to the ActiveMQ broker"
+  value       = module.test_activemq_with_external_config.configuration_revision
 }
 
 output "activemq_minimal_broker_name" {

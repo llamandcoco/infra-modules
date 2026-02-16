@@ -28,6 +28,14 @@ resource "aws_mq_broker" "this" {
   # Authentication
   authentication_strategy = var.authentication_strategy
 
+  dynamic "configuration" {
+    for_each = var.configuration_id != null ? [1] : []
+    content {
+      id       = var.configuration_id
+      revision = var.configuration_revision
+    }
+  }
+
   dynamic "ldap_server_metadata" {
     for_each = var.authentication_strategy == "LDAP" && var.ldap_server_metadata != null ? [var.ldap_server_metadata] : []
     content {
