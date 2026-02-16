@@ -226,16 +226,16 @@ resource "aws_codedeploy_deployment_group" "this" {
 
     precondition {
       condition = (
-        var.load_balancer_info == null ||
-        (length(var.load_balancer_info.target_group_names) + length(var.load_balancer_info.elb_names)) > 0
-      )
+        try(length(var.load_balancer_info.target_group_names), 0) +
+        try(length(var.load_balancer_info.elb_names), 0)
+      ) > 0 || var.load_balancer_info == null
       error_message = "load_balancer_info must include at least one target group or ELB name."
     }
 
     precondition {
       condition = (
-        var.load_balancer_info == null ||
-        (length(var.load_balancer_info.target_group_names) <= 1 && length(var.load_balancer_info.elb_names) <= 1)
+        try(length(var.load_balancer_info.target_group_names), 0) <= 1 &&
+        try(length(var.load_balancer_info.elb_names), 0) <= 1
       )
       error_message = "CodeDeploy deployment groups support at most one target group and one ELB in load_balancer_info."
     }
@@ -243,10 +243,7 @@ resource "aws_codedeploy_deployment_group" "this" {
     precondition {
       condition = (
         var.compute_platform != "ECS" ||
-        (
-          var.load_balancer_info != null &&
-          length(var.load_balancer_info.target_group_names) > 0
-        )
+        try(length(var.load_balancer_info.target_group_names), 0) > 0
       )
       error_message = "ECS deployments require load_balancer_info with at least one target group."
     }
