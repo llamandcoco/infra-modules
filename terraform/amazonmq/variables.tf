@@ -6,7 +6,7 @@ variable "broker_name" {
   description = <<-EOT
     Name of the AmazonMQ broker.
     Must be unique within your AWS account and region.
-    
+
     Constraints:
     - Must be between 1 and 50 characters
     - Can only contain alphanumeric characters, dashes, and underscores
@@ -27,7 +27,7 @@ variable "broker_name" {
 variable "engine_type" {
   description = <<-EOT
     Type of broker engine.
-    
+
     Valid values:
     - ActiveMQ: Apache ActiveMQ message broker
     - RabbitMQ: RabbitMQ message broker
@@ -43,10 +43,10 @@ variable "engine_type" {
 variable "engine_version" {
   description = <<-EOT
     Version of the broker engine.
-    
+
     ActiveMQ versions: 5.15.x, 5.16.x, 5.17.x, 5.18.x
     RabbitMQ versions: 3.8.x, 3.9.x, 3.10.x, 3.11.x, 3.12.x, 3.13.x
-    
+
     For latest supported versions, check AWS documentation.
   EOT
   type        = string
@@ -55,14 +55,14 @@ variable "engine_version" {
 variable "host_instance_type" {
   description = <<-EOT
     Instance type of the broker.
-    
+
     ActiveMQ instance types:
     - mq.t3.micro: 2 vCPU, 1 GiB RAM (dev/test only, not for production)
     - mq.m5.large: 2 vCPU, 8 GiB RAM
     - mq.m5.xlarge: 4 vCPU, 16 GiB RAM
     - mq.m5.2xlarge: 8 vCPU, 32 GiB RAM
     - mq.m5.4xlarge: 16 vCPU, 64 GiB RAM
-    
+
     RabbitMQ instance types:
     - mq.t3.micro: 2 vCPU, 1 GiB RAM (dev/test only, not for production)
     - mq.m5.large: 2 vCPU, 8 GiB RAM
@@ -75,17 +75,17 @@ variable "host_instance_type" {
 
 variable "users" {
   description = <<-EOT
-    List of broker users. Currently, only the first user in the list is used due to AWS provider limitations.
-    
+    List of broker users. This module currently supports exactly one user.
+
     Each user must have:
     - username: User login name
     - password: User password (stored securely, use sensitive variable)
-    
+
     Optional fields:
     - console_access: Enable web console access (ActiveMQ only)
     - groups: List of groups for the user (ActiveMQ with LDAP only)
     - replication_user: Whether this user is for replication (ActiveMQ only)
-    
+
     Example:
     [
       {
@@ -108,16 +108,21 @@ variable "users" {
     condition     = length(var.users) > 0
     error_message = "At least one user must be defined."
   }
+
+  validation {
+    condition     = length(var.users) == 1
+    error_message = "This module currently supports exactly one user."
+  }
 }
 
 variable "subnet_ids" {
   description = <<-EOT
     List of subnet IDs for the broker.
-    
+
     - SINGLE_INSTANCE deployment: Provide 1 subnet
     - ACTIVE_STANDBY_MULTI_AZ deployment: Provide 2 subnets in different AZs
     - CLUSTER_MULTI_AZ deployment: Provide 3 subnets in different AZs (RabbitMQ only)
-    
+
     Subnets must be in a VPC with DNS resolution and DNS hostnames enabled.
   EOT
   type        = list(string)
@@ -131,11 +136,11 @@ variable "subnet_ids" {
 variable "security_groups" {
   description = <<-EOT
     List of security group IDs to assign to the broker.
-    
+
     The security groups must allow inbound traffic on the appropriate ports:
     - ActiveMQ: 61617 (OpenWire), 8162 (Web Console), 5671 (AMQP), 61614 (STOMP), 1883 (MQTT)
     - RabbitMQ: 5671 (AMQP), 15671 (Web Console)
-    
+
     Security groups must be in the same VPC as the subnets.
   EOT
   type        = list(string)
@@ -148,12 +153,12 @@ variable "security_groups" {
 variable "deployment_mode" {
   description = <<-EOT
     Deployment mode for the broker.
-    
+
     Valid values:
     - SINGLE_INSTANCE: Single broker in one AZ (dev/test, not HA)
     - ACTIVE_STANDBY_MULTI_AZ: Active/Standby pair across 2 AZs (HA for ActiveMQ)
     - CLUSTER_MULTI_AZ: Cluster of 3 nodes across 3 AZs (HA for RabbitMQ only)
-    
+
     ActiveMQ supports: SINGLE_INSTANCE, ACTIVE_STANDBY_MULTI_AZ
     RabbitMQ supports: SINGLE_INSTANCE, CLUSTER_MULTI_AZ
   EOT
@@ -169,10 +174,10 @@ variable "deployment_mode" {
 variable "publicly_accessible" {
   description = <<-EOT
     Enable public accessibility for the broker.
-    
+
     - true: Broker endpoints are accessible from the internet (requires public subnets)
     - false: Broker endpoints are only accessible from within the VPC (recommended)
-    
+
     For production workloads, set to false and access via VPC/VPN/Direct Connect.
   EOT
   type        = bool
@@ -182,11 +187,11 @@ variable "publicly_accessible" {
 variable "storage_type" {
   description = <<-EOT
     Storage type for the broker.
-    
+
     Valid values:
     - EBS: Elastic Block Store (default, recommended for most use cases)
     - EFS: Elastic File System (ActiveMQ only, for shared storage in multi-AZ)
-    
+
     RabbitMQ only supports EBS.
   EOT
   type        = string
@@ -205,11 +210,11 @@ variable "storage_type" {
 variable "authentication_strategy" {
   description = <<-EOT
     Authentication strategy for the broker.
-    
+
     Valid values:
     - SIMPLE: Simple username/password authentication (default)
     - LDAP: LDAP-based authentication (ActiveMQ only, requires ldap_server_metadata)
-    
+
     RabbitMQ only supports SIMPLE authentication.
   EOT
   type        = string
@@ -225,7 +230,7 @@ variable "ldap_server_metadata" {
   description = <<-EOT
     LDAP server configuration for authentication (ActiveMQ only).
     Only used when authentication_strategy = "LDAP".
-    
+
     Required fields:
     - hosts: List of LDAP server hosts (e.g., ["ldap://example.com:389"])
     - role_base: Base DN for role search
@@ -234,7 +239,7 @@ variable "ldap_server_metadata" {
     - service_account_password: Password for service account
     - user_base: Base DN for user search
     - user_search_matching: LDAP search filter for users
-    
+
     Optional fields:
     - role_name: Attribute for role name
     - role_search_subtree: Search role subtree (default: false)
@@ -265,10 +270,10 @@ variable "ldap_server_metadata" {
 variable "kms_key_id" {
   description = <<-EOT
     ARN of AWS KMS key for encryption at rest.
-    
+
     - If specified: Uses customer-managed KMS key
     - If null: Uses AWS-owned key (default, no additional cost)
-    
+
     Customer-managed KMS keys provide:
     - Control over key policies and rotation
     - CloudTrail audit logs of key usage
@@ -285,7 +290,7 @@ variable "kms_key_id" {
 variable "enable_general_log" {
   description = <<-EOT
     Enable general logging to CloudWatch Logs.
-    
+
     General logs contain informational messages about the broker's operation.
     Useful for troubleshooting and monitoring.
   EOT
@@ -296,7 +301,7 @@ variable "enable_general_log" {
 variable "enable_audit_log" {
   description = <<-EOT
     Enable audit logging to CloudWatch Logs (ActiveMQ only).
-    
+
     Audit logs track management actions and user authentication.
     Recommended for compliance and security monitoring.
   EOT
@@ -311,10 +316,10 @@ variable "enable_audit_log" {
 variable "auto_minor_version_upgrade" {
   description = <<-EOT
     Enable automatic minor version upgrades during maintenance windows.
-    
+
     - true: Automatically upgrade to newer minor versions (recommended)
     - false: Manual control over version upgrades
-    
+
     Minor version upgrades include bug fixes and security patches.
   EOT
   type        = bool
@@ -324,21 +329,16 @@ variable "auto_minor_version_upgrade" {
 variable "maintenance_day_of_week" {
   description = <<-EOT
     Day of the week for maintenance window.
-    
+
     Valid values: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
-    
-    If null, AWS chooses a random day/time.
-    Recommended: Set to a low-traffic period.
+
+    Default is SUNDAY.
   EOT
   type        = string
-  default     = null
+  default     = "SUNDAY"
 
   validation {
-    condition = (
-      var.maintenance_day_of_week != null
-      ? contains(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], var.maintenance_day_of_week)
-      : true
-    )
+    condition     = contains(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], var.maintenance_day_of_week)
     error_message = "Maintenance day must be a valid day of the week."
   }
 }
@@ -346,9 +346,9 @@ variable "maintenance_day_of_week" {
 variable "maintenance_time_of_day" {
   description = <<-EOT
     Time of day for maintenance window in HH:MM format (24-hour clock).
-    
+
     Example: "03:00" for 3:00 AM
-    
+
     Only used when maintenance_day_of_week is set.
   EOT
   type        = string
@@ -363,93 +363,14 @@ variable "maintenance_time_of_day" {
 variable "maintenance_time_zone" {
   description = <<-EOT
     Time zone for the maintenance window.
-    
+
     Example: "America/New_York", "UTC", "Europe/London"
-    
+
     Only used when maintenance_day_of_week is set.
     For valid time zones, see IANA Time Zone Database.
   EOT
   type        = string
   default     = "UTC"
-}
-
-# -----------------------------------------------------------------------------
-# Configuration Management
-# -----------------------------------------------------------------------------
-
-variable "create_configuration" {
-  description = <<-EOT
-    Create a broker configuration resource.
-    
-    - true: Creates a configuration with custom broker settings
-    - false: No configuration is created (uses broker defaults)
-    
-    Configurations allow you to customize broker behavior with XML settings.
-  EOT
-  type        = bool
-  default     = false
-}
-
-variable "configuration_id" {
-  description = <<-EOT
-    ID of an existing broker configuration to apply.
-    
-    If specified, the broker will use this configuration instead of defaults.
-    Cannot be used with create_configuration = true.
-  EOT
-  type        = string
-  default     = null
-}
-
-variable "configuration_revision" {
-  description = <<-EOT
-    Revision number of the configuration to use.
-    
-    Only used when configuration_id is specified.
-    If not specified, uses the latest revision.
-  EOT
-  type        = number
-  default     = null
-}
-
-variable "configuration_name" {
-  description = <<-EOT
-    Name of the configuration to create.
-    Only used when create_configuration = true.
-    
-    If not specified, defaults to '{broker_name}-config'.
-  EOT
-  type        = string
-  default     = null
-}
-
-variable "configuration_description" {
-  description = <<-EOT
-    Description of the configuration.
-    Only used when create_configuration = true.
-  EOT
-  type        = string
-  default     = "Managed by Terraform"
-}
-
-variable "configuration_data" {
-  description = <<-EOT
-    XML configuration data for the broker.
-    Only used when create_configuration = true.
-    
-    For ActiveMQ, this is an ActiveMQ XML configuration.
-    For RabbitMQ, this is a base64-encoded RabbitMQ configuration.
-    
-    Example (ActiveMQ):
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <broker xmlns="http://activemq.apache.org/schema/core">
-      <plugins>
-        <forcePersistencyModeBrokerPlugin persistenceFlag="true"/>
-      </plugins>
-    </broker>
-  EOT
-  type        = string
-  default     = null
 }
 
 # -----------------------------------------------------------------------------

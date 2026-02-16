@@ -141,25 +141,6 @@ output "maintenance_window_start_time" {
 }
 
 # -----------------------------------------------------------------------------
-# Configuration Outputs
-# -----------------------------------------------------------------------------
-
-output "configuration_id" {
-  description = "ID of the broker configuration. Returns the created configuration ID if create_configuration is true, otherwise returns the provided configuration_id."
-  value       = var.create_configuration ? aws_mq_configuration.this[0].id : var.configuration_id
-}
-
-output "configuration_arn" {
-  description = "ARN of the created broker configuration. Returns null if create_configuration is false."
-  value       = var.create_configuration ? aws_mq_configuration.this[0].arn : null
-}
-
-output "configuration_latest_revision" {
-  description = "Latest revision number of the created configuration. Returns null if create_configuration is false."
-  value       = var.create_configuration ? aws_mq_configuration.this[0].latest_revision : null
-}
-
-# -----------------------------------------------------------------------------
 # Resource Reference Outputs
 # -----------------------------------------------------------------------------
 

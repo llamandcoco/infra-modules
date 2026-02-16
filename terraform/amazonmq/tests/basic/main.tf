@@ -140,51 +140,7 @@ module "test_activemq_ha" {
   }
 }
 
-# Test 4: RabbitMQ broker with custom configuration
-module "test_rabbitmq_with_config" {
-  source = "../../"
-
-  broker_name        = "test-rabbitmq-config"
-  engine_type        = "RabbitMQ"
-  engine_version     = "3.13.0"
-  host_instance_type = "mq.m5.large"
-  deployment_mode    = "SINGLE_INSTANCE"
-
-  # Network configuration
-  subnet_ids      = ["subnet-12345678"]
-  security_groups = ["sg-12345678"]
-
-  # Users
-  users = [
-    {
-      username = "admin"
-      password = "AdminPassword123!"
-    }
-  ]
-
-  # Create custom configuration
-  create_configuration      = true
-  configuration_description = "Custom RabbitMQ configuration for testing"
-  configuration_data        = <<-EOT
-    # Sample RabbitMQ configuration
-    loopback_users.guest = false
-    listeners.tcp.default = 5672
-    management.tcp.port = 15672
-  EOT
-
-  # Publicly accessible for testing (not recommended for production)
-  publicly_accessible = true
-
-  tags = {
-    Environment = "test"
-    ManagedBy   = "terraform"
-    Purpose     = "module-testing"
-    Engine      = "rabbitmq"
-    Feature     = "custom-config"
-  }
-}
-
-# Test 5: Minimal ActiveMQ broker
+# Test 4: Minimal ActiveMQ broker
 module "test_activemq_minimal" {
   source = "../../"
 
@@ -252,16 +208,6 @@ output "activemq_ha_storage_type" {
 output "activemq_ha_kms_enabled" {
   description = "Whether the HA broker uses AWS-owned encryption"
   value       = module.test_activemq_ha.encryption_use_aws_owned_key
-}
-
-output "rabbitmq_config_configuration_id" {
-  description = "Configuration ID for the RabbitMQ broker with custom config"
-  value       = module.test_rabbitmq_with_config.configuration_id
-}
-
-output "rabbitmq_config_publicly_accessible" {
-  description = "Whether the RabbitMQ config broker is publicly accessible"
-  value       = module.test_rabbitmq_with_config.publicly_accessible
 }
 
 output "activemq_minimal_broker_name" {

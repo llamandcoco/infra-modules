@@ -11,8 +11,6 @@ terraform {
 
 # AmazonMQ Broker
 # Creates a managed message broker for ActiveMQ or RabbitMQ
-# Note: Due to AWS provider schema limitations, some nested blocks cannot use
-# dynamic iteration and must be included statically with conditional values.
 resource "aws_mq_broker" "this" {
   broker_name = var.broker_name
 
@@ -24,17 +22,73 @@ resource "aws_mq_broker" "this" {
 
   # Security
   security_groups     = var.security_groups
-  subnet_ids          = var.deployment_mode == "SINGLE_INSTANCE" ? [var.subnet_ids[0]] : var.subnet_ids
+  subnet_ids          = var.subnet_ids
   publicly_accessible = var.publicly_accessible
 
   # Authentication
   authentication_strategy = var.authentication_strategy
+
+  dynamic "ldap_server_metadata" {
+    for_each = var.authentication_strategy == "LDAP" && var.ldap_server_metadata != null ? [var.ldap_server_metadata] : []
+    content {
+      hosts                    = ldap_server_metadata.value.hosts
+      role_base                = ldap_server_metadata.value.role_base
+      role_search_matching     = ldap_server_metadata.value.role_search_matching
+      service_account_password = ldap_server_metadata.value.service_account_password
+      service_account_username = ldap_server_metadata.value.service_account_username
+      user_base                = ldap_server_metadata.value.user_base
+      user_search_matching     = ldap_server_metadata.value.user_search_matching
+      role_name                = try(ldap_server_metadata.value.role_name, null)
+      role_search_subtree      = try(ldap_server_metadata.value.role_search_subtree, null)
+      user_role_name           = try(ldap_server_metadata.value.user_role_name, null)
+      user_search_subtree      = try(ldap_server_metadata.value.user_search_subtree, null)
+    }
+  }
 
   # Storage
   storage_type = var.storage_type
 
   # Auto minor version upgrade
   auto_minor_version_upgrade = var.auto_minor_version_upgrade
+
+  lifecycle {
+    precondition {
+      condition = (
+        (var.engine_type == "ActiveMQ" && contains(["SINGLE_INSTANCE", "ACTIVE_STANDBY_MULTI_AZ"], var.deployment_mode)) ||
+        (var.engine_type == "RabbitMQ" && contains(["SINGLE_INSTANCE", "CLUSTER_MULTI_AZ"], var.deployment_mode))
+      )
+      error_message = "deployment_mode is invalid for engine_type. ActiveMQ supports SINGLE_INSTANCE/ACTIVE_STANDBY_MULTI_AZ, RabbitMQ supports SINGLE_INSTANCE/CLUSTER_MULTI_AZ."
+    }
+
+    precondition {
+      condition = (
+        (var.deployment_mode == "SINGLE_INSTANCE" && length(var.subnet_ids) == 1) ||
+        (var.deployment_mode == "ACTIVE_STANDBY_MULTI_AZ" && length(var.subnet_ids) == 2) ||
+        (var.deployment_mode == "CLUSTER_MULTI_AZ" && length(var.subnet_ids) == 3)
+      )
+      error_message = "subnet_ids must include exactly 1 subnet for SINGLE_INSTANCE, 2 for ACTIVE_STANDBY_MULTI_AZ, or 3 for CLUSTER_MULTI_AZ."
+    }
+
+    precondition {
+      condition     = var.engine_type == "ActiveMQ" || var.storage_type == "EBS"
+      error_message = "RabbitMQ only supports storage_type = EBS."
+    }
+
+    precondition {
+      condition     = var.engine_type == "ActiveMQ" || var.authentication_strategy == "SIMPLE"
+      error_message = "RabbitMQ only supports authentication_strategy = SIMPLE."
+    }
+
+    precondition {
+      condition     = var.authentication_strategy != "LDAP" || var.ldap_server_metadata != null
+      error_message = "ldap_server_metadata must be provided when authentication_strategy is LDAP."
+    }
+
+    precondition {
+      condition     = var.engine_type == "ActiveMQ" || var.enable_audit_log == false
+      error_message = "enable_audit_log is only supported for ActiveMQ brokers."
+    }
+  }
 
   # Encryption
   encryption_options {
@@ -50,7 +104,7 @@ resource "aws_mq_broker" "this" {
 
   # Maintenance window (conditional inclusion based on variable)
   maintenance_window_start_time {
-    day_of_week = var.maintenance_day_of_week != null ? var.maintenance_day_of_week : "SUNDAY"
+    day_of_week = var.maintenance_day_of_week
     time_of_day = var.maintenance_time_of_day
     time_zone   = var.maintenance_time_zone
   }
@@ -68,25 +122,6 @@ resource "aws_mq_broker" "this" {
     var.tags,
     {
       Name = var.broker_name
-    }
-  )
-}
-
-# Configuration (optional)
-# Creates a broker configuration for custom settings
-resource "aws_mq_configuration" "this" {
-  count = var.create_configuration ? 1 : 0
-
-  name           = var.configuration_name != null ? var.configuration_name : "${var.broker_name}-config"
-  description    = var.configuration_description
-  engine_type    = var.engine_type
-  engine_version = var.engine_version
-  data           = var.configuration_data
-
-  tags = merge(
-    var.tags,
-    {
-      Name = var.configuration_name != null ? var.configuration_name : "${var.broker_name}-config"
     }
   )
 }
