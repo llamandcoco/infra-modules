@@ -10,13 +10,13 @@ variable "configuration_name" {
   type        = string
 
   validation {
-    condition     = length(var.configuration_name) > 0 && length(var.configuration_name) <= 255
-    error_message = "Configuration name must be between 1 and 255 characters long."
+    condition     = length(var.configuration_name) > 0 && length(var.configuration_name) <= 150
+    error_message = "Configuration name must be between 1 and 150 characters long."
   }
 
   validation {
-    condition     = can(regex("^[a-zA-Z0-9_-]+$", var.configuration_name))
-    error_message = "Configuration name must only contain alphanumeric characters, hyphens, and underscores."
+    condition     = can(regex("^[a-zA-Z0-9._~-]+$", var.configuration_name))
+    error_message = "Configuration name must only contain alphanumeric characters, periods, hyphens, underscores, and tildes."
   }
 }
 
@@ -24,13 +24,7 @@ variable "engine_version" {
   description = <<-EOT
     The version of the RabbitMQ broker engine.
     
-    Supported versions:
-    - 3.13
-    - 3.12
-    - 3.11
-    - 3.10
-    - 3.9
-    - 3.8
+    Use major.minor format (for example: 3.13).
     
     Refer to AWS documentation for the latest supported versions:
     https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/rabbitmq-version-management.html
@@ -38,8 +32,8 @@ variable "engine_version" {
   type        = string
 
   validation {
-    condition     = can(regex("^3\\.(8|9|10|11|12|13)$", var.engine_version))
-    error_message = "Engine version must be a valid RabbitMQ version (3.8, 3.9, 3.10, 3.11, 3.12, or 3.13)."
+    condition     = can(regex("^[0-9]+\\.[0-9]+$", var.engine_version))
+    error_message = "Engine version must be in major.minor format (for example: 3.13)."
   }
 }
 
@@ -47,7 +41,7 @@ variable "configuration_data" {
   description = <<-EOT
     The RabbitMQ configuration data in Base64-encoded format.
     
-    This should be a Base64-encoded RabbitMQ advanced.config file following Erlang syntax.
+    This should be a Base64-encoded RabbitMQ Cuttlefish configuration (rabbitmq.conf format).
     The configuration allows you to customize RabbitMQ broker settings such as:
     - Memory limits and thresholds
     - Disk space limits
@@ -57,15 +51,11 @@ variable "configuration_data" {
     - Logging levels
     
     Example (before Base64 encoding):
-    [
-      {rabbit, [
-        {vm_memory_high_watermark, 0.4},
-        {disk_free_limit, {mem_relative, 1.0}}
-      ]}
-    ].
+    vm_memory_high_watermark.relative = 0.4
+    disk_free_limit.relative = 1.0
     
     Use the base64encode() function to encode your configuration:
-    configuration_data = base64encode(file("path/to/advanced.config"))
+    configuration_data = base64encode(file("path/to/rabbitmq.conf"))
     
     For configuration reference, see:
     https://www.rabbitmq.com/configure.html
@@ -75,6 +65,11 @@ variable "configuration_data" {
   validation {
     condition     = can(base64decode(var.configuration_data))
     error_message = "Configuration data must be a valid Base64-encoded string."
+  }
+
+  validation {
+    condition     = try(length(trimspace(base64decode(var.configuration_data))) > 0, false)
+    error_message = "Configuration data must decode to a non-empty RabbitMQ Cuttlefish configuration."
   }
 }
 

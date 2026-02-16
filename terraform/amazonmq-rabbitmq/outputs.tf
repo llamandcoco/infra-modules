@@ -41,6 +41,11 @@ output "latest_revision" {
   value       = aws_mq_configuration.this.latest_revision
 }
 
+output "configuration_revision" {
+  description = "Revision number to pass to broker modules when attaching this configuration."
+  value       = aws_mq_configuration.this.latest_revision
+}
+
 # -----------------------------------------------------------------------------
 # Resource Reference Outputs
 # -----------------------------------------------------------------------------

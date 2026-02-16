@@ -29,14 +29,10 @@ module "test_basic_config" {
   engine_version     = "3.13"
   description        = "Basic RabbitMQ configuration for testing"
 
-  # Basic configuration with memory and disk settings
+  # Basic Cuttlefish configuration with memory and disk settings
   configuration_data = base64encode(<<-EOT
-    [
-      {rabbit, [
-        {vm_memory_high_watermark, 0.4},
-        {disk_free_limit, {mem_relative, 1.0}}
-      ]}
-    ].
+    vm_memory_high_watermark.relative = 0.4
+    disk_free_limit.relative = 1.0
   EOT
   )
 
@@ -56,21 +52,13 @@ module "test_advanced_config" {
   engine_version     = "3.12"
   description        = "Advanced RabbitMQ configuration with custom queue and logging settings"
 
-  # Advanced configuration with queue policies and logging
+  # Advanced Cuttlefish configuration with queue policies and logging
   configuration_data = base64encode(<<-EOT
-    [
-      {rabbit, [
-        {vm_memory_high_watermark, 0.5},
-        {disk_free_limit, {mem_relative, 1.5}},
-        {default_vhost, <<"/">>},
-        {default_user, <<"admin">>},
-        {default_permissions, [<<".*">>, <<".*">>, <<".*">>]},
-        {log, [
-          {file, [{level, info}]},
-          {console, [{level, info}]}
-        ]}
-      ]}
-    ].
+    vm_memory_high_watermark.relative = 0.5
+    disk_free_limit.relative = 1.5
+    default_vhost = /
+    log.file.level = info
+    log.console.level = info
   EOT
   )
 
@@ -90,20 +78,14 @@ module "test_production_config" {
   engine_version     = "3.13"
   description        = "Production-optimized RabbitMQ configuration"
 
-  # Production configuration with connection limits and heartbeat settings
+  # Production Cuttlefish configuration with connection limits and heartbeat settings
   configuration_data = base64encode(<<-EOT
-    [
-      {rabbit, [
-        {vm_memory_high_watermark, 0.6},
-        {disk_free_limit, {mem_relative, 2.0}},
-        {heartbeat, 60},
-        {channel_max, 2048},
-        {log, [
-          {file, [{level, warning}]},
-          {console, [{level, error}]}
-        ]}
-      ]}
-    ].
+    vm_memory_high_watermark.relative = 0.6
+    disk_free_limit.relative = 2.0
+    heartbeat = 60
+    channel_max = 2048
+    log.file.level = warning
+    log.console.level = error
   EOT
   )
 
@@ -124,14 +106,10 @@ module "test_legacy_version_config" {
   engine_version     = "3.8"
   description        = "RabbitMQ configuration for legacy version 3.8"
 
-  # Minimal configuration for legacy version
+  # Minimal Cuttlefish configuration for legacy version
   configuration_data = base64encode(<<-EOT
-    [
-      {rabbit, [
-        {vm_memory_high_watermark, 0.4},
-        {disk_free_limit, 1000000000}
-      ]}
-    ].
+    vm_memory_high_watermark.relative = 0.4
+    disk_free_limit.absolute = 1000000000
   EOT
   )
 
@@ -157,6 +135,11 @@ output "basic_config_arn" {
 output "basic_config_latest_revision" {
   description = "Latest revision of the basic configuration"
   value       = module.test_basic_config.latest_revision
+}
+
+output "basic_config_configuration_revision" {
+  description = "Broker attach revision of the basic configuration"
+  value       = module.test_basic_config.configuration_revision
 }
 
 output "advanced_config_id" {
