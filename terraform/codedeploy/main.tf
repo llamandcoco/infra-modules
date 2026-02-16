@@ -14,6 +14,19 @@ terraform {
 
 locals {
   role_name = var.create_service_role ? "${var.application_name}-codedeploy-role" : null
+
+  default_deployment_config_name = (
+    var.compute_platform == "Lambda" ? "CodeDeployDefault.LambdaAllAtOnce" :
+    var.compute_platform == "ECS" ? "CodeDeployDefault.ECSAllAtOnce" :
+    "CodeDeployDefault.OneAtATime"
+  )
+
+  # CodeDeploy requires different managed policies by compute platform.
+  service_role_policy_arn = (
+    var.compute_platform == "Lambda" ? "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda" :
+    var.compute_platform == "ECS" ? "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS" :
+    "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+  )
 }
 
 # -----------------------------------------------------------------------------
@@ -55,7 +68,7 @@ resource "aws_iam_role_policy_attachment" "codedeploy" {
   count = var.create_service_role ? 1 : 0
 
   role       = aws_iam_role.this[0].name
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRole"
+  policy_arn = local.service_role_policy_arn
 }
 
 # -----------------------------------------------------------------------------
@@ -66,7 +79,7 @@ resource "aws_codedeploy_deployment_group" "this" {
   app_name               = aws_codedeploy_app.this.name
   deployment_group_name  = var.deployment_group_name
   service_role_arn       = var.create_service_role ? aws_iam_role.this[0].arn : var.service_role_arn
-  deployment_config_name = var.deployment_config_name
+  deployment_config_name = coalesce(var.deployment_config_name, local.default_deployment_config_name)
 
   # EC2/On-Premises configuration
   dynamic "ec2_tag_set" {
@@ -97,7 +110,7 @@ resource "aws_codedeploy_deployment_group" "this" {
 
   # Lambda configuration
   dynamic "deployment_style" {
-    for_each = var.compute_platform == "Lambda" ? [1] : []
+    for_each = contains(["Lambda", "ECS"], var.compute_platform) ? [1] : []
     content {
       deployment_option = "WITH_TRAFFIC_CONTROL"
       deployment_type   = var.deployment_type
@@ -169,6 +182,73 @@ resource "aws_codedeploy_deployment_group" "this" {
       trigger_name       = trigger_configuration.value.trigger_name
       trigger_events     = trigger_configuration.value.trigger_events
       trigger_target_arn = trigger_configuration.value.trigger_target_arn
+    }
+  }
+
+  lifecycle {
+    precondition {
+      condition     = var.create_service_role || var.service_role_arn != null
+      error_message = "service_role_arn must be provided when create_service_role is false."
+    }
+
+    precondition {
+      condition = (
+        (var.compute_platform == "ECS" && var.ecs_service != null) ||
+        (var.compute_platform != "ECS" && var.ecs_service == null)
+      )
+      error_message = "ecs_service must be set only when compute_platform is ECS."
+    }
+
+    precondition {
+      condition     = var.compute_platform == "Server" || length(var.ec2_tag_filters) == 0
+      error_message = "ec2_tag_filters is only supported when compute_platform is Server."
+    }
+
+    precondition {
+      condition     = var.compute_platform == "Server" || length(var.autoscaling_groups) == 0
+      error_message = "autoscaling_groups is only supported when compute_platform is Server."
+    }
+
+    precondition {
+      condition     = var.compute_platform == "Server" || var.deployment_type == "BLUE_GREEN"
+      error_message = "deployment_type IN_PLACE is only supported when compute_platform is Server."
+    }
+
+    precondition {
+      condition     = var.compute_platform != "Lambda" || var.blue_green_deployment_config == null
+      error_message = "blue_green_deployment_config is not supported when compute_platform is Lambda."
+    }
+
+    precondition {
+      condition     = var.compute_platform != "Lambda" || var.load_balancer_info == null
+      error_message = "load_balancer_info is not supported when compute_platform is Lambda."
+    }
+
+    precondition {
+      condition = (
+        var.load_balancer_info == null ||
+        (length(var.load_balancer_info.target_group_names) + length(var.load_balancer_info.elb_names)) > 0
+      )
+      error_message = "load_balancer_info must include at least one target group or ELB name."
+    }
+
+    precondition {
+      condition = (
+        var.load_balancer_info == null ||
+        (length(var.load_balancer_info.target_group_names) <= 1 && length(var.load_balancer_info.elb_names) <= 1)
+      )
+      error_message = "CodeDeploy deployment groups support at most one target group and one ELB in load_balancer_info."
+    }
+
+    precondition {
+      condition = (
+        var.compute_platform != "ECS" ||
+        (
+          var.load_balancer_info != null &&
+          length(var.load_balancer_info.target_group_names) > 0
+        )
+      )
+      error_message = "ECS deployments require load_balancer_info with at least one target group."
     }
   }
 

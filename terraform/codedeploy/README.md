@@ -48,7 +48,7 @@ Complete, tested configurations in [`tests/`](tests/):
 **Usage:**
 ```bash
 # View example
-cat tests/basic/
+cat tests/basic/main.tf
 
 # Copy and adapt
 cp -r tests/basic/ my-project/
@@ -64,6 +64,8 @@ cd tests/basic && terraform init && terraform plan
 <summary>Terraform Documentation</summary>
 
 <!-- BEGIN_TF_DOCS -->
+
+
 ## Requirements
 
 | Name | Version |
@@ -89,30 +91,29 @@ No modules.
 | [aws_codedeploy_deployment_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codedeploy_deployment_group) | resource |
 | [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.codedeploy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_policy_document.assume](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_alarm_names"></a> [alarm\_names](#input\_alarm\_names) | List of CloudWatch alarm names to monitor during deployment. | `list(string)` | `[]` | no |
 | <a name="input_application_name"></a> [application\_name](#input\_application\_name) | The name of the CodeDeploy application. | `string` | n/a | yes |
-| <a name="input_auto_rollback_enabled"></a> [auto\_rollback\_enabled](#input\_auto\_rollback\_enabled) | Enable automatic rollback on deployment failure or alarm threshold breach. | `bool` | `false` | no |
-| <a name="input_auto_rollback_events"></a> [auto\_rollback\_events](#input\_auto\_rollback\_events) | List of events that can trigger automatic rollback. Valid values: DEPLOYMENT\_FAILURE, DEPLOYMENT\_STOP\_ON\_ALARM, DEPLOYMENT\_STOP\_ON\_REQUEST. | `list(string)` | <pre>[<br>  "DEPLOYMENT_FAILURE"<br>]</pre> | no |
-| <a name="input_autoscaling_groups"></a> [autoscaling\_groups](#input\_autoscaling\_groups) | List of Auto Scaling Group names to deploy to. | `list(string)` | `[]` | no |
-| <a name="input_blue_green_deployment_config"></a> [blue\_green\_deployment\_config](#input\_blue\_green\_deployment\_config) | Blue/Green deployment configuration for EC2/On-Premises or ECS deployments. | <pre>object({<br>    terminate_blue_instances_action  = string<br>    termination_wait_time_in_minutes = number<br>    deployment_ready_action          = string<br>    green_fleet_provisioning_action  = string<br>  })</pre> | `null` | no |
-| <a name="input_compute_platform"></a> [compute\_platform](#input\_compute\_platform) | The compute platform on which CodeDeploy deploys the application.<br>Valid values: Server (EC2/On-Premises), Lambda, ECS. | `string` | `"Server"` | no |
-| <a name="input_create_service_role"></a> [create\_service\_role](#input\_create\_service\_role) | Whether to create a new IAM service role for CodeDeploy. If false, service\_role\_arn must be provided. | `bool` | `true` | no |
-| <a name="input_deployment_config_name"></a> [deployment\_config\_name](#input\_deployment\_config\_name) | The name of the deployment configuration.<br>For EC2/On-Premises: CodeDeployDefault.OneAtATime, CodeDeployDefault.HalfAtATime, CodeDeployDefault.AllAtOnce<br>For Lambda: CodeDeployDefault.LambdaCanary10Percent5Minutes, CodeDeployDefault.LambdaLinear10PercentEvery1Minute, CodeDeployDefault.LambdaAllAtOnce<br>For ECS: CodeDeployDefault.ECSAllAtOnce, CodeDeployDefault.ECSLinear10PercentEvery1Minutes, CodeDeployDefault.ECSCanary10Percent5Minutes | `string` | `"CodeDeployDefault.OneAtATime"` | no |
 | <a name="input_deployment_group_name"></a> [deployment\_group\_name](#input\_deployment\_group\_name) | The name of the deployment group. | `string` | n/a | yes |
-| <a name="input_deployment_type"></a> [deployment\_type](#input\_deployment\_type) | Deployment type for Lambda deployments. Valid values: BLUE\_GREEN, IN\_PLACE. | `string` | `"BLUE_GREEN"` | no |
-| <a name="input_ec2_tag_filters"></a> [ec2\_tag\_filters](#input\_ec2\_tag\_filters) | List of EC2 tag filters to identify instances for deployment.<br>Each filter should have: key, type (KEY\_ONLY, VALUE\_ONLY, KEY\_AND\_VALUE), and value. | <pre>list(object({<br>    key   = string<br>    type  = string<br>    value = string<br>  }))</pre> | `[]` | no |
-| <a name="input_ecs_service"></a> [ecs\_service](#input\_ecs\_service) | ECS service configuration for ECS deployments. | <pre>object({<br>    cluster_name = string<br>    service_name = string<br>  })</pre> | `null` | no |
+| <a name="input_alarm_names"></a> [alarm\_names](#input\_alarm\_names) | List of CloudWatch alarm names to monitor during deployment. | `list(string)` | `[]` | no |
+| <a name="input_auto_rollback_enabled"></a> [auto\_rollback\_enabled](#input\_auto\_rollback\_enabled) | Enable automatic rollback on deployment failure or alarm threshold breach. | `bool` | `false` | no |
+| <a name="input_auto_rollback_events"></a> [auto\_rollback\_events](#input\_auto\_rollback\_events) | List of events that can trigger automatic rollback. Valid values: DEPLOYMENT\_FAILURE, DEPLOYMENT\_STOP\_ON\_ALARM, DEPLOYMENT\_STOP\_ON\_REQUEST. | `list(string)` | <pre>[<br/>  "DEPLOYMENT_FAILURE"<br/>]</pre> | no |
+| <a name="input_autoscaling_groups"></a> [autoscaling\_groups](#input\_autoscaling\_groups) | List of Auto Scaling Group names to deploy to. | `list(string)` | `[]` | no |
+| <a name="input_blue_green_deployment_config"></a> [blue\_green\_deployment\_config](#input\_blue\_green\_deployment\_config) | Blue/Green deployment configuration for EC2/On-Premises or ECS deployments. | <pre>object({<br/>    terminate_blue_instances_action  = string<br/>    termination_wait_time_in_minutes = number<br/>    deployment_ready_action          = string<br/>    green_fleet_provisioning_action  = string<br/>  })</pre> | `null` | no |
+| <a name="input_compute_platform"></a> [compute\_platform](#input\_compute\_platform) | The compute platform on which CodeDeploy deploys the application.<br/>Valid values: Server (EC2/On-Premises), Lambda, ECS. | `string` | `"Server"` | no |
+| <a name="input_create_service_role"></a> [create\_service\_role](#input\_create\_service\_role) | Whether to create a new IAM service role for CodeDeploy. If false, service\_role\_arn must be provided. | `bool` | `true` | no |
+| <a name="input_deployment_config_name"></a> [deployment\_config\_name](#input\_deployment\_config\_name) | The name of the deployment configuration.<br/>For EC2/On-Premises: CodeDeployDefault.OneAtATime, CodeDeployDefault.HalfAtATime, CodeDeployDefault.AllAtOnce<br/>For Lambda: CodeDeployDefault.LambdaCanary10Percent5Minutes, CodeDeployDefault.LambdaLinear10PercentEvery1Minute, CodeDeployDefault.LambdaAllAtOnce<br/>For ECS: CodeDeployDefault.ECSAllAtOnce, CodeDeployDefault.ECSLinear10PercentEvery1Minutes, CodeDeployDefault.ECSCanary10Percent5Minutes<br/>If null, a platform-specific default is used. | `string` | `null` | no |
+| <a name="input_deployment_type"></a> [deployment\_type](#input\_deployment\_type) | Deployment type for deployment\_style. Valid values: BLUE\_GREEN, IN\_PLACE. For Lambda and ECS, only BLUE\_GREEN is supported. | `string` | `"BLUE_GREEN"` | no |
+| <a name="input_ec2_tag_filters"></a> [ec2\_tag\_filters](#input\_ec2\_tag\_filters) | List of EC2 tag filters to identify instances for deployment.<br/>Each filter should have: key, type (KEY\_ONLY, VALUE\_ONLY, KEY\_AND\_VALUE), and value. | <pre>list(object({<br/>    key   = string<br/>    type  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_ecs_service"></a> [ecs\_service](#input\_ecs\_service) | ECS service configuration for ECS deployments. | <pre>object({<br/>    cluster_name = string<br/>    service_name = string<br/>  })</pre> | `null` | no |
 | <a name="input_ignore_poll_alarm_failure"></a> [ignore\_poll\_alarm\_failure](#input\_ignore\_poll\_alarm\_failure) | Whether to ignore failures in polling CloudWatch alarms. | `bool` | `false` | no |
-| <a name="input_load_balancer_info"></a> [load\_balancer\_info](#input\_load\_balancer\_info) | Load balancer configuration for deployment group. | <pre>object({<br>    target_group_names = list(string)<br>    elb_names          = list(string)<br>  })</pre> | `null` | no |
+| <a name="input_load_balancer_info"></a> [load\_balancer\_info](#input\_load\_balancer\_info) | Load balancer configuration for deployment group. | <pre>object({<br/>    target_group_names = list(string)<br/>    elb_names          = list(string)<br/>  })</pre> | `null` | no |
 | <a name="input_service_role_arn"></a> [service\_role\_arn](#input\_service\_role\_arn) | ARN of an existing IAM role for CodeDeploy. Required when create\_service\_role is false. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. | `map(string)` | `{}` | no |
-| <a name="input_trigger_configurations"></a> [trigger\_configurations](#input\_trigger\_configurations) | List of trigger configurations for deployment notifications.<br>Each trigger should have: trigger\_name, trigger\_events (list), and trigger\_target\_arn (SNS topic ARN). | <pre>list(object({<br>    trigger_name       = string<br>    trigger_events     = list(string)<br>    trigger_target_arn = string<br>  }))</pre> | `[]` | no |
+| <a name="input_trigger_configurations"></a> [trigger\_configurations](#input\_trigger\_configurations) | List of trigger configurations for deployment notifications.<br/>Each trigger should have: trigger\_name, trigger\_events (list), and trigger\_target\_arn (SNS topic ARN). | <pre>list(object({<br/>    trigger_name       = string<br/>    trigger_events     = list(string)<br/>    trigger_target_arn = string<br/>  }))</pre> | `[]` | no |
 
 ## Outputs
 

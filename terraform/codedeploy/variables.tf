@@ -81,13 +81,14 @@ variable "deployment_config_name" {
     For EC2/On-Premises: CodeDeployDefault.OneAtATime, CodeDeployDefault.HalfAtATime, CodeDeployDefault.AllAtOnce
     For Lambda: CodeDeployDefault.LambdaCanary10Percent5Minutes, CodeDeployDefault.LambdaLinear10PercentEvery1Minute, CodeDeployDefault.LambdaAllAtOnce
     For ECS: CodeDeployDefault.ECSAllAtOnce, CodeDeployDefault.ECSLinear10PercentEvery1Minutes, CodeDeployDefault.ECSCanary10Percent5Minutes
+    If null, a platform-specific default is used.
   EOT
   type        = string
-  default     = "CodeDeployDefault.OneAtATime"
+  default     = null
 }
 
 variable "deployment_type" {
-  description = "Deployment type for Lambda deployments. Valid values: BLUE_GREEN, IN_PLACE."
+  description = "Deployment type for deployment_style. Valid values: BLUE_GREEN, IN_PLACE. For Lambda and ECS, only BLUE_GREEN is supported."
   type        = string
   default     = "BLUE_GREEN"
 
@@ -112,6 +113,22 @@ variable "ec2_tag_filters" {
     value = string
   }))
   default = []
+
+  validation {
+    condition = alltrue([
+      for filter in var.ec2_tag_filters :
+      contains(["KEY_AND_VALUE", "KEY_ONLY", "VALUE_ONLY"], filter.type)
+    ])
+    error_message = "Each ec2_tag_filter.type must be one of: KEY_AND_VALUE, KEY_ONLY, VALUE_ONLY."
+  }
+
+  validation {
+    condition = alltrue([
+      for filter in var.ec2_tag_filters :
+      filter.type == "KEY_ONLY" || length(filter.value) > 0
+    ])
+    error_message = "ec2_tag_filter.value must be non-empty for KEY_AND_VALUE or VALUE_ONLY filter types."
+  }
 }
 
 variable "autoscaling_groups" {
@@ -216,6 +233,35 @@ variable "trigger_configurations" {
     trigger_target_arn = string
   }))
   default = []
+
+  validation {
+    condition = alltrue([
+      for config in var.trigger_configurations :
+      can(regex("^arn:aws:sns:[a-z0-9-]+:[0-9]{12}:.+$", config.trigger_target_arn))
+    ])
+    error_message = "Each trigger_target_arn must be a valid SNS topic ARN."
+  }
+
+  validation {
+    condition = alltrue([
+      for config in var.trigger_configurations :
+      alltrue([
+        for event in config.trigger_events :
+        contains([
+          "DeploymentStart",
+          "DeploymentSuccess",
+          "DeploymentFailure",
+          "DeploymentStop",
+          "DeploymentRollback",
+          "DeploymentReady",
+          "InstanceStart",
+          "InstanceSuccess",
+          "InstanceFailure"
+        ], event)
+      ])
+    ])
+    error_message = "trigger_events contains unsupported values."
+  }
 }
 
 # -----------------------------------------------------------------------------
