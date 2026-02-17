@@ -21,11 +21,18 @@ provider "aws" {
   secret_key = "test"
 }
 
+variable "enable_live_lookup" {
+  description = "Enable real AWS AMI lookup tests. Requires valid AWS credentials."
+  type        = bool
+  default     = false
+}
+
 # -----------------------------------------------------------------------------
 # Test 1: Find Amazon Linux 2 AMI
 # -----------------------------------------------------------------------------
 
 module "amazon_linux_2" {
+  count  = var.enable_live_lookup ? 1 : 0
   source = "../../"
 
   owners = ["amazon"]
@@ -57,6 +64,7 @@ module "amazon_linux_2" {
 # -----------------------------------------------------------------------------
 
 module "ubuntu_2204" {
+  count  = var.enable_live_lookup ? 1 : 0
   source = "../../"
 
   owners = ["099720109477"] # Canonical
@@ -84,6 +92,7 @@ module "ubuntu_2204" {
 # -----------------------------------------------------------------------------
 
 module "amazon_linux_2_arm" {
+  count  = var.enable_live_lookup ? 1 : 0
   source = "../../"
 
   owners = ["amazon"]
@@ -125,23 +134,23 @@ module "specific_ami" {
 # -----------------------------------------------------------------------------
 
 output "amazon_linux_2_ami_id" {
-  description = "AMI ID for Amazon Linux 2"
-  value       = module.amazon_linux_2.ami_id
+  description = "AMI ID for Amazon Linux 2 (null unless enable_live_lookup=true)"
+  value       = try(module.amazon_linux_2[0].ami_id, null)
 }
 
 output "amazon_linux_2_ami_name" {
-  description = "AMI name for Amazon Linux 2"
-  value       = module.amazon_linux_2.ami_name
+  description = "AMI name for Amazon Linux 2 (null unless enable_live_lookup=true)"
+  value       = try(module.amazon_linux_2[0].ami_name, null)
 }
 
 output "ubuntu_ami_id" {
-  description = "AMI ID for Ubuntu 22.04 LTS"
-  value       = module.ubuntu_2204.ami_id
+  description = "AMI ID for Ubuntu 22.04 LTS (null unless enable_live_lookup=true)"
+  value       = try(module.ubuntu_2204[0].ami_id, null)
 }
 
 output "arm_ami_architecture" {
-  description = "Architecture of ARM-based AMI"
-  value       = module.amazon_linux_2_arm.ami_architecture
+  description = "Architecture of ARM-based AMI (null unless enable_live_lookup=true)"
+  value       = try(module.amazon_linux_2_arm[0].ami_architecture, null)
 }
 
 output "specific_ami_id" {

@@ -51,7 +51,11 @@ cp -r tests/basic/ my-project/
 ## Testing
 
 ```bash
+# Offline-safe test (default)
 cd tests/basic && terraform init && terraform plan
+
+# Live lookup test (requires valid AWS credentials)
+cd tests/basic && terraform init && terraform plan -var='enable_live_lookup=true'
 ```
 
 <details>
