@@ -4,7 +4,7 @@ terraform {
 
 # S3 bucket for CloudTrail logs
 module "s3" {
-  source = "../../s3"
+  source = "../s3"
 
   bucket_name   = var.s3_bucket_name
   force_destroy = var.force_destroy
@@ -44,7 +44,7 @@ module "s3" {
 
 # CloudTrail
 module "cloudtrail" {
-  source = "../../cloudtrail"
+  source = "../cloudtrail"
 
   trail_name    = var.trail_name
   s3_bucket_id  = module.s3.bucket_id
