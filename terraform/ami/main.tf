@@ -25,4 +25,11 @@ data "aws_ami" "this" {
   }
 
   tags = var.filter_tags
+
+  lifecycle {
+    precondition {
+      condition     = length(var.owners) > 0
+      error_message = "owners must not be empty when ami_id is not provided."
+    }
+  }
 }

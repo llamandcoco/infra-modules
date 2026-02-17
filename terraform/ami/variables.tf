@@ -18,11 +18,6 @@ variable "owners" {
   description = "List of AMI owner IDs or aliases (e.g., ['amazon', '099720109477'] or ['self', 'aws-marketplace']). Required for AMI lookup."
   type        = list(string)
   default     = []
-
-  validation {
-    condition     = var.ami_id != null || length(var.owners) > 0
-    error_message = "Either ami_id must be provided or owners list must not be empty."
-  }
 }
 
 variable "filters" {
