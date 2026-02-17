@@ -5,7 +5,7 @@
 
 ## Purpose
 
-Main Terraform module registry containing 50 production-ready, reusable infrastructure modules for AWS, Azure, and GCP. Each module follows a standardized structure with comprehensive testing and documentation. All modules support credential-less testing using mock provider configurations.
+Main Terraform module registry containing 50+ production-ready, reusable infrastructure modules for AWS, Azure, and GCP. AWS modules are organized under `aws/` subdirectory, matching the organizational structure of `azure/` and `gcp/`. Each module follows a standardized structure with comprehensive testing and documentation. All modules support credential-less testing using mock provider configurations.
 
 ## Key Files
 
@@ -121,11 +121,12 @@ Main Terraform module registry containing 50 production-ready, reusable infrastr
 |--------|---------|
 | `_template/` | Template for creating new modules |
 
-## Subdirectories (Special Categories)
+## Subdirectories (Cloud-Organized)
 
 | Directory | Purpose |
 |-----------|---------|
-| `stack/` | Composite modules combining multiple resources (see `stack/AGENTS.md`) |
+| `aws/` | All AWS cloud modules (50+ modules) - organized in flat structure |
+| `aws/stack/` | Composite AWS modules combining multiple resources (see `aws/stack/AGENTS.md`) |
 | `azure/` | Azure cloud modules (see `azure/AGENTS.md`) |
 | `gcp/` | Google Cloud Platform modules (see `gcp/AGENTS.md`) |
 
@@ -150,15 +151,15 @@ module-name/
         └── main.tf
 ```
 
-**When adding a new module:**
-1. Copy `_template/` directory: `cp -r _template/ new-module/`
+**When adding a new AWS module:**
+1. Copy `_template/` directory: `cp -r _template/ aws/new-module/`
 2. Edit `main.tf` with resource definitions
 3. Define variables in `variables.tf` (include type, description, validation)
 4. Add outputs to `outputs.tf` (include descriptions)
 5. Update `README.md` following DOCUMENTATION_GUIDELINES.md
 6. Create `tests/basic/main.tf` with mock provider config
 7. Test locally: `cd tests/basic && terraform init -backend=false && terraform plan`
-8. Run `make test-module MODULE=new-module` from repository root
+8. Run `make test-module MODULE=aws/new-module` from repository root
 
 **When modifying a module:**
 1. Read existing code and test cases first
@@ -167,7 +168,7 @@ module-name/
 4. Update README.md only if inputs/outputs changed
 5. Run `terraform fmt -recursive .` in module directory
 6. Test locally: `cd tests/basic && terraform init -backend=false && terraform plan`
-7. Run `make test-module MODULE=module-name` from repository root
+7. Run `make test-module MODULE=aws/module-name` from repository root (for AWS modules)
 
 **Documentation rules (CRITICAL - Read DOCUMENTATION_GUIDELINES.md):**
 - ❌ **Never** duplicate code in README
@@ -215,10 +216,10 @@ module "test" {
 **Local testing:**
 ```bash
 # From repository root
-make test-module MODULE=s3
+make test-module MODULE=aws/s3
 
 # Manual testing
-cd terraform/s3/tests/basic
+cd terraform/aws/s3/tests/basic
 terraform init -backend=false
 terraform plan
 ```
@@ -326,9 +327,9 @@ resource "aws_resource" "this" {
 ## Module Usage Example
 
 ```hcl
-# In your infrastructure code
+# In your infrastructure code (AWS modules)
 module "s3_bucket" {
-  source = "github.com/llamandcoco/infra-modules//terraform/s3?ref=<commit-sha>"
+  source = "github.com/llamandcoco/infra-modules//terraform/aws/s3?ref=<commit-sha>"
 
   bucket_name = "my-application-bucket"
   environment = "prod"
