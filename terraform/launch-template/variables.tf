@@ -35,10 +35,21 @@ variable "use_ssm_ami_lookup" {
   default     = true
 }
 
-variable "ami_ssm_parameter_name" {
-  description = "SSM parameter name for AL2023 AMI"
+variable "ami_architecture" {
+  description = "AMI architecture for AL2023 SSM lookup: auto (infer from instance_type), x86_64, or arm64"
   type        = string
-  default     = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+  default     = "auto"
+
+  validation {
+    condition     = contains(["auto", "x86_64", "arm64"], var.ami_architecture)
+    error_message = "ami_architecture must be one of: auto, x86_64, arm64."
+  }
+}
+
+variable "ami_ssm_parameter_name" {
+  description = "Optional custom SSM parameter name for AL2023 AMI lookup"
+  type        = string
+  default     = null
 }
 
 variable "key_name" {

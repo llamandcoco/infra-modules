@@ -15,13 +15,25 @@ terraform {
 # CI-safe conditional SSM lookup for AL2023 AMI
 data "aws_ssm_parameter" "al2023" {
   count = var.image_id == null && var.use_ssm_ami_lookup ? 1 : 0
-  name  = var.ami_ssm_parameter_name
+  name  = local.ami_ssm_parameter_name
 }
 
 # -----------------------------------------------------------------------------
 # Derived Locals
 # -----------------------------------------------------------------------------
 locals {
+  instance_family = var.instance_type != null ? split(".", var.instance_type)[0] : null
+  inferred_ami_architecture = (
+    local.instance_family == "a1" ||
+    length(regexall("[0-9]g", coalesce(local.instance_family, ""))) > 0
+  ) ? "arm64" : "x86_64"
+  effective_ami_architecture = var.ami_architecture == "auto" ? local.inferred_ami_architecture : var.ami_architecture
+  ami_ssm_parameter_name = var.ami_ssm_parameter_name != null ? var.ami_ssm_parameter_name : (
+    "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-${local.effective_ami_architecture}"
+  )
+  user_data = var.user_data_base64 != null ? var.user_data_base64 : (
+    var.user_data != null ? base64encode(var.user_data) : null
+  )
   image_id = var.image_id != null ? var.image_id : (
     var.use_ssm_ami_lookup && length(data.aws_ssm_parameter.al2023) > 0 ? data.aws_ssm_parameter.al2023[0].value : null
   )
@@ -47,12 +59,10 @@ resource "aws_launch_template" "this" {
   }
 
   # Security Groups
-  vpc_security_group_ids = var.vpc_security_group_ids
+  vpc_security_group_ids = length(var.network_interfaces) > 0 ? null : var.vpc_security_group_ids
 
   # User Data
-  user_data = var.user_data_base64 != null ? var.user_data_base64 : (
-    var.user_data != null ? base64encode(var.user_data) : null
-  )
+  user_data = local.user_data
 
   # Metadata Options (IMDSv2)
   metadata_options {
@@ -159,5 +169,15 @@ resource "aws_launch_template" "this" {
 
   lifecycle {
     create_before_destroy = true
+
+    precondition {
+      condition     = !(length(var.vpc_security_group_ids) > 0 && length(var.network_interfaces) > 0)
+      error_message = "Do not set both vpc_security_group_ids and network_interfaces. When using network_interfaces, set security groups in each network interface block."
+    }
+
+    precondition {
+      condition     = !(var.user_data != null && var.user_data_base64 != null)
+      error_message = "Set only one of user_data or user_data_base64."
+    }
   }
 }
