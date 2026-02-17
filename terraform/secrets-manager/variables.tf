@@ -51,9 +51,25 @@ variable "secrets" {
   validation {
     condition = alltrue([
       for name, secret in var.secrets :
-      secret.rotation_enabled != true || secret.rotation_lambda_arn != null
+      secret.rotation_enabled != true || (secret.rotation_lambda_arn != null && trimspace(secret.rotation_lambda_arn) != "")
     ])
-    error_message = "When rotation_enabled is true, rotation_lambda_arn must be specified."
+    error_message = "When rotation_enabled is true, rotation_lambda_arn must be a non-empty string."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, secret in var.secrets :
+      secret.rotation_days == null || (secret.rotation_days >= 1 && secret.rotation_days <= 365)
+    ])
+    error_message = "rotation_days must be between 1 and 365 when specified."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, secret in var.secrets :
+      secret.recovery_window_in_days == null || secret.recovery_window_in_days == 0 || (secret.recovery_window_in_days >= 7 && secret.recovery_window_in_days <= 30)
+    ])
+    error_message = "recovery_window_in_days must be 0 or between 7 and 30 when specified."
   }
 }
 
