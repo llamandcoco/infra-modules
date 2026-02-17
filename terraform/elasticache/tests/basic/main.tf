@@ -33,10 +33,6 @@ module "test_basic_redis" {
   subnet_ids         = ["subnet-12345678", "subnet-87654321"]
   security_group_ids = ["sg-12345678"]
 
-  # Disable encryption for basic test
-  at_rest_encryption_enabled = false
-  transit_encryption_enabled = false
-
   tags = {
     Environment = "test"
     ManagedBy   = "terraform"

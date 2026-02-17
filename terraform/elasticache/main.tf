@@ -9,6 +9,12 @@ terraform {
   }
 }
 
+locals {
+  effective_parameter_group_family = var.parameter_group_family != null ? var.parameter_group_family : (
+    var.engine == "redis" ? "redis7" : "memcached1.6"
+  )
+}
+
 # ElastiCache Subnet Group
 # Defines the subnets where ElastiCache nodes will be launched
 resource "aws_elasticache_subnet_group" "this" {
@@ -24,6 +30,13 @@ resource "aws_elasticache_subnet_group" "this" {
       Name = "${var.cluster_id}-subnet-group"
     }
   )
+
+  lifecycle {
+    precondition {
+      condition     = length(var.subnet_ids) > 0
+      error_message = "subnet_ids must not be empty when subnet_group_name is not provided."
+    }
+  }
 }
 
 # ElastiCache Parameter Group
@@ -32,7 +45,7 @@ resource "aws_elasticache_parameter_group" "this" {
   count = var.parameter_group_name != null ? 0 : 1
 
   name        = "${var.cluster_id}-params"
-  family      = var.parameter_group_family
+  family      = local.effective_parameter_group_family
   description = "Parameter group for ${var.cluster_id} ElastiCache cluster"
 
   dynamic "parameter" {
@@ -50,6 +63,16 @@ resource "aws_elasticache_parameter_group" "this" {
       Name = "${var.cluster_id}-params"
     }
   )
+
+  lifecycle {
+    precondition {
+      condition = (
+        (var.engine == "redis" && can(regex("^redis", local.effective_parameter_group_family))) ||
+        (var.engine == "memcached" && can(regex("^memcached", local.effective_parameter_group_family)))
+      )
+      error_message = "parameter_group_family must match engine family: redis* for Redis, memcached* for Memcached."
+    }
+  }
 }
 
 # ElastiCache Replication Group (Redis)
@@ -114,6 +137,26 @@ resource "aws_elasticache_replication_group" "this" {
     ignore_changes = [
       engine_version
     ]
+
+    precondition {
+      condition     = !var.automatic_failover_enabled || var.num_cache_nodes >= 2
+      error_message = "automatic_failover_enabled requires num_cache_nodes >= 2."
+    }
+
+    precondition {
+      condition     = !var.automatic_failover_enabled || var.multi_az_enabled
+      error_message = "automatic_failover_enabled requires multi_az_enabled = true."
+    }
+
+    precondition {
+      condition     = !var.multi_az_enabled || var.automatic_failover_enabled
+      error_message = "multi_az_enabled requires automatic_failover_enabled = true."
+    }
+
+    precondition {
+      condition     = var.auth_token == null || var.transit_encryption_enabled
+      error_message = "auth_token can only be set when transit_encryption_enabled = true."
+    }
   }
 }
 
@@ -134,7 +177,7 @@ resource "aws_elasticache_cluster" "this" {
 
   # AZ mode for Memcached
   az_mode                      = var.num_cache_nodes > 1 ? "cross-az" : "single-az"
-  preferred_availability_zones = var.num_cache_nodes > 1 ? var.availability_zones : null
+  preferred_availability_zones = var.num_cache_nodes > 1 && length(var.availability_zones) > 0 ? var.availability_zones : null
 
   # Maintenance configuration
   maintenance_window         = var.maintenance_window
@@ -158,5 +201,10 @@ resource "aws_elasticache_cluster" "this" {
     ignore_changes = [
       engine_version
     ]
+
+    precondition {
+      condition     = length(var.availability_zones) == 0 || length(var.availability_zones) == var.num_cache_nodes
+      error_message = "availability_zones must be empty or contain exactly num_cache_nodes entries for Memcached."
+    }
   }
 }

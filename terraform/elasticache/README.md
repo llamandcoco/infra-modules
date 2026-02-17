@@ -68,7 +68,7 @@ cd tests/basic && terraform init && terraform plan
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
 
 ## Modules
 
@@ -87,35 +87,35 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_apply_immediately"></a> [apply\_immediately](#input\_apply\_immediately) | Apply changes immediately instead of during the next maintenance window.<br>Use with caution as this may cause downtime. | `bool` | `false` | no |
-| <a name="input_at_rest_encryption_enabled"></a> [at\_rest\_encryption\_enabled](#input\_at\_rest\_encryption\_enabled) | Enable encryption at rest for Redis data. <br>Can only be enabled when creating a new cluster. | `bool` | `true` | no |
-| <a name="input_auth_token"></a> [auth\_token](#input\_auth\_token) | Password used to access a password-protected Redis server.<br>Only used when transit\_encryption\_enabled is true.<br>Must be 16-128 alphanumeric characters. | `string` | `null` | no |
+| <a name="input_apply_immediately"></a> [apply\_immediately](#input\_apply\_immediately) | Apply changes immediately instead of during the next maintenance window.<br/>Use with caution as this may cause downtime. | `bool` | `false` | no |
+| <a name="input_at_rest_encryption_enabled"></a> [at\_rest\_encryption\_enabled](#input\_at\_rest\_encryption\_enabled) | Enable encryption at rest for Redis data. <br/>Can only be enabled when creating a new cluster. | `bool` | `true` | no |
+| <a name="input_auth_token"></a> [auth\_token](#input\_auth\_token) | Password used to access a password-protected Redis server.<br/>Only used when transit\_encryption\_enabled is true.<br/>Must be 16-128 alphanumeric characters. | `string` | `null` | no |
 | <a name="input_auto_minor_version_upgrade"></a> [auto\_minor\_version\_upgrade](#input\_auto\_minor\_version\_upgrade) | Automatically upgrade to new minor versions during the maintenance window. | `bool` | `true` | no |
-| <a name="input_automatic_failover_enabled"></a> [automatic\_failover\_enabled](#input\_automatic\_failover\_enabled) | Enable automatic failover for Redis. Requires at least 2 nodes and multi\_az\_enabled.<br>Automatically promotes a replica to primary if the primary fails. | `bool` | `false` | no |
+| <a name="input_automatic_failover_enabled"></a> [automatic\_failover\_enabled](#input\_automatic\_failover\_enabled) | Enable automatic failover for Redis. Requires at least 2 nodes and multi\_az\_enabled.<br/>Automatically promotes a replica to primary if the primary fails. | `bool` | `false` | no |
 | <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | List of availability zones for Memcached cluster nodes. Only used when num\_cache\_nodes > 1 for Memcached. | `list(string)` | `[]` | no |
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | Unique identifier for the ElastiCache cluster. Must be lowercase alphanumeric and hyphens only. | `string` | n/a | yes |
 | <a name="input_description"></a> [description](#input\_description) | Description for the replication group (Redis only). | `string` | `"Managed by Terraform"` | no |
 | <a name="input_engine"></a> [engine](#input\_engine) | Cache engine to use. Valid values: redis or memcached. | `string` | n/a | yes |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Version number of the cache engine. For Redis, use 6.x or 7.x. For Memcached, use 1.6.x. | `string` | `null` | no |
 | <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | Name of the final snapshot to create when the cluster is deleted (Redis only). If null, no final snapshot is created. | `string` | `null` | no |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | ARN of the KMS key to use for at-rest encryption.<br>If not specified, uses the default AWS managed key for ElastiCache. | `string` | `null` | no |
-| <a name="input_log_delivery_configuration"></a> [log\_delivery\_configuration](#input\_log\_delivery\_configuration) | Log delivery configuration for Redis slow log and engine log.<br>Each configuration must specify destination, destination\_type, log\_format, and log\_type. | <pre>list(object({<br>    destination      = string<br>    destination_type = string<br>    log_format       = string<br>    log_type         = string<br>  }))</pre> | `[]` | no |
-| <a name="input_maintenance_window"></a> [maintenance\_window](#input\_maintenance\_window) | Weekly time range during which system maintenance can occur.<br>Format: ddd:HH:MM-ddd:HH:MM in UTC (e.g., 'sun:05:00-sun:09:00').<br>Must not overlap with snapshot\_window. | `string` | `"sun:05:00-sun:09:00"` | no |
-| <a name="input_multi_az_enabled"></a> [multi\_az\_enabled](#input\_multi\_az\_enabled) | Enable Multi-AZ for Redis. Distributes replica nodes across multiple availability zones.<br>Required for automatic failover. | `bool` | `false` | no |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | ARN of the KMS key to use for at-rest encryption.<br/>If not specified, uses the default AWS managed key for ElastiCache. | `string` | `null` | no |
+| <a name="input_log_delivery_configuration"></a> [log\_delivery\_configuration](#input\_log\_delivery\_configuration) | Log delivery configuration for Redis slow log and engine log.<br/>Each configuration must specify destination, destination\_type, log\_format, and log\_type. | <pre>list(object({<br/>    destination      = string<br/>    destination_type = string<br/>    log_format       = string<br/>    log_type         = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_maintenance_window"></a> [maintenance\_window](#input\_maintenance\_window) | Weekly time range during which system maintenance can occur.<br/>Format: ddd:HH:MM-ddd:HH:MM in UTC (e.g., 'sun:05:00-sun:09:00').<br/>Must not overlap with snapshot\_window. | `string` | `"sun:05:00-sun:09:00"` | no |
+| <a name="input_multi_az_enabled"></a> [multi\_az\_enabled](#input\_multi\_az\_enabled) | Enable Multi-AZ for Redis. Distributes replica nodes across multiple availability zones.<br/>Required for automatic failover. | `bool` | `false` | no |
 | <a name="input_node_type"></a> [node\_type](#input\_node\_type) | Instance type for cache nodes (e.g., cache.t3.micro, cache.r6g.large). | `string` | n/a | yes |
 | <a name="input_notification_topic_arn"></a> [notification\_topic\_arn](#input\_notification\_topic\_arn) | ARN of an SNS topic to send ElastiCache notifications to (cluster events, failures, etc.). | `string` | `null` | no |
-| <a name="input_num_cache_nodes"></a> [num\_cache\_nodes](#input\_num\_cache\_nodes) | Number of cache nodes in the cluster.<br>- For Redis: Number of replica nodes + 1 primary (minimum 2 for automatic failover)<br>- For Memcached: Total number of nodes in the cluster | `number` | `1` | no |
-| <a name="input_parameter_group_family"></a> [parameter\_group\_family](#input\_parameter\_group\_family) | Parameter group family for the cache engine (e.g., redis7, redis6.x, memcached1.6). | `string` | `"redis7"` | no |
+| <a name="input_num_cache_nodes"></a> [num\_cache\_nodes](#input\_num\_cache\_nodes) | Number of cache nodes in the cluster.<br/>- For Redis: Number of replica nodes + 1 primary (minimum 2 for automatic failover)<br/>- For Memcached: Total number of nodes in the cluster | `number` | `1` | no |
+| <a name="input_parameter_group_family"></a> [parameter\_group\_family](#input\_parameter\_group\_family) | Parameter group family for the cache engine (e.g., redis7, redis6.x, memcached1.6). If null, uses redis7 for Redis or memcached1.6 for Memcached. | `string` | `null` | no |
 | <a name="input_parameter_group_name"></a> [parameter\_group\_name](#input\_parameter\_group\_name) | Name of an existing ElastiCache parameter group to use. If null, a new parameter group will be created. | `string` | `null` | no |
-| <a name="input_parameters"></a> [parameters](#input\_parameters) | List of cache parameters to apply. Each parameter must have a name and value. | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
+| <a name="input_parameters"></a> [parameters](#input\_parameters) | List of cache parameters to apply. Each parameter must have a name and value. | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_port"></a> [port](#input\_port) | Port number on which the cache accepts connections. Default: 6379 for Redis, 11211 for Memcached. | `number` | `null` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | List of security group IDs to associate with the ElastiCache cluster. | `list(string)` | `[]` | no |
-| <a name="input_snapshot_retention_limit"></a> [snapshot\_retention\_limit](#input\_snapshot\_retention\_limit) | Number of days to retain automatic snapshots (Redis only). <br>Set to 0 to disable automated backups. Maximum: 35 days. | `number` | `7` | no |
-| <a name="input_snapshot_window"></a> [snapshot\_window](#input\_snapshot\_window) | Daily time range during which ElastiCache begins taking daily snapshots (Redis only).<br>Format: HH:MM-HH:MM in UTC (e.g., '03:00-05:00'). Must not overlap with maintenance\_window. | `string` | `"03:00-05:00"` | no |
+| <a name="input_snapshot_retention_limit"></a> [snapshot\_retention\_limit](#input\_snapshot\_retention\_limit) | Number of days to retain automatic snapshots (Redis only). <br/>Set to 0 to disable automated backups. Maximum: 35 days. | `number` | `7` | no |
+| <a name="input_snapshot_window"></a> [snapshot\_window](#input\_snapshot\_window) | Daily time range during which ElastiCache begins taking daily snapshots (Redis only).<br/>Format: HH:MM-HH:MM in UTC (e.g., '03:00-05:00'). Must not overlap with maintenance\_window. | `string` | `"03:00-05:00"` | no |
 | <a name="input_subnet_group_name"></a> [subnet\_group\_name](#input\_subnet\_group\_name) | Name of an existing ElastiCache subnet group to use. If null, a new subnet group will be created. | `string` | `null` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of VPC subnet IDs for the cache subnet group. Required unless subnet\_group\_name is specified. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. Use this to add consistent tagging across your infrastructure. | `map(string)` | `{}` | no |
-| <a name="input_transit_encryption_enabled"></a> [transit\_encryption\_enabled](#input\_transit\_encryption\_enabled) | Enable in-transit encryption (TLS) for Redis.<br>Can only be enabled when creating a new cluster. | `bool` | `true` | no |
+| <a name="input_transit_encryption_enabled"></a> [transit\_encryption\_enabled](#input\_transit\_encryption\_enabled) | Enable in-transit encryption (TLS) for Redis.<br/>Can only be enabled when creating a new cluster. | `bool` | `true` | no |
 
 ## Outputs
 

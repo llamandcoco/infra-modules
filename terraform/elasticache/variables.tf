@@ -66,9 +66,9 @@ variable "port" {
 }
 
 variable "parameter_group_family" {
-  description = "Parameter group family for the cache engine (e.g., redis7, redis6.x, memcached1.6)."
+  description = "Parameter group family for the cache engine (e.g., redis7, redis6.x, memcached1.6). If null, uses redis7 for Redis or memcached1.6 for Memcached."
   type        = string
-  default     = "redis7"
+  default     = null
 }
 
 variable "parameters" {
@@ -139,7 +139,7 @@ variable "availability_zones" {
 
 variable "snapshot_retention_limit" {
   description = <<-EOT
-    Number of days to retain automatic snapshots (Redis only). 
+    Number of days to retain automatic snapshots (Redis only).
     Set to 0 to disable automated backups. Maximum: 35 days.
   EOT
   type        = number
@@ -207,7 +207,7 @@ variable "notification_topic_arn" {
 
 variable "at_rest_encryption_enabled" {
   description = <<-EOT
-    Enable encryption at rest for Redis data. 
+    Enable encryption at rest for Redis data.
     Can only be enabled when creating a new cluster.
   EOT
   type        = bool
