@@ -117,12 +117,12 @@ resource "aws_db_proxy" "this" {
 
   lifecycle {
     precondition {
-      condition     = var.create_security_group || (var.vpc_security_group_ids != null && length(var.vpc_security_group_ids) > 0)
+      condition     = var.create_security_group || try(length(var.vpc_security_group_ids), 0) > 0
       error_message = "Set create_security_group=true or provide at least one vpc_security_group_ids entry."
     }
 
     precondition {
-      condition     = var.vpc_security_group_ids == null || length(var.vpc_security_group_ids) > 0
+      condition     = var.vpc_security_group_ids == null || try(length(var.vpc_security_group_ids), 0) > 0
       error_message = "If vpc_security_group_ids is provided, it must contain at least one security group ID."
     }
 
