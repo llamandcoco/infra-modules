@@ -37,14 +37,23 @@ locals {
   image_id = var.image_id != null ? var.image_id : (
     var.use_ssm_ami_lookup && length(data.aws_ssm_parameter.al2023) > 0 ? data.aws_ssm_parameter.al2023[0].value : null
   )
+
+  # Secure defaults for metadata_options (enforce IMDSv2)
+  metadata_options = var.metadata_options != null ? var.metadata_options : {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required" # Enforce IMDSv2
+    http_put_response_hop_limit = 1
+    instance_metadata_tags      = "disabled"
+  }
 }
 
 # -----------------------------------------------------------------------------
 # Launch Template
 # -----------------------------------------------------------------------------
 resource "aws_launch_template" "this" {
-  name        = var.name
-  description = var.description
+  name                   = var.name
+  description            = var.description
+  update_default_version = var.update_default_version
 
   image_id      = local.image_id
   instance_type = var.instance_type
@@ -52,8 +61,9 @@ resource "aws_launch_template" "this" {
 
   # IAM Instance Profile
   dynamic "iam_instance_profile" {
-    for_each = var.iam_instance_profile_name != null ? [1] : []
+    for_each = var.iam_instance_profile_name != null || var.iam_instance_profile_arn != null ? [1] : []
     content {
+      arn  = var.iam_instance_profile_arn
       name = var.iam_instance_profile_name
     }
   }
@@ -66,15 +76,18 @@ resource "aws_launch_template" "this" {
 
   # Metadata Options (IMDSv2)
   metadata_options {
-    http_endpoint               = var.metadata_options.http_endpoint
-    http_tokens                 = var.metadata_options.http_tokens
-    http_put_response_hop_limit = var.metadata_options.http_put_response_hop_limit
-    instance_metadata_tags      = var.metadata_options.instance_metadata_tags
+    http_endpoint               = local.metadata_options.http_endpoint
+    http_tokens                 = local.metadata_options.http_tokens
+    http_put_response_hop_limit = local.metadata_options.http_put_response_hop_limit
+    instance_metadata_tags      = local.metadata_options.instance_metadata_tags
   }
 
   # Monitoring
-  monitoring {
-    enabled = var.enable_monitoring
+  dynamic "monitoring" {
+    for_each = var.enable_monitoring != null ? [1] : []
+    content {
+      enabled = var.enable_monitoring
+    }
   }
 
   # Network Interfaces
