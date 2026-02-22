@@ -123,7 +123,7 @@ variable "user_data_base64" {
 # -----------------------------------------------------------------------------
 
 variable "metadata_options" {
-  description = "Instance metadata service configuration"
+  description = "Instance metadata service configuration. If not specified, defaults to IMDSv2 enforcement (http_tokens = required). Set to null or provide custom values to override."
   type = object({
     http_endpoint               = optional(string)
     http_tokens                 = optional(string)

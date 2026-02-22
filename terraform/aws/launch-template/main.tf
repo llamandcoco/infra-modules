@@ -37,6 +37,14 @@ locals {
   image_id = var.image_id != null ? var.image_id : (
     var.use_ssm_ami_lookup && length(data.aws_ssm_parameter.al2023) > 0 ? data.aws_ssm_parameter.al2023[0].value : null
   )
+
+  # Secure defaults for metadata_options (enforce IMDSv2)
+  metadata_options = var.metadata_options != null ? var.metadata_options : {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required" # Enforce IMDSv2
+    http_put_response_hop_limit = 1
+    instance_metadata_tags      = "disabled"
+  }
 }
 
 # -----------------------------------------------------------------------------
@@ -67,14 +75,11 @@ resource "aws_launch_template" "this" {
   user_data = local.user_data
 
   # Metadata Options (IMDSv2)
-  dynamic "metadata_options" {
-    for_each = var.metadata_options != null ? [var.metadata_options] : []
-    content {
-      http_endpoint               = metadata_options.value.http_endpoint
-      http_tokens                 = metadata_options.value.http_tokens
-      http_put_response_hop_limit = metadata_options.value.http_put_response_hop_limit
-      instance_metadata_tags      = metadata_options.value.instance_metadata_tags
-    }
+  metadata_options {
+    http_endpoint               = local.metadata_options.http_endpoint
+    http_tokens                 = local.metadata_options.http_tokens
+    http_put_response_hop_limit = local.metadata_options.http_put_response_hop_limit
+    instance_metadata_tags      = local.metadata_options.instance_metadata_tags
   }
 
   # Monitoring

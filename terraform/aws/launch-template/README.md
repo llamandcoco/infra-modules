@@ -5,13 +5,13 @@ Terraform module for creating AWS EC2 Launch Templates with comprehensive config
 ## Features
 
 - AMI selection via direct ID or SSM parameter lookup (AL2023 x86_64/arm64 auto-selection)
-- IMDSv2 enforced by default for enhanced security
 - Flexible network configuration with support for multiple network interfaces
 - Block device mappings with encryption enabled by default
 - Spot instance support with configurable interruption behavior
 - Tag specifications for automatic resource tagging at launch
 - CPU credits configuration for T2/T3/T4g instance families
 - Placement controls for availability zones and tenancy
+- Optional metadata_options for IMDSv2 enforcement
 
 ## Quick Start
 
@@ -51,6 +51,36 @@ cp -r tests/basic/ my-project/
 cd tests/basic && terraform init && terraform plan
 ```
 
+## Security
+
+### IMDSv2 Enforcement (Default)
+
+This module **enforces IMDSv2 by default** for enhanced security. If `metadata_options` is not explicitly set, the following secure defaults are applied:
+
+```hcl
+metadata_options = {
+  http_endpoint               = "enabled"
+  http_tokens                 = "required"  # IMDSv2 enforced
+  http_put_response_hop_limit = 1
+  instance_metadata_tags      = "disabled"
+}
+```
+
+**Important Notes:**
+- **New deployments**: IMDSv2 is automatically enforced (no action required)
+- **Importing existing resources**: You may see drift if the existing launch template doesn't have IMDSv2 configured. This is expected and improves security.
+- **Legacy compatibility**: To allow both IMDSv1 and IMDSv2 (not recommended), explicitly set:
+  ```hcl
+  metadata_options = {
+    http_endpoint = "enabled"
+    http_tokens   = "optional"  # Allows IMDSv1
+  }
+  ```
+
+**Security Impact:**
+- **Default behavior**: Only IMDSv2 is allowed (recommended for production)
+- **With `http_tokens = "optional"`**: Both IMDSv1 and IMDSv2 are allowed (legacy compatibility only)
+
 <details>
 <summary>Terraform Documentation</summary>
 
@@ -66,7 +96,7 @@ cd tests/basic && terraform init && terraform plan
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.32.1 |
 
 ## Modules
 
@@ -90,18 +120,20 @@ No modules.
 | <a name="input_description"></a> [description](#input\_description) | Description of the launch template | `string` | `null` | no |
 | <a name="input_disable_api_termination"></a> [disable\_api\_termination](#input\_disable\_api\_termination) | Enable EC2 instance termination protection | `bool` | `false` | no |
 | <a name="input_ebs_optimized"></a> [ebs\_optimized](#input\_ebs\_optimized) | Enable EBS optimization | `bool` | `null` | no |
-| <a name="input_enable_monitoring"></a> [enable\_monitoring](#input\_enable\_monitoring) | Enable detailed monitoring | `bool` | `false` | no |
+| <a name="input_enable_monitoring"></a> [enable\_monitoring](#input\_enable\_monitoring) | Enable detailed monitoring | `bool` | `null` | no |
+| <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | IAM instance profile ARN for EC2 instances | `string` | `null` | no |
 | <a name="input_iam_instance_profile_name"></a> [iam\_instance\_profile\_name](#input\_iam\_instance\_profile\_name) | IAM instance profile name for EC2 instances | `string` | `null` | no |
 | <a name="input_image_id"></a> [image\_id](#input\_image\_id) | AMI ID for instances (if provided, overrides SSM lookup) | `string` | `null` | no |
 | <a name="input_instance_market_options"></a> [instance\_market\_options](#input\_instance\_market\_options) | Market (purchasing) option for the instances | <pre>object({<br/>    market_type = string<br/>    spot_options = optional(object({<br/>      block_duration_minutes         = optional(number)<br/>      instance_interruption_behavior = optional(string, "terminate")<br/>      max_price                      = optional(string)<br/>      spot_instance_type             = optional(string, "one-time")<br/>      valid_until                    = optional(string)<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | EC2 instance type | `string` | `null` | no |
 | <a name="input_key_name"></a> [key\_name](#input\_key\_name) | SSH key name to use for instances | `string` | `null` | no |
-| <a name="input_metadata_options"></a> [metadata\_options](#input\_metadata\_options) | Instance metadata service configuration | <pre>object({<br/>    http_endpoint               = optional(string, "enabled")<br/>    http_tokens                 = optional(string, "required")<br/>    http_put_response_hop_limit = optional(number, 1)<br/>    instance_metadata_tags      = optional(string, "disabled")<br/>  })</pre> | `{}` | no |
+| <a name="input_metadata_options"></a> [metadata\_options](#input\_metadata\_options) | Instance metadata service configuration. If not specified, defaults to IMDSv2 enforcement (http\_tokens = required). Set to null or provide custom values to override. | <pre>object({<br/>    http_endpoint               = optional(string)<br/>    http_tokens                 = optional(string)<br/>    http_put_response_hop_limit = optional(number)<br/>    instance_metadata_tags      = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the launch template | `string` | n/a | yes |
-| <a name="input_network_interfaces"></a> [network\_interfaces](#input\_network\_interfaces) | Network interface configuration for the launch template | <pre>list(object({<br/>    associate_public_ip_address = optional(bool)<br/>    delete_on_termination       = optional(bool, true)<br/>    device_index                = number<br/>    security_groups             = optional(list(string), [])<br/>    subnet_id                   = optional(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_network_interfaces"></a> [network\_interfaces](#input\_network\_interfaces) | Network interface configuration for the launch template | <pre>list(object({<br/>    associate_public_ip_address = optional(bool)<br/>    delete_on_termination       = optional(bool)<br/>    device_index                = number<br/>    security_groups             = optional(list(string), [])<br/>    subnet_id                   = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_placement"></a> [placement](#input\_placement) | Placement configuration for instances | <pre>object({<br/>    availability_zone = optional(string)<br/>    group_name        = optional(string)<br/>    tenancy           = optional(string, "default")<br/>  })</pre> | `null` | no |
 | <a name="input_tag_specifications"></a> [tag\_specifications](#input\_tag\_specifications) | Resource types to tag at launch | <pre>list(object({<br/>    resource_type = string<br/>    tags          = map(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to the launch template resource | `map(string)` | `{}` | no |
+| <a name="input_update_default_version"></a> [update\_default\_version](#input\_update\_default\_version) | Whether to update Default Version each time a new version is created. Set to true for automatic rollout, false to keep existing default. | `bool` | `false` | no |
 | <a name="input_use_ssm_ami_lookup"></a> [use\_ssm\_ami\_lookup](#input\_use\_ssm\_ami\_lookup) | When true, use SSM parameter to lookup AL2023 AMI | `bool` | `true` | no |
 | <a name="input_user_data"></a> [user\_data](#input\_user\_data) | Plain user data script (will be base64-encoded) | `string` | `null` | no |
 | <a name="input_user_data_base64"></a> [user\_data\_base64](#input\_user\_data\_base64) | Base64-encoded user data script | `string` | `null` | no |
