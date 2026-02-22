@@ -118,6 +118,7 @@ resource "aws_db_instance" "this" {
   performance_insights_retention_period = var.performance_insights_retention_period
 
   # Additional Settings
+  backup_retention_period    = var.backup_retention_period
   auto_minor_version_upgrade = var.auto_minor_version_upgrade
   apply_immediately          = var.apply_immediately
   deletion_protection        = var.deletion_protection

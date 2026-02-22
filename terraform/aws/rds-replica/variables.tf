@@ -207,6 +207,17 @@ variable "performance_insights_retention_period" {
 # Maintenance & Upgrade Configuration
 # -----------------------------------------------------------------------------
 
+variable "backup_retention_period" {
+  description = "Number of days to retain automated backups for the replica. Set based on your recovery requirements."
+  type        = number
+  default     = 7
+
+  validation {
+    condition     = var.backup_retention_period >= 1 && var.backup_retention_period <= 35
+    error_message = "backup_retention_period must be between 1 and 35 days."
+  }
+}
+
 variable "auto_minor_version_upgrade" {
   description = "Whether to automatically upgrade minor engine versions during maintenance windows."
   type        = bool

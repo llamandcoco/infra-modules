@@ -37,7 +37,6 @@ module "test_rds_replica" {
   storage_type = "gp3"
 
   # Deletion settings for testing
-  deletion_protection = false
   skip_final_snapshot = true
 
   tags = {
