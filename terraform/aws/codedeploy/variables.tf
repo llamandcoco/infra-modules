@@ -157,10 +157,11 @@ variable "ecs_service" {
 variable "blue_green_deployment_config" {
   description = "Blue/Green deployment configuration for EC2/On-Premises or ECS deployments."
   type = object({
-    terminate_blue_instances_action  = string
-    termination_wait_time_in_minutes = number
-    deployment_ready_action          = string
-    green_fleet_provisioning_action  = string
+    terminate_blue_instances_action       = string
+    termination_wait_time_in_minutes      = number
+    deployment_ready_action               = string
+    deployment_ready_wait_time_in_minutes = optional(number, 0)
+    green_fleet_provisioning_action       = string
   })
   default = null
 }
