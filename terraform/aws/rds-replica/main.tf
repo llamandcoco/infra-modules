@@ -97,7 +97,7 @@ resource "aws_db_instance" "this" {
   # Storage Configuration
   allocated_storage  = var.allocated_storage
   storage_type       = var.storage_type
-  storage_encrypted  = true
+  storage_encrypted  = var.storage_encrypted
   kms_key_id         = var.kms_key_id
   iops               = var.iops
   storage_throughput = var.storage_throughput
@@ -105,7 +105,7 @@ resource "aws_db_instance" "this" {
   max_allocated_storage = var.max_allocated_storage
 
   # Network Configuration
-  vpc_security_group_ids = var.vpc_security_group_ids != null ? var.vpc_security_group_ids : (var.create_security_group ? [aws_security_group.this[0].id] : [])
+  vpc_security_group_ids = var.vpc_security_group_ids != null ? var.vpc_security_group_ids : (var.create_security_group ? [aws_security_group.this[0].id] : null)
   publicly_accessible    = var.publicly_accessible
   port                   = var.port
   availability_zone      = var.availability_zone
@@ -122,6 +122,7 @@ resource "aws_db_instance" "this" {
   apply_immediately          = var.apply_immediately
   deletion_protection        = var.deletion_protection
   skip_final_snapshot        = var.skip_final_snapshot
+  final_snapshot_identifier  = var.skip_final_snapshot ? null : coalesce(var.final_snapshot_identifier, "${var.identifier}-final-snapshot")
   copy_tags_to_snapshot      = var.copy_tags_to_snapshot
 
   tags = merge(
@@ -140,6 +141,21 @@ resource "aws_db_instance" "this" {
     precondition {
       condition     = var.monitoring_interval == 0 || var.monitoring_role_arn != null
       error_message = "monitoring_role_arn is required when monitoring_interval is greater than 0."
+    }
+
+    precondition {
+      condition     = var.create_security_group || try(length(var.vpc_security_group_ids), 0) > 0
+      error_message = "Set create_security_group=true or provide at least one vpc_security_group_ids entry."
+    }
+
+    precondition {
+      condition     = var.vpc_security_group_ids == null || try(length(var.vpc_security_group_ids), 0) > 0
+      error_message = "If vpc_security_group_ids is provided, it must contain at least one security group ID."
+    }
+
+    precondition {
+      condition     = !var.create_security_group || var.vpc_id != null
+      error_message = "vpc_id is required when create_security_group is true."
     }
 
     precondition {

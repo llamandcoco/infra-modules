@@ -137,6 +137,12 @@ variable "kms_key_id" {
   default     = null
 }
 
+variable "storage_encrypted" {
+  description = "Whether to enable storage encryption on the replica. If null, uses AWS default behavior for replicas."
+  type        = bool
+  default     = null
+}
+
 variable "iops" {
   description = "The amount of provisioned IOPS. Required when storage_type is io1 or io2."
   type        = number
@@ -227,6 +233,12 @@ variable "skip_final_snapshot" {
   description = "Whether to skip the final snapshot when the replica is deleted."
   type        = bool
   default     = false
+}
+
+variable "final_snapshot_identifier" {
+  description = "Custom identifier for the final snapshot when skip_final_snapshot is false. If null, a default is generated."
+  type        = string
+  default     = null
 }
 
 variable "copy_tags_to_snapshot" {
