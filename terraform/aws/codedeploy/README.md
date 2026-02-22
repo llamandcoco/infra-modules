@@ -61,6 +61,48 @@ cp -r tests/basic/ my-project/
 cd tests/basic && terraform init && terraform plan
 ```
 
+## Important Notes
+
+### Blue/Green Deployments and Auto Scaling Groups
+
+When using Blue/Green deployments with `COPY_AUTO_SCALING_GROUP`, CodeDeploy dynamically creates and manages Auto Scaling Groups. This causes Terraform drift on the `autoscaling_groups` attribute.
+
+**Recommended approach:**
+
+Add lifecycle ignore_changes to your Terragrunt/Terraform configuration:
+
+```hcl
+terraform {
+  source = "path/to/codedeploy/module"
+}
+
+# Add this to prevent drift
+resource "aws_codedeploy_deployment_group" "this" {
+  # ... your config ...
+
+  lifecycle {
+    ignore_changes = [autoscaling_groups]
+  }
+}
+```
+
+**Or in Terragrunt:**
+
+```hcl
+terraform {
+  source = "path/to/codedeploy/module"
+
+  # Unfortunately, Terragrunt doesn't support lifecycle blocks directly
+  # You may need to accept the drift or manage it outside Terraform
+}
+```
+
+**Why this happens:**
+- CodeDeploy creates new ASGs during each Blue/Green deployment
+- These ASGs are automatically added to the deployment group
+- Old ASGs may be removed after successful deployments
+- This is expected behavior and not a real drift issue
+
 <details>
 <summary>Terraform Documentation</summary>
 

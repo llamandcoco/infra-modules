@@ -187,13 +187,6 @@ resource "aws_codedeploy_deployment_group" "this" {
   }
 
   lifecycle {
-    # Ignore changes to autoscaling_groups as CodeDeploy manages these during Blue/Green deployments
-    # For Blue/Green deployments, CodeDeploy creates and manages ASGs dynamically
-    # For IN_PLACE deployments, manually manage autoscaling_groups outside Terraform if needed
-    ignore_changes = [
-      autoscaling_groups,
-    ]
-
     precondition {
       condition     = var.create_service_role || var.service_role_arn != null
       error_message = "service_role_arn must be provided when create_service_role is false."
