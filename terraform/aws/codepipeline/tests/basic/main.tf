@@ -31,14 +31,19 @@ module "test_basic_pipeline" {
   env           = "dev"
   app           = "myapp"
 
-  # GitHub configuration
-  github_owner  = "myorg"
-  github_repo   = "myrepo"
-  github_branch = "main"
+  # Source configuration (GitHub V1)
+  source_provider = "GitHub"
+  github_owner    = "myorg"
+  github_repo     = "myrepo"
+  github_branch   = "main"
 
-  # CodeBuild integration
+  # Build stage (enabled)
+  enable_build_stage     = true
   codebuild_project_name = "test-build-project"
   codebuild_project_arn  = "arn:aws:codebuild:us-east-1:123456789012:project/test-build-project"
+
+  # Deploy stage (disabled for basic test)
+  enable_deploy_stage = false
 
   # Skip real AWS calls for testing
   skip_data_source_lookup = true
