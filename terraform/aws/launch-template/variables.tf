@@ -17,6 +17,12 @@ variable "description" {
   default     = null
 }
 
+variable "update_default_version" {
+  description = "Whether to update Default Version each time a new version is created. Set to true for automatic rollout, false to keep existing default."
+  type        = bool
+  default     = false
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
@@ -68,6 +74,12 @@ variable "iam_instance_profile_name" {
   default     = null
 }
 
+variable "iam_instance_profile_arn" {
+  description = "IAM instance profile ARN for EC2 instances"
+  type        = string
+  default     = null
+}
+
 # -----------------------------------------------------------------------------
 # Network Configuration
 # -----------------------------------------------------------------------------
@@ -82,7 +94,7 @@ variable "network_interfaces" {
   description = "Network interface configuration for the launch template"
   type = list(object({
     associate_public_ip_address = optional(bool)
-    delete_on_termination       = optional(bool, true)
+    delete_on_termination       = optional(bool)
     device_index                = number
     security_groups             = optional(list(string), [])
     subnet_id                   = optional(string)
@@ -113,12 +125,12 @@ variable "user_data_base64" {
 variable "metadata_options" {
   description = "Instance metadata service configuration"
   type = object({
-    http_endpoint               = optional(string, "enabled")
-    http_tokens                 = optional(string, "required")
-    http_put_response_hop_limit = optional(number, 1)
-    instance_metadata_tags      = optional(string, "disabled")
+    http_endpoint               = optional(string)
+    http_tokens                 = optional(string)
+    http_put_response_hop_limit = optional(number)
+    instance_metadata_tags      = optional(string)
   })
-  default = {}
+  default = null
 }
 
 # -----------------------------------------------------------------------------
@@ -128,7 +140,7 @@ variable "metadata_options" {
 variable "enable_monitoring" {
   description = "Enable detailed monitoring"
   type        = bool
-  default     = false
+  default     = null
 }
 
 # -----------------------------------------------------------------------------
