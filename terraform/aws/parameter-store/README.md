@@ -40,14 +40,36 @@ cp -r tests/basic/ my-project/
 
 ## Testing
 
-## Features
+```bash
+cd tests/basic && terraform init && terraform validate
+```
 
-- Multiple Parameter Types String, StringList, and SecureString
-- KMS Encryption Optional customer-managed KMS keys for SecureString parameters
-- Flexible Tiers Support for Standard, Advanced, and Intelligent-Tiering
-- Data Validation Optional allowed patterns and data types
-- Secure by Default Uses SecureString type by default for sensitive data
-- Tag Support Comprehensive tagging for resource organization
+## Important Notes
+
+### Optional Name Tag
+
+By default, this module automatically adds a `Name` tag to each parameter with the parameter name as the value. This provides consistency with other AWS Terraform modules in this repository.
+
+However, the `auto_name_tag` variable (default: `true`) allows you to disable this behavior when:
+- Importing existing parameters that don't have Name tags (prevents drift)
+- Following a custom tagging strategy that doesn't use Name tags
+- Integrating with external systems that manage tags differently
+
+**Example:**
+```hcl
+module "parameters" {
+  source = "path/to/parameter-store"
+
+  auto_name_tag = false  # Disable automatic Name tag
+
+  parameters = {
+    "/app/config/key" = {
+      value = "value"
+      type  = "String"
+    }
+  }
+}
+```
 
 <details>
 <summary>Terraform Documentation</summary>

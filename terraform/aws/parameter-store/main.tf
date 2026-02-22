@@ -32,8 +32,6 @@ resource "aws_ssm_parameter" "this" {
   tags = merge(
     var.common_tags,
     try(each.value.tags, {}),
-    {
-      Name = each.key
-    }
+    var.auto_name_tag ? { Name = each.key } : {}
   )
 }

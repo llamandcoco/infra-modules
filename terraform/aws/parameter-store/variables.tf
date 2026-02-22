@@ -92,3 +92,9 @@ variable "common_tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "auto_name_tag" {
+  description = "Automatically add Name tag with parameter name. Set to false to disable."
+  type        = bool
+  default     = true
+}

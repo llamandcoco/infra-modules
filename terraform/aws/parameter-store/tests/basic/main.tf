@@ -89,6 +89,26 @@ module "test_parameters" {
   default_overwrite = true
 }
 
+# Test with auto_name_tag disabled
+module "test_without_name_tag" {
+  source = "../../"
+
+  parameters = {
+    "/app/test/no-name-tag" = {
+      value       = "test-value"
+      type        = "String"
+      description = "Parameter without automatic Name tag"
+    }
+  }
+
+  auto_name_tag = false
+
+  common_tags = {
+    Environment = "test"
+    CustomTag   = "value"
+  }
+}
+
 # Test outputs to verify module behavior
 output "all_parameter_names" {
   description = "Map of all parameter names"
