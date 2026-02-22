@@ -46,6 +46,11 @@ variable "auth" {
     secret_arn                = optional(string)
     username                  = optional(string)
   }))
+
+  validation {
+    condition     = length(var.auth) > 0
+    error_message = "auth must include at least one authentication configuration."
+  }
 }
 
 variable "target_db_instance_identifier" {

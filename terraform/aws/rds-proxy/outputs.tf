@@ -1,5 +1,5 @@
 output "proxy_id" {
-  description = "The Amazon Resource Name (ARN) for the proxy."
+  description = "The ID of the RDS Proxy."
   value       = aws_db_proxy.this.id
 }
 

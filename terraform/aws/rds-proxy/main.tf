@@ -92,7 +92,7 @@ resource "aws_db_proxy" "this" {
   idle_client_timeout    = var.idle_client_timeout
   require_tls            = var.require_tls
   role_arn               = var.role_arn
-  vpc_security_group_ids = var.vpc_security_group_ids != null ? var.vpc_security_group_ids : (var.create_security_group ? [aws_security_group.this[0].id] : [])
+  vpc_security_group_ids = var.vpc_security_group_ids != null ? var.vpc_security_group_ids : (var.create_security_group ? [aws_security_group.this[0].id] : null)
   vpc_subnet_ids         = var.vpc_subnet_ids
 
   dynamic "auth" {
@@ -114,6 +114,28 @@ resource "aws_db_proxy" "this" {
       Name = var.name
     }
   )
+
+  lifecycle {
+    precondition {
+      condition     = var.create_security_group || (var.vpc_security_group_ids != null && length(var.vpc_security_group_ids) > 0)
+      error_message = "Set create_security_group=true or provide at least one vpc_security_group_ids entry."
+    }
+
+    precondition {
+      condition     = var.vpc_security_group_ids == null || length(var.vpc_security_group_ids) > 0
+      error_message = "If vpc_security_group_ids is provided, it must contain at least one security group ID."
+    }
+
+    precondition {
+      condition     = !var.create_security_group || var.vpc_id != null
+      error_message = "vpc_id is required when create_security_group is true."
+    }
+
+    precondition {
+      condition     = !(var.create_security_group && (length(var.allowed_security_groups) > 0 || length(var.allowed_cidr_blocks) > 0) && var.port == null)
+      error_message = "port is required when create_security_group is true and ingress sources are provided."
+    }
+  }
 }
 
 # RDS Proxy Default Target Group
@@ -137,4 +159,11 @@ resource "aws_db_proxy_target" "this" {
   target_group_name      = aws_db_proxy_default_target_group.this.name
   db_instance_identifier = var.target_db_instance_identifier
   db_cluster_identifier  = var.target_db_cluster_identifier
+
+  lifecycle {
+    precondition {
+      condition     = (var.target_db_instance_identifier == null) != (var.target_db_cluster_identifier == null)
+      error_message = "Set exactly one of target_db_instance_identifier or target_db_cluster_identifier."
+    }
+  }
 }
