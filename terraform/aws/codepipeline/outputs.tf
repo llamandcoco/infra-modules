@@ -23,22 +23,22 @@ output "pipeline_arn" {
 
 output "artifact_bucket_name" {
   description = "The name of the S3 bucket for pipeline artifacts."
-  value       = aws_s3_bucket.pipeline_artifacts.id
+  value       = local.artifact_bucket
 }
 
 output "artifact_bucket_id" {
   description = "The ID of the S3 bucket for pipeline artifacts."
-  value       = aws_s3_bucket.pipeline_artifacts.id
+  value       = local.artifact_bucket
 }
 
 output "artifact_bucket_arn" {
   description = "The ARN of the S3 bucket for pipeline artifacts."
-  value       = aws_s3_bucket.pipeline_artifacts.arn
+  value       = var.create_artifact_bucket ? aws_s3_bucket.pipeline_artifacts[0].arn : "arn:aws:s3:::${var.artifact_bucket_name}"
 }
 
 output "artifact_bucket_region" {
   description = "The AWS region of the S3 bucket."
-  value       = aws_s3_bucket.pipeline_artifacts.region
+  value       = var.create_artifact_bucket ? aws_s3_bucket.pipeline_artifacts[0].region : local.region
 }
 
 # -----------------------------------------------------------------------------
@@ -47,15 +47,15 @@ output "artifact_bucket_region" {
 
 output "pipeline_role_name" {
   description = "The name of the CodePipeline IAM role."
-  value       = aws_iam_role.pipeline.name
+  value       = var.create_service_role ? aws_iam_role.pipeline[0].name : null
 }
 
 output "pipeline_role_id" {
   description = "The ID of the CodePipeline IAM role."
-  value       = aws_iam_role.pipeline.id
+  value       = var.create_service_role ? aws_iam_role.pipeline[0].id : null
 }
 
 output "pipeline_role_arn" {
   description = "The ARN of the CodePipeline IAM role."
-  value       = aws_iam_role.pipeline.arn
+  value       = local.pipeline_role_arn
 }
