@@ -108,11 +108,11 @@ resource "aws_codedeploy_deployment_group" "this" {
     }
   }
 
-  # Lambda configuration
+  # Deployment Style (for all platforms when deployment_type is specified)
   dynamic "deployment_style" {
-    for_each = contains(["Lambda", "ECS"], var.compute_platform) ? [1] : []
+    for_each = var.deployment_type != null ? [1] : []
     content {
-      deployment_option = "WITH_TRAFFIC_CONTROL"
+      deployment_option = var.deployment_type == "BLUE_GREEN" ? "WITH_TRAFFIC_CONTROL" : "WITHOUT_TRAFFIC_CONTROL"
       deployment_type   = var.deployment_type
     }
   }
@@ -127,7 +127,8 @@ resource "aws_codedeploy_deployment_group" "this" {
       }
 
       deployment_ready_option {
-        action_on_timeout = blue_green_deployment_config.value.deployment_ready_action
+        action_on_timeout    = blue_green_deployment_config.value.deployment_ready_action
+        wait_time_in_minutes = blue_green_deployment_config.value.deployment_ready_wait_time_in_minutes
       }
 
       green_fleet_provisioning_option {
